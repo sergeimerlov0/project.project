@@ -40,65 +40,57 @@ public class TestDataInitService {
         Role adminRole = roleService.getById(1L).get();
         Role userRole = roleService.getById(2L).get();
 
+        StringBuilder email = new StringBuilder();
+        StringBuilder password = new StringBuilder();
+        StringBuilder fullName = new StringBuilder();
+        StringBuilder city = new StringBuilder();
+        StringBuilder linkSite = new StringBuilder();
+        StringBuilder linkGitHub = new StringBuilder();
+        StringBuilder linkVk = new StringBuilder();
+        StringBuilder about = new StringBuilder();
+        StringBuilder imageLink = new StringBuilder();
+        StringBuilder nickname = new StringBuilder();
 
         User admin = new User();
         admin.setRole(adminRole);
-        admin.setEmail("Vasya@mail.ru");
-        admin.setPassword("password");
-        admin.setFullName("Vasya");
-        admin.setCity("Vasya's City");
-        admin.setLinkSite("vasya.ru");
-        admin.setLinkGitHub("github.com/vasya");
-        admin.setLinkVk("vk.com/vasya");
-        admin.setAbout("Hello my name is Vasya");
-        admin.setImageLink("vasya.ru/myphoto/1");
-        admin.setNickname("Vasya1337");
+        admin.setEmail(email.append("Vasya@mail.ru").toString());
+        admin.setPassword(password.append("password").toString());
+        admin.setFullName(fullName.append("Vasya").toString());
+        admin.setCity(city.append("Vasya's City").toString());
+        admin.setLinkSite(linkSite.append("vasya.ru").toString());
+        admin.setLinkGitHub(linkGitHub.append("github.com/vasya").toString());
+        admin.setLinkVk(linkVk.append("vk.com/vasya").toString());
+        admin.setAbout(about.append("Hello my name is Vasya").toString());
+        admin.setImageLink(imageLink.append("vasya.ru/myphoto/1").toString());
+        admin.setNickname(nickname.append("Vasya1337").toString());
         userService.persist(admin);
 
         User admin1 = new User();
         admin1.setRole(adminRole);
-        admin1.setEmail("123@mail.ru");
-        admin1.setPassword("123");
-        admin1.setFullName("Volodya");
-        admin1.setCity("Volodya's City");
-        admin1.setLinkSite("Volodya.ru");
-        admin1.setLinkGitHub("github.com/Volodya");
-        admin1.setLinkVk("vk.com/Volodya");
-        admin1.setAbout("Hello my name is Volodya");
-        admin1.setImageLink("Volodya.ru/myphoto/1");
-        admin1.setNickname("Volodya");
+        admin1.setEmail(email.delete(0, email.length()).append("123@mail.ru").toString());
+        admin1.setPassword(password.delete(0, password.length()).append("123").toString());
+        admin1.setFullName(fullName.delete(0, fullName.length()).append("Volodya").toString());
+        admin1.setCity(city.delete(0, city.length()).append("Volodya's City").toString());
+        admin1.setLinkSite(linkSite.delete(0, linkSite.length()).append("Volodya.ru").toString());
+        admin1.setLinkGitHub(linkGitHub.delete(0, linkGitHub.length()).append("github.com/Volodya").toString());
+        admin1.setLinkVk(linkVk.delete(0, linkVk.length()).append("github.com/Volodya").toString());
+        admin1.setAbout(about.delete(0, about.length()).append("Hello my name is Volodya").toString());
+        admin1.setImageLink(imageLink.delete(0, imageLink.length()).append("Volodya.ru/myphoto/1").toString());
+        admin1.setNickname(nickname.delete(0, nickname.length()).append("Vova").toString());
         userService.persist(admin1);
 
         for (int x = 2; x < 51; x++ ) {
-            StringBuilder email = new StringBuilder();
-            email.append(x).append("user@mail.ru");
 
-            StringBuilder password = new StringBuilder();
-            password.append(x).append(111);
-
-            StringBuilder fullName = new StringBuilder();
-            fullName.append(x).append("user");
-
-            StringBuilder city = new StringBuilder();
-            city.append(x).append("user's City");
-
-            StringBuilder linkSite = new StringBuilder();
-            linkSite.append(x).append("user.ru");
-
-            StringBuilder linkGitHub = new StringBuilder();
-            linkGitHub.append("github.com/").append(x).append("user");
-
-            StringBuilder linkVk = new StringBuilder();
-            linkVk.append("vk.com/").append(x).append("user");
-
-            StringBuilder about = new StringBuilder();
-            about.append("Hello my name is ").append(x).append("user");
-
-            StringBuilder imageLink = new StringBuilder();
-            imageLink.append(x).append("user").append(".ru/myphoto/1");
-
-            StringBuilder nickname = new StringBuilder();
-            nickname.append(x).append("user");
+            email.delete(0, email.length()).append(x).append("user@mail.ru");
+            password.delete(0, password.length()).append(x).append(111);
+            fullName.delete(0, fullName.length()).append(x).append("user");
+            city.delete(0, city.length()).append(x).append("user's City");
+            linkSite.delete(0, linkSite.length()).append(x).append("user.ru");
+            linkGitHub.delete(0, linkGitHub.length()).append("github.com/").append(x).append("user");
+            linkVk.delete(0, linkVk.length()).append("vk.com/").append(x).append("user");
+            about.delete(0, about.length()).append("Hello my name is ").append(x).append("user");
+            imageLink.delete(0, imageLink.length()).append(x).append("user").append(".ru/myphoto/1");
+            nickname.delete(0, nickname.length()).append(x).append("user");
 
             User u = new User();
             u.setRole(userRole);
