@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,12 +25,24 @@ public class TestDataInitService {
 
     @PostConstruct
     private void init() {
+        addRole();
+        addUser();
+    }
+
+    private void addRole() {
         // изменить при необходимости
         roleService.persist(new Role("ADMIN"));
         roleService.persist(new Role("USER"));
+    }
+
+    private void addUser() {
+        // изменить при необходимости
+        Role adminRole = roleService.getById(1L).get();
+        Role userRole = roleService.getById(2L).get();
+
 
         User admin = new User();
-        admin.setRole(roleService.getById(1L).get());
+        admin.setRole(adminRole);
         admin.setEmail("Vasya@mail.ru");
         admin.setPassword("password");
         admin.setFullName("Vasya");
@@ -42,18 +55,66 @@ public class TestDataInitService {
         admin.setNickname("Vasya1337");
         userService.persist(admin);
 
-        User user = new User();
-        user.setRole(roleService.getById(2L).get());
-        user.setEmail("Oleg@mail.ru");
-        user.setPassword("password");
-        user.setFullName("Oleg");
-        user.setCity("Oleg's City");
-        user.setLinkSite("oleg.ru");
-        user.setLinkGitHub("github.com/oleg");
-        user.setLinkVk("vk.com/oleg");
-        user.setAbout("Hello my name is Oleg");
-        user.setImageLink("Oleg.ru/myphoto/1");
-        user.setNickname("Oleg1337");
-        userService.persist(user);
+        User admin1 = new User();
+        admin1.setRole(adminRole);
+        admin1.setEmail("123@mail.ru");
+        admin1.setPassword("123");
+        admin1.setFullName("Volodya");
+        admin1.setCity("Volodya's City");
+        admin1.setLinkSite("Volodya.ru");
+        admin1.setLinkGitHub("github.com/Volodya");
+        admin1.setLinkVk("vk.com/Volodya");
+        admin1.setAbout("Hello my name is Volodya");
+        admin1.setImageLink("Volodya.ru/myphoto/1");
+        admin1.setNickname("Volodya");
+        userService.persist(admin1);
+
+        for (int x = 2; x < 51; x++ ) {
+            StringBuilder email = new StringBuilder();
+            email.append(x).append("user@mail.ru");
+
+            StringBuilder password = new StringBuilder();
+            password.append(x).append(111);
+
+            StringBuilder fullName = new StringBuilder();
+            fullName.append(x).append("user");
+
+            StringBuilder city = new StringBuilder();
+            city.append(x).append("user's City");
+
+            StringBuilder linkSite = new StringBuilder();
+            linkSite.append(x).append("user.ru");
+
+            StringBuilder linkGitHub = new StringBuilder();
+            linkGitHub.append("github.com/").append(x).append("user");
+
+            StringBuilder linkVk = new StringBuilder();
+            linkVk.append("vk.com/").append(x).append("user");
+
+            StringBuilder about = new StringBuilder();
+            about.append("Hello my name is ").append(x).append("user");
+
+            StringBuilder imageLink = new StringBuilder();
+            imageLink.append(x).append("user").append(".ru/myphoto/1");
+
+            StringBuilder nickname = new StringBuilder();
+            nickname.append(x).append("user");
+
+            User u = new User();
+            u.setRole(userRole);
+            u.setEmail(email.toString());
+            u.setPassword(password.toString());
+            u.setFullName(fullName.toString());
+            u.setCity(city.toString());
+            u.setLinkSite(linkSite.toString());
+            u.setLinkGitHub(linkGitHub.toString());
+            u.setLinkVk(linkVk.toString());
+            u.setAbout(about.toString());
+            u.setImageLink(imageLink.toString());
+            u.setNickname(nickname.toString());
+
+            userService.persist(u);
+        }
+
     }
 }
