@@ -4,27 +4,30 @@ import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class TestDataInitService {
 
     private final RoleService roleService;
     private final UserService userService;
+    private final Flyway flyway;
 
     @Autowired
-    public TestDataInitService(UserService userService, RoleService roleService) {
+    public TestDataInitService(UserService userService, RoleService roleService, Flyway flyway) {
         this.userService = userService;
         this.roleService = roleService;
+        this.flyway = flyway;
     }
 
     @PostConstruct
     private void init() {
+        flyway.clean();
+        flyway.migrate();
         addRole();
         addUser();
     }
