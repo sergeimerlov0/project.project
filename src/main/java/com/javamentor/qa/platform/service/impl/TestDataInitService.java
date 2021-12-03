@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.*;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +20,16 @@ public class TestDataInitService {
 
     private final RoleService roleService;
     private final UserService userService;
+    private final Flyway flyway;
     private final AnswerService answerService;
     private final QuestionService questionService;
     private final TagService tagService;
 
     @Autowired
-    public TestDataInitService(RoleService roleService, UserService userService, AnswerService answerService, QuestionService questionService, TagService tagService) {
+    public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway, AnswerService answerService, QuestionService questionService, TagService tagService) {
         this.roleService = roleService;
         this.userService = userService;
+        this.flyway = flyway;
         this.answerService = answerService;
         this.questionService = questionService;
         this.tagService = tagService;
@@ -34,6 +37,8 @@ public class TestDataInitService {
 
     @PostConstruct // потом убрать @PostConstruct
     private void init() {
+        flyway.clean();
+        flyway.migrate();
         addRole();
         addUser();
         addTag();
