@@ -1,19 +1,14 @@
 package com.javamentor.qa.platform.service.impl;
 
-import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.RoleService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 @Service
 public class TestDataInitService {
@@ -21,97 +16,26 @@ public class TestDataInitService {
     private final RoleService roleService;
     private final UserService userService;
     private final Flyway flyway;
-    private final AnswerService answerService;
-    private final QuestionService questionService;
-    private final TagService tagService;
 
     @Autowired
-    public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway, AnswerService answerService, QuestionService questionService, TagService tagService) {
-        this.roleService = roleService;
+    public TestDataInitService(UserService userService, RoleService roleService, Flyway flyway) {
         this.userService = userService;
+        this.roleService = roleService;
         this.flyway = flyway;
-        this.answerService = answerService;
-        this.questionService = questionService;
-        this.tagService = tagService;
     }
 
-    @PostConstruct // потом убрать @PostConstruct
+    @PostConstruct
     private void init() {
         flyway.clean();
         flyway.migrate();
         addRole();
         addUser();
-        addTag();
-        addQuestion();
-        addAnswer();
     }
 
     private void addRole() {
         // изменить при необходимости
         roleService.persist(new Role("ADMIN"));
         roleService.persist(new Role("USER"));
-    }
-
-    private void addTag() {
-        StringBuilder name = new StringBuilder();
-        StringBuilder description = new StringBuilder();
-
-        for (int x = 1; x <= 50; x++) {
-            name.delete(0, name.length()).append("tag:").append(x);
-            description.delete(0, description.length()).append("this is tag by name: ").append(name);
-
-            Tag tag = new Tag();
-            tag.setName(name.toString());
-            tag.setDescription(description.toString());
-            tagService.persist(tag);
-            name.delete(0, name.length());
-            description.delete(0, description.length());
-        }
-    }
-
-    private void addQuestion() {
-        StringBuilder title = new StringBuilder();
-        StringBuilder description = new StringBuilder();
-        List<Tag> tags = new ArrayList<>();
-
-        for (int x = 1; x <= 50; x++) {
-            tags.clear();
-            title.delete(0, title.length()).append("title:").append(x);
-            description.delete(0, title.length()).append("this is question by title: ").append(title);
-
-            // добавление рандомных тегов в рандомном количестве [1;5]
-            for (int y = (1 + (int) (Math.random() * 4)); y <= 5; y++) {
-                Tag tag = tagService.getById((long) (1 + (int) (Math.random() * 49))).get();
-                if (!tags.contains(tag)) {
-                    tags.add(tag);
-                }
-            }
-
-            Question question = new Question();
-            question.setTitle(title.toString());
-            question.setDescription(description.toString());
-            question.setTags(tags);
-            // добавление рандомного юзера
-            question.setUser(userService.getById((long) (1 + (int) (Math.random() * 49))).get());
-            questionService.persist(question);
-        }
-    }
-
-    private void addAnswer() {
-        StringBuilder htmlBody = new StringBuilder();
-        Random random = new Random();
-        // добавление радномного количества ответов [1;50]
-        for (int x = 1 + (int) (Math.random() * 49); x <= 50; x++) {
-            htmlBody.delete(0, htmlBody.length()).append("htmlBody:").append(x);
-            Answer answer = new Answer();
-            answer.setIsDeleted(random.nextBoolean());
-            answer.setHtmlBody(htmlBody.toString());
-            answer.setIsHelpful(random.nextBoolean());
-            answer.setIsDeletedByModerator(random.nextBoolean());
-            answer.setQuestion(questionService.getById((long) (1 + (int) (Math.random() * 49))).get());
-            answer.setUser(userService.getById((long) (1 + (int) (Math.random() * 49))).get());
-            answerService.persist(answer);
-        }
     }
 
     private void addUser() {
@@ -158,7 +82,7 @@ public class TestDataInitService {
         admin1.setNickname(nickname.delete(0, nickname.length()).append("Vova").toString());
         userService.persist(admin1);
 
-        for (int x = 2; x <= 50; x++) {
+        for (int x = 2; x < 51; x++ ) {
 
             email.delete(0, email.length()).append(x).append("user@mail.ru");
             password.delete(0, password.length()).append(x).append(111);
@@ -186,7 +110,6 @@ public class TestDataInitService {
 
             userService.persist(u);
         }
-
 
     }
 }
