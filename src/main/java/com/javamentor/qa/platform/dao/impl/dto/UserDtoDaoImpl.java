@@ -25,17 +25,5 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
 
     }
-//    @Override
-//    JOIN Reputation r on (e.id=r.author.id)
-//    public UserDto getUserById(Long id) {
-//
-//        return entityManager.createQuery("SELECT new  com.javamentor.qa.platform.models.dto.UserDto" +
-//                        "(e.author.id,e.author.email,e.author.fullName,e.author.imageLink,e.author.city,e.count)" +
-//                        "FROM Reputation e" +
-//                        " where e.author.id =:id", UserDto.class)
-//                .setParameter("id",id)
-//                .getSingleResult();
-//
-//
-//    }
+
 }
