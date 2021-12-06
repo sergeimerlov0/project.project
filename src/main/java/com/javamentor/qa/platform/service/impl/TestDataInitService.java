@@ -76,8 +76,8 @@ public class TestDataInitService {
 
         for (int x = 1; x <= 50; x++) {
             tags.clear();
-            title.delete(0, title.length()).append("title:").append(x);
-            description.delete(0, title.length()).append("this is question by title: ").append(title);
+            title.delete(0, 50).append("title:").append(x);
+            description.delete(0, 50).append("this is question by title: ").append(title);
 
             // добавление рандомных тегов в рандомном количестве [1;5]
             for (int y = (1 + (int) (Math.random() * 4)); y <= 5; y++) {
