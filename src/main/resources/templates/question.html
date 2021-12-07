@@ -62,7 +62,7 @@
         <div class="col-sm-7">
             <div class="float-left">
 
-                <form action="#" th:action="@{/question/add}">
+                <form action="#" th:action="@{question/add}" th:object="${question}" method="POST">
                     <div class="card">
                         <p><h4>Заголовок</h4></p>
                         <div class="form-group">
