@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.models.dto;
+package com.javamentor.qa.platform.service.abstracts.dto;
 
 import java.util.List;
 import java.util.Map;
