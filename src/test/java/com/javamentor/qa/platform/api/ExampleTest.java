@@ -6,11 +6,16 @@ import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.webapp.controllers.rest.TestController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * \* Created with IntelliJ IDEA.
@@ -27,8 +32,13 @@ public class ExampleTest extends AbstractApiTest {
     @DataSet("example/exampleDataSet.yml")
     public void exampleTest() throws Exception{
 
-        List<String> test = testController.getTest();
-        assertThat(test).isEmpty();
+        this.mvc.perform(MockMvcRequestBuilders
+                .get("/test"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+
+
     }
 
 }
