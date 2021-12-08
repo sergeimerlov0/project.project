@@ -13,9 +13,9 @@ class ResourceAnswerControllerTest extends AbstractApiTest {
     private AnswerService answerService;
 
     @Test
-    @DataSet("src/test/resources/datasets/answerTest/answer_delete_data_set.xml")
+    @DataSet("datasets/answerDatasets/answerDeleteDataSet.yml")
     void deleteAnswerById() {
         answerService.deleteById(100L);
-        assertEquals(1L, answerService.getAll().size());
+        assertEquals(2L, answerService.getAll().size());
     }
 }

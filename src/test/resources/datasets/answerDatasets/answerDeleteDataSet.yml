@@ -1,0 +1,53 @@
+user_entity:
+  - id: 100
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+
+role:
+  - id: 100
+    name: "ADMIN"
+
+question:
+  - id: 100
+    title: "test"
+    description: "test"
+    persist_date: "[DAY,NOW]"
+    user_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+question_has_tag:
+  - question_id: 100
+    tag_id: 100
+
+tag:
+  - id: 100
+    name: "test tag"
+
+answer:
+  - id: 100
+    user_id: 100
+    question_id: 100
+    html_body: "test0"
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    update_date: "[DAY,NOW]"
+
+  - id: 101
+    html_body: "test1"
+    user_id: 100
+    question_id: 100
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: false
+    update_date: "[DAY,NOW]"
+
+  - id: 102
+    html_body: "test2"
+    user_id: 100
+    question_id: 100
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    update_date: "[DAY,NOW]"
