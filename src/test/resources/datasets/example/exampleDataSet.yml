@@ -1,0 +1,23 @@
+badges:
+  - id: 100
+    badge_name: "super"
+    reputations_for_merit: 10
+    description: "some super"
+
+  - id: 101
+    badge_name: "norm"
+    reputations_for_merit: 20
+    description: "some normal"
+
+
+
+
+
+
+
+
+
+
+
+
+
