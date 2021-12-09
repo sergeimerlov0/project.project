@@ -37,8 +37,8 @@ public class TestDataInitService {
 
     @PostConstruct // потом убрать @PostConstruct
     private void init() {
-        flyway.clean();
-        flyway.migrate();
+        //flyway.clean();
+        //flyway.migrate();
         addRole();
         addUser();
         addTag();

@@ -13,5 +13,4 @@ public class AdviceController {
     public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
-
 }

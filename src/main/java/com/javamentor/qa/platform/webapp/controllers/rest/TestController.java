@@ -24,4 +24,16 @@ public class TestController {
     public List<String> getTest() {
         return new ArrayList<>();
     }
+
+    /*
+    Just Security Test
+     */
+    @GetMapping("/user")
+    public String user(){
+        return "hi, user!";
+    }
+    @GetMapping("/admin")
+    public String admin(){
+        return "hi, admin!";
+    }
 }

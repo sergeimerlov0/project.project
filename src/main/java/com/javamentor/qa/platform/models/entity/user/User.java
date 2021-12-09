@@ -28,11 +28,11 @@ public class User implements UserDetails {
     @GeneratedValue(generator = "User_seq")
     private Long id;
 
-    @Column
+    @Column(name = "email")
     @NonNull
     private String email;
 
-    @Column
+    @Column(name = "password")
     @NonNull
     private String password;
 
@@ -76,7 +76,7 @@ public class User implements UserDetails {
     @Column
     private String nickname;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "role_id", nullable = false)
     @NonNull
     private Role role;
