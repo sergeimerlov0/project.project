@@ -25,16 +25,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     private UserDetailsService userDetailsService;
-    private LoginSuccessHandler loginSuccessHandler;
     private JwtAuthorizationFilter authorizationFilter;
 
     @Autowired
     public void setUserDetailsService(@Qualifier("userDetailsServiceImpl")
-                                                  UserDetailsService userDetailsService,
-                                      LoginSuccessHandler loginSuccessHandler, JwtAuthorizationFilter filter) {
+                                              UserDetailsService userDetailsService,
+                                      JwtAuthorizationFilter filter) {
         this.authorizationFilter = filter;
         this.userDetailsService = userDetailsService;
-        this.loginSuccessHandler = loginSuccessHandler;
     }
 
     @Bean
@@ -62,30 +60,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        CharacterEncodingFilter filter = new CharacterEncodingFilter();
-        filter.setEncoding("UTF-8");
-        filter.setForceEncoding(true);
-        http.cors().disable();
+        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+        encodingFilter.setEncoding("UTF-8");
+        encodingFilter.setForceEncoding(true);
+        http.cors().and().csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/","/login","/logout","/static/**","/templates/**","/api/auth/token").permitAll()
-                .antMatchers("/api/users/**").hasAuthority("ADMIN")
-                .antMatchers("/api/user/**").hasAuthority("USER")
-
-                .antMatchers("/test/admin").hasAuthority("ADMIN")
-                .antMatchers("/test/user").hasAuthority("USER")
-
-                .anyRequest().authenticated()
+                .antMatchers("/**").permitAll()
                 .and()
-                .addFilterBefore(filter,UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(authorizationFilter,UsernamePasswordAuthenticationFilter.class)
-                .formLogin().loginPage("/login")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .successHandler(loginSuccessHandler)
-                .and()
-                .logout()
-                .logoutUrl("/logout").logoutSuccessUrl("/login")
-                .and().csrf().disable();
+                .addFilterBefore(encodingFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

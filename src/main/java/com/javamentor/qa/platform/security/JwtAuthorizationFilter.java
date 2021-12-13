@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -20,6 +21,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -29,15 +31,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException, NullPointerException {
         String path = request.getServletPath();
-        if (path.equals("/api/auth/token") || path.equals("/login")) {
+        if (path.equals("/api/auth/token")) {
             filterChain.doFilter(request, response);
         } else {
             String authHeader = request.getHeader(AUTHORIZATION);
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 try {
                     String token = authHeader.substring("Bearer ".length());
-                    Algorithm algorithm = Algorithm.HMAC256("PrinceNanadaime".getBytes());
-                    JWT.require(algorithm).build().verify(token);
+                    JWT.require(Algorithm.HMAC256("PrinceNanadaime".getBytes())).build().verify(token);
                     filterChain.doFilter(request, response);
                 } catch (Exception e) {
                     response.setHeader("Error", e.getMessage());
