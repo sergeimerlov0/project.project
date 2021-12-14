@@ -2,18 +2,20 @@ package com.javamentor.qa.platform.api;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ResourceAnswerControllerTest extends AbstractApiTest {
 
-    @Autowired
-    private AnswerService answerService;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Test
     @DataSet(value = {
@@ -27,7 +29,7 @@ class ResourceAnswerControllerTest extends AbstractApiTest {
     void deleteAnswerById() throws Exception {
         this.mvc.perform(delete("/api/user/question/100/answer/100"))
                 .andExpect(status().isOk());
-        assertFalse(answerService.existsById(100L));
+        Assertions.assertFalse(existsById(100L));
     }
 
     @Test
@@ -42,5 +44,12 @@ class ResourceAnswerControllerTest extends AbstractApiTest {
     void tryToDeleteNonExistedId() throws Exception {
         this.mvc.perform(delete("/api/user/question/100/answer/104"))
                 .andExpect(status().isBadRequest());
+    }
+
+    public boolean existsById(Long id) {
+        long count = (long) entityManager.createQuery("SELECT COUNT(e) FROM " + Answer.class.getName() +
+                        " e WHERE e.id =: id")
+                .setParameter("id", id).getSingleResult();
+        return count > 0;
     }
 }
