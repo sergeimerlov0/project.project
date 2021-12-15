@@ -1,7 +1,7 @@
 const model = [
   {
     type: 'logo',
-    value: 'https://icon-library.com/images/stack-overflow-icon/stack-overflow-icon-4.jpg',
+    value: 'Kata',
     imageStyles: {
       width: '120px',
       height: '40px'
