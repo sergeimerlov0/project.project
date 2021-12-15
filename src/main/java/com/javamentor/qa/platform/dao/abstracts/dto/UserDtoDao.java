@@ -2,6 +2,9 @@ package com.javamentor.qa.platform.dao.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
 
+import java.util.Optional;
+
 public interface UserDtoDao {
-    public UserDto getUserById(Long id);
+    Optional<UserDto> getUserById(Long id);
 }
+

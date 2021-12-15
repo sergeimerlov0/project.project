@@ -6,24 +6,23 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Optional;
 
 @Repository
 public class UserDtoDaoImpl implements UserDtoDao {
-    @PersistenceContext()
+
+    @PersistenceContext
     private EntityManager entityManager;
 
 
     @Override
-    public UserDto getUserById(Long id) {
+    public Optional<UserDto> getUserById(Long id) {
 
-        return entityManager.createQuery("SELECT new  com.javamentor.qa.platform.models.dto.UserDto" +
-                        "(e.id,e.email,e.fullName,e.imageLink,e.city,r.count)" +
-                        "FROM User e left outer JOIN Reputation r on (e.id=r.author.id)" +
-                        " where e.id =:id and e.isEnabled=true ", UserDto.class)
-                .setParameter("id", id)
-                .getSingleResult();
-
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.UserDto(rep.id, rep.author.email, rep.author.fullName,rep.author.imageLink,rep.author.city,rep.count)" +
+                        " from Reputation rep where rep.author.id =: id", UserDto.class)
+                .setParameter("id", id).getResultStream().findAny();
 
     }
 
 }
+
