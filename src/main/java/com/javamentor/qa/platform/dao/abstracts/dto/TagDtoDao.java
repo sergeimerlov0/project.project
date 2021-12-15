@@ -1,11 +1,11 @@
 package com.javamentor.qa.platform.dao.abstracts.dto;
 
-import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.dto.TagDto;
 
 import java.util.List;
 
 public interface TagDtoDao {
-    List<Tag> getTrackedTagByUsername(String username);
+    List<TagDto> getTrackedTagById(Long id);
 
-    List<Tag> getIgnoreTagByUsername(String username);
+    List<TagDto> getIgnoreTagById(Long id);
 }
