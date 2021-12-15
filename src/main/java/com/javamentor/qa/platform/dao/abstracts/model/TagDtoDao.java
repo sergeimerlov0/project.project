@@ -1,6 +1,9 @@
 package com.javamentor.qa.platform.dao.abstracts.model;
 
-import com.javamentor.qa.platform.models.dto.TagDto;
+public interface TagDtoDao {
+    Long getId();
 
-public interface TagDtoDao extends ReadOnlyDao<TagDto, Long> {
+    String getName();
+
+    String getDescription();
 }
