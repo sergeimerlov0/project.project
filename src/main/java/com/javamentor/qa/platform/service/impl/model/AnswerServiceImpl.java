@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implements AnswerService {
-
     @Autowired
     public AnswerServiceImpl(AnswerDao answerDao) {
         super(answerDao);
