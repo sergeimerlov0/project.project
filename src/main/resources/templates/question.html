@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+    <title>Question page</title>
+</head>
+<body>
+
+<div class="container">
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('#myModal').modal('show');
+        });
+    </script>
+
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h2 class="modal-title">Задавая хороший вопрос</h2>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <h6>Теперь вы готовы задать ваш первый вопрос, связанный с программированием. Ведь наше сообщество
+                        именно для этого! Чтобы получить лучшие ответы, взгляните на рекомендации:</h6>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <ol>
+                        <li>Опишите проблему кратко</li>
+                        <li>Опишите, что вы пробовали</li>
+                        <li>При необходимости добавьте немного кода</li>
+                        <br>
+                        <p>Больше советов в боковой панели</p><br>
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Начать писать</button>
+                    </ol>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="container">
+    <div class="pt-5">
+        <h2>Задать публичный вопрос</h2><br>
+    </div>
+    <div class="row">
+        <div class="col-sm-7">
+            <div class="float-left">
+
+                <form action="#" th:action="@{question/add/}" th:object="${question}" method="POST">
+                    <div class="card">
+                        <p><h4>Заголовок</h4></p>
+                        <div class="form-group">
+                            <label for="inputQuestion" class=" font-weight-bold">Будьте конкретны. Представьте, что вы
+                                задаёте
+                                вопрос другому человеку.</label>
+                            <input type="text" class="form-control" id="inputQuestion"
+                                   placeholder="В чем заключается Ваш вопрос? Будьте конкретны." required
+                                   name="inputQuestion">
+                        </div>
+                        <br>
+
+                        <p><h4>Основная часть</h4></p>
+                        <div class="form-group">
+                            <label for="inputMainPart" class=" font-weight-bold">Добавьте всю информацию, которая может
+                                понадобиться
+                                для ответа на ваш вопрос</label>
+                            <input type="text" class="form-control" id="inputMainPart" required name="inputMainPart">
+                        </div>
+                        <br>
+
+                        <p><h4>Метки</h4></p>
+                        <div class="form-group">
+                            <label for="inputTags" class=" font-weight-bold">Добавьте не более 5 меток, описывающих о
+                                чём
+                                ваш
+                                вопрос</label>
+                            <input type="text" class="form-control" id="inputTags"
+                                   placeholder="например, [sql python-3.x c++]"
+                                   required name="text1">
+                        </div>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Проверьте Ваш вопрос</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="float-right">
+                <div class="card">
+                    <div class="card-footer">
+                        <p class="card-text">Создайте черновик своего вопроса</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Сообщество здесь, чтобы помочь вам с конкретными проблемами по программированию, алгоритмам,
+                            языкам программирования.
+                        </p><br>
+                        <p>Избегайте публикации вопросов, на которые невозможно дать объективный ответ.</p>
+                        <div class="dropdown">
+                            <button class="btn btn-light dropdown-toggle"
+                                    type="button" id="dropdownMenu1" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                1. Опишите проблему кратко
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <ul>
+                                    <li>Включите подробную информацию о вашей цели</li>
+                                    <li>Опишите, что вы ожидали и что получили</li>
+                                    <li>Добавьте сообщения об ошибках</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-light dropdown-toggle"
+                                    type="button" id="dropdownMenu2" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                2. Опишите, что Вы пробовали
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                <ul>
+                                    <li>Покажите, что вы пробовали, что вы нашли (на этом сайте или в другом месте), и
+                                        почему это не решает вашу проблему. Вы можете получить лучшие ответы, когда
+                                        продемонстрируете ваше исследование.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-light dropdown-toggle"
+                                    type="button" id="dropdownMenu3" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                3. Добавьте немного кода
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu3">
+                                <ul>
+                                    <li>По возможности добавьте минимальный код, необходимый для воспроизведения вашей
+                                        проблемы (так называемый минимальный воспроизводимый пример)
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
