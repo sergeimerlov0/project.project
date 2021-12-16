@@ -2,9 +2,15 @@ package com.javamentor.qa.platform.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,6 +31,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+    private AuthenticationManager authenticationManager;
+    private UserService userService;
+
+    @Autowired
+    public void setAuthenticationManager(AuthenticationManager authenticationManager, UserService userService) {
+        this.authenticationManager = authenticationManager;
+        this.userService = userService;
+    }
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -36,16 +51,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         } else {
             String authHeader = request.getHeader(AUTHORIZATION);
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                try {
-                    String token = authHeader.substring("Bearer ".length());
-                    JWT.require(Algorithm.HMAC256("PrinceNanadaime".getBytes())).build().verify(token);
-                    filterChain.doFilter(request, response);
-                } catch (Exception e) {
-                    response.setHeader("Error", e.getMessage());
-                    response.setStatus(FORBIDDEN.value());
-                    response.setContentType(APPLICATION_JSON_VALUE);
-                    objectMapper.writeValue(response.getOutputStream(), e.getMessage());
-                }
+                String token = authHeader.substring("Bearer ".length());
+                DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256("PrinceNanadaime".getBytes())).build().verify(token);
+                String email = decodedJWT.getSubject();
+                User user = userService.getByEmail(email).get();
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        email, user.getPassword(), user.getAuthorities()
+                );
+                authenticationManager.authenticate(authenticationToken);
+                filterChain.doFilter(request, response);
             } else {
                 response.setContentType(APPLICATION_JSON_VALUE);
                 response.setStatus(FORBIDDEN.value());
@@ -54,7 +68,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 error.put("status", "Forbidden");
                 error.put("message", "Forbidden");
                 error.put("path", request.getServletPath());
-                error.put("Generate token to get access: ","/api/auth/token");
+                error.put("Generate token to get access: ", "/api/auth/token");
                 objectMapper.writeValue(response.getOutputStream(), error);
             }
         }
