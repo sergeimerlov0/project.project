@@ -19,8 +19,8 @@ public class ResourceAnswerController {
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Успешное удаление"),
-        @ApiResponse(code = 400, message = "Ответа с таким ID не существует")})
+            @ApiResponse(code = 200, message = "Успешное удаление"),
+            @ApiResponse(code = 400, message = "Ответа с таким ID не существует")})
     @DeleteMapping("/{answerId}")
     public ResponseEntity<String> deleteAnswerById(@ApiParam("Id ответа") @PathVariable Long answerId) {
         if (!answerService.existsById(answerId)) {
