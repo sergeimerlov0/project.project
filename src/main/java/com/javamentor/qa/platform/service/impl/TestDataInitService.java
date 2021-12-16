@@ -35,8 +35,7 @@ public class TestDataInitService {
         this.tagService = tagService;
     }
 
-    @PostConstruct // потом убрать @PostConstruct
-    private void init() {
+    public void init() {
         flyway.clean();
         flyway.migrate();
         addRole();
