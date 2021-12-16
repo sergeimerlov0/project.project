@@ -79,6 +79,7 @@ public class User implements UserDetails {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "role_id", nullable = false)
     @NonNull
+    @ToString.Exclude
     private Role role;
 
     @Override
@@ -87,7 +88,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
+    public @NonNull String getPassword() {
         return password;
     }
 

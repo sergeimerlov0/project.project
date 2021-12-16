@@ -12,7 +12,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -29,13 +32,6 @@ public class AuthenticationResourceController {
         this.encoder = encoder;
         this.userService = userService;
     }
-
-    /*public boolean verifyPassword(String requestPassword, String userPassword) {
-        if (!encoder.matches(requestPassword, userPassword) && !encoder.matches(userPassword, requestPassword)) {
-            log.error("Wrong Password!");
-            return false;
-        } else return true;
-    }*/
 
     @GetMapping("/getall")
     public ResponseEntity<List<User>> users() {
@@ -62,10 +58,6 @@ public class AuthenticationResourceController {
                 email, user.getPassword(), user.getAuthorities()
         );
         authenticationManager.authenticate(token);
-        return JWT.create()
-                .withSubject(user.getEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) //24 hours = 1 day
-                .withClaim("link", user.getLinkSite())
-                .sign(Algorithm.HMAC256("PrinceNanadaime".getBytes()));
+        return JWT.create().withSubject(user.getEmail()).sign(Algorithm.HMAC256("PrinceNanadaime".getBytes()));
     }
 }
