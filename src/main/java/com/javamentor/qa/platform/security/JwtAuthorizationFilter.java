@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -54,11 +55,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 String token = authHeader.substring("Bearer ".length());
                 DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256("PrinceNanadaime".getBytes())).build().verify(token);
                 String email = decodedJWT.getSubject();
-                User user = userService.getByEmail(email).get();
+
+                Optional<User> userOptional = userService.getByEmail(email);
+                User user = userOptional.orElseGet(userOptional::orElseThrow);
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         email, user.getPassword(), user.getAuthorities()
                 );
-                authenticationManager.authenticate(authenticationToken);
+                if (!authenticationToken.isAuthenticated()) authenticationManager.authenticate(authenticationToken);
                 filterChain.doFilter(request, response);
             } else {
                 response.setContentType(APPLICATION_JSON_VALUE);

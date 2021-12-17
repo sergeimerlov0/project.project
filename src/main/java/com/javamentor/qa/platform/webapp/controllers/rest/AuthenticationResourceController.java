@@ -6,15 +6,13 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -23,41 +21,38 @@ import java.util.Optional;
 public class AuthenticationResourceController {
 
     private final UserService userService;
-    private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationResourceController(UserService userService, PasswordEncoder encoder,
-                                            AuthenticationManager authenticationManager) {
+    public AuthenticationResourceController(UserService userService, AuthenticationManager authenticationManager,
+                                            PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
-        this.encoder = encoder;
+        this.passwordEncoder = passwordEncoder;
         this.userService = userService;
     }
 
     @GetMapping("/getall")
-    public ResponseEntity<List<User>> users() {
-        return ResponseEntity.ok().body(userService.getAll());
-    }
-
-    @GetMapping("/current")
-    public ResponseEntity<Map<String, String>> currentUser(@RequestBody AuthenticationRequest request) {
-        Map<String, String> data = new LinkedHashMap<>();
-        Optional<User> optionalUser = userService.getByEmail(request.getEmail());
-        User user = optionalUser.orElseGet(optionalUser::orElseThrow);
-        data.put("email", user.getEmail());
-        data.put("password", user.getPassword());
-        return ResponseEntity.ok().body(data);
+    public List<User> users() {
+        return userService.getAll();
     }
 
     @PostMapping("/auth/token")
-    public String token(@RequestBody AuthenticationRequest request) throws NullPointerException {
+    public String token(@RequestBody AuthenticationRequest request) throws NullPointerException,
+            AuthenticationException {
         String email = request.getEmail();
+        String password = request.getPassword();
         log.info("Email is " + email);
 
-        User user = userService.getByEmail(email).get();
+        Optional<User> userOptional = userService.getByEmail(email);
+        User user = userOptional.orElseGet(userOptional::orElseThrow);
+
+        if (!passwordEncoder.matches(password, user.getPassword()) && !passwordEncoder.matches(
+                user.getPassword(), password)) throw new AuthenticationException("Wrong password!");
+
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                email, user.getPassword(), user.getAuthorities()
-        );
-        authenticationManager.authenticate(token);
+                email, user.getPassword(), user.getAuthorities());
+
+        if (!token.isAuthenticated()) authenticationManager.authenticate(token);
         return JWT.create().withSubject(user.getEmail()).sign(Algorithm.HMAC256("PrinceNanadaime".getBytes()));
     }
 }
