@@ -34,9 +34,9 @@ public class ResourceAnswerController {
         return ResponseEntity.status(HttpStatus.OK).body("Answer successfully deleted");
     }
 
-    @ApiOperation(value = "Получение ответов на вопрос", tags = {"Получение ответов"})
+    @ApiOperation(value = "Получение списка ответов на вопрос", tags = {"Получение списка ответов"})
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Успешное удаление")})
+            @ApiResponse(code = 200, message = "Успешное получение")})
     @GetMapping()
     public ResponseEntity<List<AnswerDto>> getAnswerByQuestionId(@PathVariable Long questionId) {
         return new ResponseEntity<>(answerDtoService.getAnswerByQuestionId(questionId), HttpStatus.OK);

@@ -71,7 +71,7 @@ class ResourceAnswerControllerTest extends AbstractApiTest {
                 "getAnswerDataSet/user.yml",
                 "getAnswerDataSet/voteAnswer.yml"
         })
-        public void getAnswerByQuestionIdt() throws Exception{
+        public void getAnswerByQuestionId() throws Exception{
 
             this.mvc.perform(get("/api/user/question/100/answer"))
                     .andDo(print())
@@ -83,6 +83,26 @@ class ResourceAnswerControllerTest extends AbstractApiTest {
                     .andExpect(jsonPath("$[1].id", is(101)))
                     .andExpect(jsonPath("$[1].userReputation", is(106)))
                     .andExpect(jsonPath("$[1].countValuable", is(-2)));
+    }
+
+    @Test
+    @DataSet(value = {
+            "getAnswerDataSet/answer.yml",
+            "getAnswerDataSet/question.yml",
+            "getAnswerDataSet/questionHasTag.yml",
+            "getAnswerDataSet/tag.yml",
+            "getAnswerDataSet/reputation.yml",
+            "getAnswerDataSet/role.yml",
+            "getAnswerDataSet/user.yml",
+            "getAnswerDataSet/voteAnswer.yml"
+    })
+    public void getEmptyListAnswerByQuestionId() throws Exception{
+
+        this.mvc.perform(get("/api/user/question/2000/answer"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+
     }
 
 }
