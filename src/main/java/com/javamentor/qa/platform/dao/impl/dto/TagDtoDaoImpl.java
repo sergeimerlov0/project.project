@@ -16,14 +16,14 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public List<TagDto> getTrackedTagById(Long id) {
-        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.TagDto(t.trackedTag) from TrackedTag t where t.user.id=:id", TagDto.class)
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.TagDto(x.id, x.name) from TrackedTag t join t.trackedTag x where t.user.id=:id", TagDto.class)
                 .setParameter("id", id)
                 .getResultList();
     }
 
     @Override
     public List<TagDto> getIgnoreTagById(Long id) {
-        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.TagDto(t.ignoredTag) from IgnoredTag t where t.user.id=:id", TagDto.class)
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.TagDto(x.id, x.name) from IgnoredTag t join t.ignoredTag x where t.user.id=:id", TagDto.class)
                 .setParameter("id", id)
                 .getResultList();
     }

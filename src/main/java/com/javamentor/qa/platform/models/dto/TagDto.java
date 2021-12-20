@@ -15,8 +15,8 @@ public class TagDto {
     private String name;
     private String description;
 
-    public TagDto(Tag tag) {
-        this.id = tag.getId();
-        this.name = tag.getName();
+    public TagDto(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 }

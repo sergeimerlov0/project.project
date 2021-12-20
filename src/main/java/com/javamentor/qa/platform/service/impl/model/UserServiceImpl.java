@@ -11,16 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements UserService {
 
-    private final UserDao userDao;
-
     @Autowired
     public UserServiceImpl(UserDao userDao) {
         super(userDao);
-        this.userDao = userDao;
-    }
-
-    @Override
-    public User getByUsername(String username) {
-        return userDao.getByUsername(username);
     }
 }

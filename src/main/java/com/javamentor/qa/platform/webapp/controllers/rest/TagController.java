@@ -37,8 +37,9 @@ public class TagController {
             @ApiResponse(code = 400, message = "TrackedTagDto not exist")})
     @GetMapping("/tracked")
     public ResponseEntity<List<TagDto>> getAllTrackedTagDto(Authentication authentication) {
+        Long id = 2L; // todo убрать когда будет готово секьюрити
         return new ResponseEntity<>(tagDtoService
-                .getTrackedTagById((userService.getByUsername(authentication.getName())).getId()), HttpStatus.OK);
+                .getTrackedTagById(userService.getById(id).get().getId()), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Getting all IgnoredTagDto", tags = {"IgnoredTagDto"})
@@ -47,7 +48,8 @@ public class TagController {
             @ApiResponse(code = 400, message = "IgnoredTagDto not exist")})
     @GetMapping("/ignored")
     public ResponseEntity<List<TagDto>> getAllIgnoredTagDto(Authentication authentication) {
+        Long id = 2L; // todo убрать когда будет готово секьюрити
         return new ResponseEntity<>(tagDtoService
-                .getIgnoreTagById((userService.getByUsername(authentication.getName())).getId()), HttpStatus.OK);
+                .getTrackedTagById(userService.getById(id).get().getId()), HttpStatus.OK);
     }
 }
