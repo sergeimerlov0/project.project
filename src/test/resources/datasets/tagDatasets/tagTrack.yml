@@ -1,4 +1,4 @@
-tag_ignore:
+tag_tracked:
   - id: 100
     tracked_tag_id: 102
     user_id: 100

@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.dto;
 
+import com.javamentor.qa.platform.models.entity.question.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +15,8 @@ public class TagDto {
     private String name;
     private String description;
 
-    public TagDto(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    public TagDto(Tag tag) {
+        this.id = tag.getId();
+        this.name = tag.getName();
     }
 }

@@ -1,4 +1,6 @@
 user_entity:
   - id: 100
     role_id: 100
+    email: 123@mail.com
+    password: password
     last_redaction_date: "[DAY,NOW]"
