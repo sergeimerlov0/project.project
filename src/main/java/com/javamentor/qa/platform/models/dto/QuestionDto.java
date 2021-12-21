@@ -14,12 +14,12 @@ public class QuestionDto {
     private Long id;
     private String title;
     private Long authorId;
-    private Long authorReputation;              //можно подсчитать с помощью sql
+    private Long authorReputation;
     private String authorName;
     private String authorImage;
     private String description;
     private Long viewCount;                      //пока не считай это поле, как оно будет считаться решим позже, пусть пока будет 0
-    private Long countAnswer;                    //можно подсчитать с помощью sql
+    private Long countAnswer;
     private Long countValuable;                  //Это голоса за ответ QuestionVote
     private LocalDateTime persistDateTime;
     private LocalDateTime lastUpdateDateTime;

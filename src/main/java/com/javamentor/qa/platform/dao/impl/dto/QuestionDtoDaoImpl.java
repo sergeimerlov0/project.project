@@ -18,13 +18,19 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @Override
     public Optional<QuestionDto> getQuestionDtoByQuestionId(Long id) {
 
+        //@Todo в дальнейшем реализовать подсчёт просмотров (пока стоит 0)
+
         return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto." +
-                "QuestionDto(question.id, question.title, author.id, 0L, author.fullName, author.imageLink, " +
-                "question.description, 0L, 0L, 0L, question.persistDateTime, question.lastUpdateDateTime) " +
+                "QuestionDto(question.id, question.title, author.id, " +
+                "(SELECT sum (reputation.count) from Reputation reputation where reputation.author.id = :id), " +
+                "author.fullName, author.imageLink, " +
+                "question.description, 0L, " +
+                "(SELECT count (*) from Answer answer where answer.question.id = :id), " +
+                "(SELECT count (*) from VoteQuestion voteOnQuestion where voteOnQuestion.question.id = :id), " +
+                "question.persistDateTime, question.lastUpdateDateTime) " +
                 "from Question question " +
                 "join question.user as author " +
                 "join question.answers as answer " +
                 "where question.id = :id", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
     }
-    //JPa конструктор, result transformer.
 }

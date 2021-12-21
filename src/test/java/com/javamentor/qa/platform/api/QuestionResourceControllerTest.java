@@ -18,13 +18,18 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/questionDatasets/user.yml",
             "datasets/questionDatasets/role.yml",
             "datasets/questionDatasets/question.yml",
-            "datasets/questionDatasets/questionHasTag.yml"
+            "datasets/questionDatasets/questionHasTag.yml",
+            "datasets/questionDatasets/reputation.yml",
+            "datasets/questionDatasets/voteQuestion.yml"
     })
     void getQuestionDtoById() throws Exception {
         this.mvc.perform(get("/api/user/question/100"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(100L))
-                .andExpect(jsonPath("$.title").value("test"));
+                .andExpect(jsonPath("$.title").value("test"))
+                .andExpect(jsonPath("$.countAnswer").value(3L))
+                .andExpect(jsonPath("$.authorReputation").value(6L))
+                .andExpect(jsonPath("$.countValuable").value(2L));
     }
 
     @Test
@@ -34,7 +39,9 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/questionDatasets/user.yml",
             "datasets/questionDatasets/role.yml",
             "datasets/questionDatasets/question.yml",
-            "datasets/questionDatasets/questionHasTag.yml"
+            "datasets/questionDatasets/questionHasTag.yml",
+            "datasets/questionDatasets/reputation.yml",
+            "datasets/questionDatasets/voteQuestion.yml"
     })
     void getNonExistedQuestionDtoById() throws Exception {
         this.mvc.perform(get("/api/user/question/101"))

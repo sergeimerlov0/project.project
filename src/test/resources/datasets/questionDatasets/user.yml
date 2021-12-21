@@ -2,3 +2,7 @@ user_entity:
   - id: 100
     role_id: 100
     last_redaction_date: "[DAY,NOW]"
+
+  - id: 101
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
