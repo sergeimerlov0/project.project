@@ -26,6 +26,5 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "join question.answers as answer " +
                 "where question.id = :id", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
     }
-
     //JPa конструктор, result transformer.
 }
