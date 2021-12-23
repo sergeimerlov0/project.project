@@ -12,5 +12,5 @@ public class UserDto {
     private String fullName;
     private String linkImage;
     private String city;
-    private int reputation;
+    private Long reputation;
 }
