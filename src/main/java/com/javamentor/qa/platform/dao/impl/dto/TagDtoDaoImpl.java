@@ -12,7 +12,16 @@ import java.util.List;
 public class TagDtoDaoImpl implements TagDtoDao {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    EntityManager entityManager;
+
+    @Override
+    public List<TagDto> getTagsByQuestionId(Long id) {
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto." +
+                "TagDto(tag.id, tag.name, tag.description) " +
+                "from Tag tag " +
+                "join tag.questions as questions " +
+                "where questions.id=: id", TagDto.class).setParameter("id", id).getResultList();
+    }
 
     @Override
     public List<TagDto> getTrackedTagById(Long id) {

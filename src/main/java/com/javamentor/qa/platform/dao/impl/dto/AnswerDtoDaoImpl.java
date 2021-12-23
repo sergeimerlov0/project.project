@@ -36,7 +36,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                                 "u.imageLink, u.nickname, " +
                                 "a.question.id, " +
                                 "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
-                                "((select count(*) from VoteAnswer v where v.vote = 'UP_VOTE' and v.answer.id = a.id) - (select count(*) from VoteAnswer v where v.vote = 'UP_DOWN' and v.answer.id = a.id)) " +
+                                "((select count(*) from VoteAnswer v where v.vote = 'UP_VOTE' and v.answer.id = a.id) - (select count(*) from VoteAnswer v where v.vote = 'DOWN_VOTE' and v.answer.id = a.id)) " +
                                 "from Answer a left outer join Reputation r on (a.user.id = r.author.id) " +
                                 "left outer join User u on (a.user.id = u.id)" +
                                 "where a.question.id =: id and a.isDeleted = false " +

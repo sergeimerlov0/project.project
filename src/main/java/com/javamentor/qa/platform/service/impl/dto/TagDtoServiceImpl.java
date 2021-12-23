@@ -21,6 +21,12 @@ public class TagDtoServiceImpl implements TagDtoService {
     }
 
     @Override
+    @Transactional
+    public List<TagDto> getTagsByQuestionId(Long id) {
+        return tagDtoDao.getTagsByQuestionId(id);
+    }
+
+    @Override
     public List<TagDto> getTrackedTagById(Long id) {
         return tagDtoDao.getTrackedTagById(id);
     }

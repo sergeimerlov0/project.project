@@ -3,18 +3,22 @@ reputation:
     author_id: 100
     count: 11
     answer_id: 100
+    type: 1
 
   - id: 101
     author_id: 100
     count: 12
     answer_id: 100
+    type: 1
 
   - id: 102
     author_id: 101
     count: 53
     answer_id: 101
+    type: 1
 
   - id: 103
     author_id: 101
     count: 53
     answer_id: 101
+    type: 1
