@@ -1,0 +1,26 @@
+reputation:
+  - id: 101
+    count: 101
+    persist_date: 2021-12-16 00:00:00
+    type: 101
+    answer_id: 101
+    author_id: 101
+    question_id: 101
+    sender_id: 102
+
+  - id: 222
+      count: 222
+      persist_date: 2021-12-16 00:00:00
+      type: 101
+      answer_id: 222
+      author_id: 223
+      question_id: 222
+      sender_id: 222
+  - id: 333
+      count: 333
+      persist_date: 2021-12-16 00:00:00
+      type: 101
+      answer_id: 333
+      author_id: 334
+      question_id: 222
+      sender_id: 222

@@ -1,8 +1,12 @@
+
 package com.javamentor.qa.platform.service.abstracts.dto;
 
-import com.javamentor.qa.platform.models.dto.UserTestDto;
+import com.javamentor.qa.platform.models.dto.UserDto;
+import org.springframework.stereotype.Service;
 
-//Образец сервиса для работы с объектом UserDto. Возможно добавлять свои методы для работы с UserDto
-public interface UserDtoService extends PaginationServiceDto<UserTestDto> {
+import java.util.Optional;
 
+public interface UserDtoService {
+    Optional<UserDto> getUserById(Long id);
 }
+
