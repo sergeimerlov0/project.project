@@ -29,7 +29,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 .andExpect(jsonPath("$.title").value("test"))
                 .andExpect(jsonPath("$.countAnswer").value(3L))
                 .andExpect(jsonPath("$.authorReputation").value(6L))
-                .andExpect(jsonPath("$.countValuable").value(2L));
+                .andExpect(jsonPath("$.countValuable").value(1L));
     }
 
     @Test

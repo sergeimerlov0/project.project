@@ -21,6 +21,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 "from Tag tag " +
                 "join tag.questions as questions " +
                 "where questions.id=: id", TagDto.class).setParameter("id", id).getResultList();
+    }
 
     @Override
     public List<TagDto> getTrackedTagById(Long id) {

@@ -26,7 +26,10 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "author.fullName, author.imageLink, " +
                 "question.description, 0L, " +
                 "(SELECT count (*) from Answer answer where answer.question.id = :id), " +
-                "(SELECT count (*) from VoteQuestion voteOnQuestion where voteOnQuestion.question.id = :id), " +
+                "((SELECT count (*) from VoteQuestion voteOnQuestion " +
+                "where voteOnQuestion.vote = 'UP_VOTE' and voteOnQuestion.question.id = :id) - " +
+                "(SELECT count (*) from VoteQuestion voteOnQuestion " +
+                "where voteOnQuestion.vote = 'DOWN_VOTE' and voteOnQuestion.question.id = :id)), " +
                 "question.persistDateTime, question.lastUpdateDateTime) " +
                 "from Question question " +
                 "join question.user as author " +
