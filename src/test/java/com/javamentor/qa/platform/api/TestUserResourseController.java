@@ -28,8 +28,8 @@ public class TestUserResourseController {
 
     @Test
     @DataSet(value = {"dataset/UserResourceController/users.yml",
-            "dataset/UserResourceController/answers.yml",
-            "dataset/UserResourceController/questions.yml",
+            "dataset/UserResourceController/answer.yml",
+            "dataset/UserResourceController/question.yml",
             "dataset/UserResourceController/reputations.yml",
             "dataset/UserResourceController/roles.yml"})
     void getUserById() throws Exception {
@@ -46,8 +46,8 @@ public class TestUserResourseController {
 
     @Test
     @DataSet(value = {"dataset/UserResourceController/users.yml",
-            "dataset/UserResourceController/answers.yml",
-            "dataset/UserResourceController/questions.yml",
+            "dataset/UserResourceController/answer.yml",
+            "dataset/UserResourceController/question.yml",
             "dataset/UserResourceController/reputations.yml",
             "dataset/UserResourceController/roles.yml"})
     void shouldNotGetUserById() throws Exception {
