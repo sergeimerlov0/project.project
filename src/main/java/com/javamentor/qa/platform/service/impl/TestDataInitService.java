@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.impl;
 
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -10,7 +11,6 @@ import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,15 +24,17 @@ public class TestDataInitService {
     private final AnswerService answerService;
     private final QuestionService questionService;
     private final TagService tagService;
+    private final TrackedTagService trackedTagService;
 
     @Autowired
-    public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway, AnswerService answerService, QuestionService questionService, TagService tagService) {
+    public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway, AnswerService answerService, QuestionService questionService, TagService tagService, TrackedTagService trackedTagService) {
         this.roleService = roleService;
         this.userService = userService;
         this.flyway = flyway;
         this.answerService = answerService;
         this.questionService = questionService;
         this.tagService = tagService;
+        this.trackedTagService = trackedTagService;
     }
 
     public void init() {
@@ -43,6 +45,7 @@ public class TestDataInitService {
         addTag();
         addQuestion();
         addAnswer();
+        addTrackedTag();
     }
 
     private void addRole() {
@@ -185,7 +188,28 @@ public class TestDataInitService {
 
             userService.persist(u);
         }
+    }
 
+    private void addTrackedTag() {
+        List<Tag> tags = new ArrayList<>();
 
+        // добавление тегов юзерам. Первый юзер без тегов
+        for (int x = 2; x <= 50; x++) {
+            tags.clear();
+            User user = userService.getById((long) x).get();
+
+            // добавление рандомных тегов в рандомном количестве [0;3]
+            for (int y = ((int) (Math.random() * 4)); y <= 2; y++) {
+                TrackedTag trackedTag = new TrackedTag();
+                Tag tag = tagService.getById((long) (1 + (int) (Math.random() * 49))).get();
+                if (!tags.contains(tag)) {
+                    tags.add(tag);
+                    trackedTag.setTrackedTag(tag);
+                    trackedTag.setUser(user);
+                    trackedTagService.persist(trackedTag);
+                }
+            }
+
+        }
     }
 }
