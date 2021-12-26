@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.websocket.AuthenticationException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +33,7 @@ public class AuthenticationResourceController {
     }
 
     @GetMapping("/getall")
-    public List<User> users() {
+    public List<User> users() throws HttpMessageNotWritableException {
         return userService.getAll();
     }
 
