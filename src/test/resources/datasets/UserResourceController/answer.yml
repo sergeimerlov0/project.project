@@ -1,0 +1,11 @@
+answer:
+  - id: 101
+    date_accept_time: 2021-12-16 00:00:00
+    html_body: "Some Body"
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    persist_date: 2021-12-16 00:00:00
+    update_date: 2021-12-16 00:00:00
+    question_id: 101
+    user_id: 101

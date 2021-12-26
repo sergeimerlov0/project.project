@@ -1,0 +1,8 @@
+question:
+  - id: 101
+    description: "description"
+    is_deleted: false
+    last_redaction_date: 2021-12-16 00:00:00
+    persist_date: 2021-12-16 00:00:00
+    title: "title"
+    user_id: 101
