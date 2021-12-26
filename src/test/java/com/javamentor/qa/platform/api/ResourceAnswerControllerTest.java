@@ -9,8 +9,12 @@ import org.junit.jupiter.api.Test;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class ResourceAnswerControllerTest extends AbstractApiTest {
 
@@ -52,4 +56,50 @@ class ResourceAnswerControllerTest extends AbstractApiTest {
                 .setParameter("id", id).getSingleResult();
         return count > 0;
     }
+
+    @Test
+    @DataSet(value = {
+            "getAnswerDataSet/answer.yml",
+            "getAnswerDataSet/question.yml",
+            "getAnswerDataSet/questionHasTag.yml",
+            "getAnswerDataSet/tag.yml",
+            "getAnswerDataSet/reputation.yml",
+            "getAnswerDataSet/role.yml",
+            "getAnswerDataSet/user.yml",
+            "getAnswerDataSet/voteAnswer.yml"
+    })
+    public void getAnswerByQuestionId() throws Exception {
+
+        this.mvc.perform(get("/api/user/question/100/answer"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(100)))
+                .andExpect(jsonPath("$[0].userReputation", is(23)))
+                .andExpect(jsonPath("$[0].countValuable", is(2)))
+                .andExpect(jsonPath("$[1].id", is(101)))
+                .andExpect(jsonPath("$[1].userReputation", is(106)))
+                .andExpect(jsonPath("$[1].countValuable", is(-2)));
+    }
+
+    @Test
+    @DataSet(value = {
+            "getAnswerDataSet/answer.yml",
+            "getAnswerDataSet/question.yml",
+            "getAnswerDataSet/questionHasTag.yml",
+            "getAnswerDataSet/tag.yml",
+            "getAnswerDataSet/reputation.yml",
+            "getAnswerDataSet/role.yml",
+            "getAnswerDataSet/user.yml",
+            "getAnswerDataSet/voteAnswer.yml"
+    })
+    public void getEmptyListAnswerByQuestionId() throws Exception {
+
+        this.mvc.perform(get("/api/user/question/2000/answer"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+
+    }
+
 }
