@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
@@ -25,9 +26,10 @@ public class TestDataInitService {
     private final QuestionService questionService;
     private final TagService tagService;
     private final TrackedTagService trackedTagService;
+    private final IgnoredTagService ignoredTagService;
 
     @Autowired
-    public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway, AnswerService answerService, QuestionService questionService, TagService tagService, TrackedTagService trackedTagService) {
+    public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway, AnswerService answerService, QuestionService questionService, TagService tagService, TrackedTagService trackedTagService, IgnoredTagService ignoredTagService) {
         this.roleService = roleService;
         this.userService = userService;
         this.flyway = flyway;
@@ -35,6 +37,7 @@ public class TestDataInitService {
         this.questionService = questionService;
         this.tagService = tagService;
         this.trackedTagService = trackedTagService;
+        this.ignoredTagService = ignoredTagService;
     }
 
     public void init() {
@@ -46,6 +49,7 @@ public class TestDataInitService {
         addQuestion();
         addAnswer();
         addTrackedTag();
+        addIgnoredTag();
     }
 
     private void addRole() {
@@ -207,6 +211,29 @@ public class TestDataInitService {
                     trackedTag.setTrackedTag(tag);
                     trackedTag.setUser(user);
                     trackedTagService.persist(trackedTag);
+                }
+            }
+
+        }
+    }
+
+    private void addIgnoredTag() {
+        List<Tag> tags = new ArrayList<>();
+
+        // добавление тегов юзерам. Первый юзер без тегов
+        for (int x = 2; x <= 50; x++) {
+            tags.clear();
+            User user = userService.getById((long) x).get();
+
+            // добавление рандомных тегов в рандомном количестве [0;3]
+            for (int y = ((int) (Math.random() * 4)); y <= 2; y++) {
+                IgnoredTag ignoredTag = new IgnoredTag();
+                Tag tag = tagService.getById((long) (1 + (int) (Math.random() * 49))).get();
+                if (!tags.contains(tag)) {
+                    tags.add(tag);
+                    ignoredTag.setIgnoredTag(tag);
+                    ignoredTag.setUser(user);
+                    ignoredTagService.persist(ignoredTag);
                 }
             }
 
