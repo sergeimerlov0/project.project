@@ -25,8 +25,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-//@RequestMapping("api/user/question/")
-@RequestMapping("api/user/{userId}/question") // - для проверки upVote и downVote, удалить когда будет готова авторизация через JWT
+@RequestMapping("api/user/question/")
 @Api(value = "Работа с вопросами", tags = {"Вопросы"})
 public class QuestionResourceController {
 
@@ -48,11 +47,11 @@ public class QuestionResourceController {
                 new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(id), HttpStatus.OK);
     }
 
-    //@PathVariable Long userId (когда будет готова авторизация через JWT) - заменить на @AuthenticationPrincipal User user
+    //когда будет готова авторизация через JWT - добавить в параметры @AuthenticationPrincipal User user
     @PostMapping("/{questionId}/upVote")
-    public ResponseEntity<Integer> upVote(@PathVariable Long userId, @PathVariable Long questionId) {
+    public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
         if (questionService.existsById(questionId)) {
-            User user = userService.getById(userId).get();//удалить когда будет готова авторизация через JWT
+            User user = userService.getById(1L).get();//удалить когда будет готова авторизация через JWT
             Question question = questionService.getById(questionId).get();
             List<VoteQuestion> voteQuestionList = voteQuestionService.getAllVoteQuestionsByQuestionId(questionId);
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
@@ -67,11 +66,11 @@ public class QuestionResourceController {
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    //@PathVariable Long userId (когда будет готова авторизация через JWT) - заменить на @AuthenticationPrincipal User user
+    //когда будет готова авторизация через JWT - добавить в параметры @AuthenticationPrincipal User user
     @PostMapping("/{questionId}/downVote")
-    public ResponseEntity<Integer> downVote(@PathVariable Long userId, @PathVariable Long questionId) {
+    public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
         if (questionService.existsById(questionId)) {
-            User user = userService.getById(userId).get();//удалить когда будет готова авторизация через JWT
+            User user = userService.getById(2L).get();//удалить когда будет готова авторизация через JWT
             Question question = questionService.getById(questionId).get();
             List<VoteQuestion> voteQuestionList = voteQuestionService.getAllVoteQuestionsByQuestionId(questionId);
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
