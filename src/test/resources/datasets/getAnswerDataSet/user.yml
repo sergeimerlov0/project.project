@@ -1,0 +1,13 @@
+user_entity:
+  - id: 100
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image100"
+    nickname: "user100"
+
+  - id: 101
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image101"
+    nickname: "user101"
+
