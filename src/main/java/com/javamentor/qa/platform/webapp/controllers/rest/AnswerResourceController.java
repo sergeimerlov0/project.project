@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("api/user/question/{questionId}/answer")
 @Api(value = "Работа с ответами на вопросы", tags = {"Ответ на вопрос"})
-public class ResourceAnswerController {
+public class AnswerResourceController {
 
     private final AnswerService answerService;
     private final AnswerDtoService answerDtoService;
