@@ -9,18 +9,61 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.util.Arrays;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class TestTagController extends AbstractApiTest {
+/**
+ * \* Created with IntelliJ IDEA.
+ * \* User: Rustam
+ */
+
+@DataSet(cleanBefore = true)
+public class TestTagResourceController extends AbstractApiTest {
 
     @PersistenceContext
     EntityManager entityManager;
 
     @Autowired
     UserService userService;
+
+    @Test
+    @DataSet(value = {
+            "relatedTagsDto/tag.yml",
+            "relatedTagsDto/answer.yml",
+            "relatedTagsDto/question.yml",
+            "relatedTagsDto/user.yml",
+            "relatedTagsDto/role.yml",
+            "relatedTagsDto/questionHasTag.yml"
+    })
+    public void getRelatedTagDto() throws Exception {
+
+        this.mvc.perform(get("/api/user/tag/related"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(10)))
+                .andExpect(jsonPath("$[0].id", is(100)))
+                .andExpect(jsonPath("$[0].countQuestion", is(10)))
+                .andExpect(jsonPath("$[4].id", is(104)))
+                .andExpect(jsonPath("$[4].countQuestion", is(6)))
+                .andExpect(jsonPath("$[8].id", is(108)))
+                .andExpect(jsonPath("$[8].countQuestion", is(2)));
+    }
+
+    @Test
+    public void getEmptyListRelatedTagDto() throws Exception {
+
+        this.mvc.perform(get("/api/user/tag/related"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+
+    }
 
     @Test
     @DataSet(value = {
