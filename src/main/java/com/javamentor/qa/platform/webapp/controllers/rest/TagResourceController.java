@@ -1,5 +1,9 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+
+import com.javamentor.qa.platform.models.dto.RelatedTagsDto;
+import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
+import io.swagger.annotations.Api;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Tag;
@@ -63,5 +67,31 @@ public class TagResourceController {
         ignoredTagService.persist(ignoredTag);
         return new ResponseEntity<>(tagDtoService
                 .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * \* Created with IntelliJ IDEA.
+ * \* User: Rustam
+ */
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("api/user/tag")
+@Api(value = "Работа с тэгами на вопросы", tags = {"Тэг и вопросы"})
+public class TagResourceController {
+
+    private final TagDtoService tagDtoService;
+
+    @ApiOperation(value = "Получение списка из 10 тэгов с " +
+            "наибольшим количеством вопросов с данным тэгом", tags = {"Получение списка тэгов"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное получение")})
+    @GetMapping("/related")
+    public ResponseEntity<List<RelatedTagsDto>> getRelatedTagDto() {
+        return new ResponseEntity<>(tagDtoService.getRelatedTagsDto(), HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserTestDto;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserDtoTestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -24,11 +25,11 @@ import java.util.Map;
 public class TestController {
 
     //Внедряем сервис для работы с нужной Dto
-    private UserDtoService userDtoService;
+    private UserDtoTestService userDtoTestService;
 
     @Autowired
-    public void setUserDtoService(UserDtoService userDtoService) {
-        this.userDtoService = userDtoService;
+    public void setUserDtoTestServiceService(UserDtoTestService userDtoTestService) {
+        this.userDtoTestService = userDtoTestService;
     }
 
     @ApiOperation(value = "API to GET of Test String List", notes = "Get all string list", tags = {"TestString"})
@@ -46,6 +47,6 @@ public class TestController {
         //Помещаем в мапу под ключ class нужный бин с нужной реализацией пагинации. Например, AllUser.
         objectMap.put("class","AllUser");
         //Получаем страницу с нужной Dto
-        return ResponseEntity.ok(userDtoService.getPageDto(1,3, objectMap));
+        return ResponseEntity.ok(userDtoTestService.getPageDto(1,3, objectMap));
     }
 }
