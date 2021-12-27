@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.webapp.controllers;
+package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import io.swagger.annotations.Api;
