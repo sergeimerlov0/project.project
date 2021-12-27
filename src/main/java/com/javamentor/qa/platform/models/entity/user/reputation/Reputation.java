@@ -74,4 +74,12 @@ public class Reputation implements Serializable {
     public int hashCode() {
         return Objects.hash(id, persistDate, count);
     }
+
+    public Reputation(User author, User sender, Integer count, ReputationType type, Answer answer) {
+        this.author = author;
+        this.sender = sender;
+        this.count = count;
+        this.type = type;
+        this.answer = answer;
+    }
 }
