@@ -15,4 +15,6 @@ public class RoleServiceImpl extends ReadWriteServiceImpl<Role, Long> implements
     public RoleServiceImpl(RoleDao roleDao) {
         super(roleDao);
     }
+
+
 }

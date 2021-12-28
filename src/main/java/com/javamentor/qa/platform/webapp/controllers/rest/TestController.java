@@ -40,6 +40,14 @@ public class TestController {
         return new ArrayList<>();
     }
 
+    @GetMapping("/pagination")
+    public ResponseEntity<PageDto<UserTestDto>> getTest2() {//Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
+        Map<String, Object> objectMap = new HashMap<>();
+        //Помещаем в мапу под ключ class нужный бин с нужной реализацией пагинации. Например, AllUser.
+        objectMap.put("class","AllUser");
+        //Получаем страницу с нужной Dto
+        return ResponseEntity.ok(userDtoTestService.getPageDto(1,3, objectMap));
+    }
 //    @GetMapping("/pagination")
 //    public ResponseEntity<PageDto<UserTestDto>> getTest2() {//Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
 //        Map<String, Object> objectMap = new HashMap<>();

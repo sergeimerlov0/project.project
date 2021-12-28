@@ -81,6 +81,13 @@ public class User implements UserDetails {
     @NonNull
     private Role role;
 
+    public User(String email, String password, String fullName, Role role) {
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(role);

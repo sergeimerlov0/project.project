@@ -1,14 +1,15 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+
+import com.javamentor.qa.platform.models.dto.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,17 +19,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * \* Created with IntelliJ IDEA.
+ * \* User: Rustam
+ */
+
 @RestController
-@RequestMapping("/api/user/tag/")
-@Api(value = "TagDto API", tags = {"TagDto"})
-public class TagController {
+@RequiredArgsConstructor
+@RequestMapping("api/user/tag")
+@Api(value = "Работа с тэгами на вопросы", tags = {"Тэг и вопросы"})
+public class TagResourceController {
+
     private final TagDtoService tagDtoService;
     private final UserService userService;
 
-    @Autowired
-    public TagController(TagDtoService tagDtoService, UserService userService) {
-        this.tagDtoService = tagDtoService;
-        this.userService = userService;
+
+    @ApiOperation(value = "Получение списка из 10 тэгов с " +
+            "наибольшим количеством вопросов с данным тэгом", tags = {"Получение списка тэгов"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное получение")})
+    @GetMapping("/related")
+    public ResponseEntity<List<RelatedTagsDto>> getRelatedTagDto() {
+        return new ResponseEntity<>(tagDtoService.getRelatedTagsDto(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Getting all TrackedTagDto", tags = {"TrackedTagDto"})
