@@ -21,7 +21,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,6 +63,20 @@ public class TagResourceController {
         Tag tag = tagService.getById(id).get();
         trackedTag.setTrackedTag(tag);
         trackedTag.setUser(user);
+        List<TrackedTag> allTrackedTags = trackedTagService.getAll();
+        List<TrackedTag> trackedTagsByUser = new ArrayList<>();
+        for (TrackedTag eachTrackedTag : allTrackedTags) {
+            if (eachTrackedTag.getUser().getId() == userId) {
+                trackedTagsByUser.add(eachTrackedTag);
+            }
+        }
+
+        for (TrackedTag trackedTagByUser: trackedTagsByUser) {
+            if (trackedTagByUser.getTrackedTag().getId() == trackedTag.getTrackedTag().getId()) {
+                return new ResponseEntity<>(tagDtoService
+                        .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.BAD_REQUEST);
+            }
+        }
         trackedTagService.persist(trackedTag);
         return new ResponseEntity<>(tagDtoService
                 .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
@@ -68,7 +85,7 @@ public class TagResourceController {
     @ApiOperation(value = "Добавление тега в IgnoredTag", tags = {"IgnoredTag"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Тег успешно добавлен в IgnoredTag"),
-            @ApiResponse(code = 400, message = "Тега не существует")})
+            @ApiResponse(code = 400, message = "Тег уже добавлен")})
     @PostMapping("/{id}/ignored")
     public ResponseEntity<List<TagDto>> addIgnoredTag(Authentication authentication, @PathVariable Long id) {
         Long userId = 2L; // todo убрать когда будет готово секьюрити
@@ -77,10 +94,22 @@ public class TagResourceController {
         Tag tag = tagService.getById(id).get();
         ignoredTag.setIgnoredTag(tag);
         ignoredTag.setUser(user);
+        List<IgnoredTag> allIgnoredTags = ignoredTagService.getAll();
+        List<IgnoredTag> ignoredTagsByUser = new ArrayList<>();
+        for (IgnoredTag eachIgnoredTag : allIgnoredTags) {
+            if (eachIgnoredTag.getUser().getId() == userId) {
+                ignoredTagsByUser.add(eachIgnoredTag);
+            }
+        }
+
+        for (IgnoredTag ignoredTagByUser: ignoredTagsByUser) {
+            if (ignoredTagByUser.getIgnoredTag().getId() == ignoredTag.getIgnoredTag().getId()) {
+                return new ResponseEntity<>(tagDtoService
+                        .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.BAD_REQUEST);
+            }
+        }
         ignoredTagService.persist(ignoredTag);
         return new ResponseEntity<>(tagDtoService
                 .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
-
-
     }
 }
