@@ -28,12 +28,9 @@ public class InviteController {
     @GetMapping()
     public void getInvite(@RequestParam String email) {
         String password = userService.generateRandomPassword();
-        String message = String.format("Hello, %s! Your password for logging system - '%s'. " +
+        String message = String.format("Hello, %s! Your password for logging system by address http://localhost:8091/login - '%s'. " +
                 "Don't forgot change your password after logging system", email, password);
-        User user = new User(null, email, password, email,
-                null, null, null, null, null,
-                null, null, null, null, null,
-                null, roleService.getById(2L).get());
+        User user = new User( email, password, email, roleService.getRoleByName("USER").get());
 
         userService.persist(user);
         mailService.send(email, "registration in Kata StackOverFlow", message);
