@@ -1,13 +1,13 @@
 package com.javamentor.qa.platform.security;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
-import com.javamentor.qa.platform.models.entity.user.User;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Repository
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -20,7 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userDao.getByEmail(s);
-        return optionalUser.orElseGet(optionalUser::orElseThrow);
+        try {
+            return userDao.getByEmail(s).orElseThrow();
+        } catch (UsernameNotFoundException | NoSuchElementException e) {
+            throw new BadCredentialsException("Invalid username");
+        }
     }
 }
