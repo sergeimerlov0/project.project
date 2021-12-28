@@ -15,11 +15,11 @@ public class VoteQuestionDaoImpl extends ReadWriteDaoImpl<VoteQuestion, Long> im
     EntityManager entityManager;
 
     @Override
-    public List<VoteQuestion> getAllVoteQuestionsByQuestionId(Long questionId) {
+    public Integer getTotalVoteQuestionsByQuestionId(Long questionId) {
         List<VoteQuestion> voteQuestionList = entityManager.createQuery("FROM VoteQuestion a WHERE a.question.id = :questionId", VoteQuestion.class)
                 .setParameter("questionId", questionId)
                 .getResultList();
-        return voteQuestionList;
+        return voteQuestionList.size();
     }
 
     @Override

@@ -4,11 +4,8 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
-import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import io.swagger.annotations.Api;
@@ -21,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,13 +27,12 @@ public class QuestionResourceController {
 
     private final QuestionDtoService questionDtoService;
     private final QuestionService questionService;
-    private final ReputationService reputationService;
     private final VoteQuestionService voteQuestionService;
     private final UserService userService; //удалить когда будет готова авторизация через JWT
 
     @GetMapping("{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
-    @ApiResponses( value = {
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
@@ -48,38 +43,30 @@ public class QuestionResourceController {
     }
 
     //когда будет готова авторизация через JWT - добавить в параметры @AuthenticationPrincipal User user
-    @PostMapping("/{questionId}/upVote")
+    @PostMapping("{questionId}/upVote")
     public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
         if (questionService.existsById(questionId)) {
             User user = userService.getById(1L).get();//удалить когда будет готова авторизация через JWT
             Question question = questionService.getById(questionId).get();
-            List<VoteQuestion> voteQuestionList = voteQuestionService.getAllVoteQuestionsByQuestionId(questionId);
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.UP_VOTE);
-                voteQuestionList.add(voteQuestion);
                 voteQuestionService.persist(voteQuestion);
-                Reputation reputation = new Reputation(LocalDateTime.now(), question.getUser(), voteQuestion.getUser(), voteQuestion.getVote().getValue(), ReputationType.VoteQuestion, voteQuestion.getQuestion());
-                reputationService.persist(reputation);
-                return new ResponseEntity<>(voteQuestionList.size(), HttpStatus.OK);
+                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     //когда будет готова авторизация через JWT - добавить в параметры @AuthenticationPrincipal User user
-    @PostMapping("/{questionId}/downVote")
+    @PostMapping("{questionId}/downVote")
     public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
         if (questionService.existsById(questionId)) {
             User user = userService.getById(2L).get();//удалить когда будет готова авторизация через JWT
             Question question = questionService.getById(questionId).get();
-            List<VoteQuestion> voteQuestionList = voteQuestionService.getAllVoteQuestionsByQuestionId(questionId);
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.DOWN_VOTE);
-                voteQuestionList.add(voteQuestion);
                 voteQuestionService.persist(voteQuestion);
-                Reputation reputation = new Reputation(LocalDateTime.now(), question.getUser(), voteQuestion.getUser(), voteQuestion.getVote().getValue(), ReputationType.VoteQuestion, voteQuestion.getQuestion());
-                reputationService.persist(reputation);
-                return new ResponseEntity<>(voteQuestionList.size(), HttpStatus.OK);
+                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
