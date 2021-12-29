@@ -54,7 +54,7 @@ public class TagResourceController {
     @ApiOperation(value = "Добавление тега в TrackedTag", tags = {"TrackedTag"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Тег успешно добавлен в TrackedTag"),
-            @ApiResponse(code = 400, message = "Тега не существует")})
+            @ApiResponse(code = 400, message = "Тег уже добавлен")})
     @PostMapping("/{id}/tracked")
     public ResponseEntity<List<TagDto>> addTrackedTag(Authentication authentication, @PathVariable Long id) {
         Long userId = 2L; // todo убрать когда будет готово секьюрити
@@ -77,7 +77,19 @@ public class TagResourceController {
                         .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.BAD_REQUEST);
             }
         }
+        List<IgnoredTag> allIgnoredTags = ignoredTagService.getAll();
+        List<IgnoredTag> ignoredTagsByUser = new ArrayList<>();
+        for (IgnoredTag eachIgnoredTag : allIgnoredTags) {
+            if (eachIgnoredTag.getUser().getId() == userId) {
+                ignoredTagsByUser.add(eachIgnoredTag);
+            }
+        }
         trackedTagService.persist(trackedTag);
+        for (IgnoredTag ignoredTagByUser: ignoredTagsByUser) {
+            if (ignoredTagByUser.getIgnoredTag().getId() == id) {
+                ignoredTagService.deleteById(ignoredTagByUser.getId());
+            }
+        }
         return new ResponseEntity<>(tagDtoService
                 .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
     }
@@ -108,7 +120,19 @@ public class TagResourceController {
                         .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.BAD_REQUEST);
             }
         }
+        List<TrackedTag> allTrackedTags = trackedTagService.getAll();
+        List<TrackedTag> trackedTagsByUser = new ArrayList<>();
+        for (TrackedTag eachTrackedTag : allTrackedTags) {
+            if (eachTrackedTag.getUser().getId() == userId) {
+                trackedTagsByUser.add(eachTrackedTag);
+            }
+        }
         ignoredTagService.persist(ignoredTag);
+        for (TrackedTag trackedTagByUser: trackedTagsByUser) {
+            if (trackedTagByUser.getTrackedTag().getId() == id) {
+                trackedTagService.deleteById(trackedTagByUser.getId());
+            }
+        }
         return new ResponseEntity<>(tagDtoService
                 .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
     }
