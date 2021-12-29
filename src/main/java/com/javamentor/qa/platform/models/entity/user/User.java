@@ -28,11 +28,11 @@ public class User implements UserDetails {
     @GeneratedValue(generator = "User_seq")
     private Long id;
 
-    @Column
+    @Column(name = "email")
     @NonNull
     private String email;
 
-    @Column
+    @Column(name = "password")
     @NonNull
     private String password;
 
@@ -94,7 +94,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
+    public @NonNull String getPassword() {
         return password;
     }
 

@@ -15,7 +15,7 @@ public abstract class ReadOnlyDaoImpl<E, K> {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
+    private final Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
             .getActualTypeArguments()[0];
 
 
