@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.AbstractApiTest;
 import org.junit.jupiter.api.Test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,6 +46,44 @@ class QuestionResourceControllerTest extends AbstractApiTest {
     })
     void getNonExistedQuestionDtoById() throws Exception {
         this.mvc.perform(get("/api/user/question/101"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DataSet(value = {"datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/user.yml",
+            "datasets/questionDatasets/role.yml"})
+    void postUpVoteQuestion() throws Exception {
+        this.mvc.perform(post("/api/user/question/100/upVote"))
+               .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    @DataSet(value = {"datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/user.yml",
+            "datasets/questionDatasets/role.yml"})
+    void postDownVoteQuestion() throws Exception {
+        this.mvc.perform(post("/api/user/question/101/downVote"))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    @DataSet(value = {"datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/user.yml",
+            "datasets/questionDatasets/role.yml"})
+    void postUpVoteQuestionByNullQuestion() throws Exception {
+        this.mvc.perform(post("/api/user/question/102/upVote"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DataSet(value = {"datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/user.yml",
+            "datasets/questionDatasets/role.yml"})
+    void downUpVoteQuestionByNullQuestion() throws Exception {
+        this.mvc.perform(post("/api/user/question/102/downVote"))
                 .andExpect(status().isBadRequest());
     }
 }

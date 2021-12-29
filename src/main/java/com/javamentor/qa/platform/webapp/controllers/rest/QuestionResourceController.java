@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,9 +46,10 @@ public class QuestionResourceController {
     //когда будет готова авторизация через JWT - добавить в параметры @AuthenticationPrincipal User user
     @PostMapping("{questionId}/upVote")
     public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
-        if (questionService.existsById(questionId)) {
-            User user = userService.getById(1L).get();//удалить когда будет готова авторизация через JWT
-            Question question = questionService.getById(questionId).get();
+        Optional<Question> optionalQuestion = questionService.getById(questionId);
+        if (optionalQuestion.isPresent()) {
+            User user = userService.getById(100L).get();//удалить когда будет готова авторизация через JWT
+            Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.UP_VOTE);
                 voteQuestionService.persist(voteQuestion);
@@ -60,9 +62,10 @@ public class QuestionResourceController {
     //когда будет готова авторизация через JWT - добавить в параметры @AuthenticationPrincipal User user
     @PostMapping("{questionId}/downVote")
     public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
-        if (questionService.existsById(questionId)) {
-            User user = userService.getById(2L).get();//удалить когда будет готова авторизация через JWT
-            Question question = questionService.getById(questionId).get();
+        Optional<Question> optionalQuestion = questionService.getById(questionId);
+        if (optionalQuestion.isPresent()) {
+            User user = userService.getById(101L).get();//удалить когда будет готова авторизация через JWT
+            Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.DOWN_VOTE);
                 voteQuestionService.persist(voteQuestion);
