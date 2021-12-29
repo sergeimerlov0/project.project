@@ -81,7 +81,7 @@ public class User implements UserDetails {
     @NonNull
     private Role role;
 
-    public User(String email, String password, String fullName, Role role) {
+    public User(@NonNull String email, @NonNull String password, String fullName, @NonNull Role role) {
         this.email = email;
         this.password = password;
         this.fullName = fullName;
