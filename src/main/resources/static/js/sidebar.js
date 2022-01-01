@@ -1,11 +1,11 @@
 const $sidebar = document.querySelector('#sidebar')
 sidebar()
-var s = document.getElementById("sidebar");
+const s = document.getElementById("sidebar");
 s.className = "container-fluid";
 function sidebar() {
   let html = `
       <div class="row">
-        <div class="col-lg-2 bg-light border mt-5 fixed-top" style="height: 100%">
+        <div class="col-lg-2 bg-light mt-5 fixed-top" style="height: 100%">
           <div class="container">
             <div class="row">
               <div class="col-lg-8">
