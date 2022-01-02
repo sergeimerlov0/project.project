@@ -48,4 +48,8 @@ public class Role implements GrantedAuthority {
         return Objects.hash(id, name);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }
