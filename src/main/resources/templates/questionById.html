@@ -1,29 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Java</title>
-  <link rel="stylesheet"
-        href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>QuestionById</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
 <header id="header"></header>
-
 <div class="container-fluid mt-5">
-  <div class="row">
-    <div class="col-lg-2">
-      <sidebar id="sidebar"></sidebar>
-    </div>
-    <div class="col-lg-10">
-      <h1 class="fs-headline1 mb24">Question title</h1>
-
-      <div class="team">
-
-      </div>
-    </div>
-  </div>
+	<div class="row">
+		<div class="col-lg-2">
+			<sidebar id="sidebar"></sidebar>
+		</div>
+		<div class="col-lg-10">
+			<br/>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<h3 class="fs-headline1 mb24" id="title">Question title</h3>
+						<div class="d-flex">
+							<div class="flex--item">
+								<span class="fc-light mr2" style="color: #b7b1af;" id="persistDateTime">Вопрос задан</span>
+								<time datetime="" title="">4 года 9 месяцев назад</time>
+							</div>&nbsp;
+							<div class="flex--item">
+								<span class="fc-light mr2" style="color: #b7b1af;" id="lastUpdateDateTime">Последняя активность</span>
+								<time datetime="" title="">4 года 9 месяцев назад</time>
+							</div>
+						</div>
+						<hr/>
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-md-1 text-center">
+									<p>
+										<svg class="ui-lib-mitten-icon _theme_white mitten-like-button_theme_undefined"
+										     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+											<path transform="translate(6, 3)"
+											      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5
+											      9H21C21 9.6985 20.9758 10.3647 20.9305 11C20.2622 20.3689 15 23 15 23H5L4 9.99999C7.5
+											      8 9.5 3 10 0.5ZM10.8485 11H18.925C18.6206 14.939 17.4419 17.4475 16.3661
+											      18.9716C15.7342 19.8667 15.1166 20.4525 14.6828 20.8019C14.5868 20.8792 14.4998 20.945
+											      14.4236 21H6.85206L6.08364 11.0105C7.7312 9.75251 8.97805 8.03148 9.87616 6.40365C10.5657
+											      5.15381 11.097 3.87294 11.4688 2.73296C11.6065 2.79228 11.703 2.85406 11.7697
+											      2.90665C11.956 3.05352 12.1278 3.29856 12.2209 3.80168C12.4364 4.96525 12.0893 6.65732
+											      11.577 8.45056L10.8485 11Z"
+											      fill-rule="evenodd" clip-rule="evenodd"></path>
+											<path transform="translate(6, 3)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
+											      clip-rule="evenodd"></path>
+										</svg>
+										+
+									</p>
+									<p><span class="ai-center" data-value="0">0</span></p>
+									<p>
+										<svg class="ui-lib-mitten-icon _theme_white mitten-dislike-button_theme_undefined"
+										     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+											<path transform="translate(26, 29) rotate(180)"
+											      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5 9H21C21
+										      9.6985 20.9758 10.3647 20.9305 11C20.2622 20.3689 15 23 15 23H5L4 9.99999C7.5 8 9.5 3 10
+										      0.5ZM10.8485 11H18.925C18.6206 14.939 17.4419 17.4475 16.3661 18.9716C15.7342 19.8667 15.1166
+										      20.4525 14.6828 20.8019C14.5868 20.8792 14.4998 20.945 14.4236 21H6.85206L6.08364
+										      11.0105C7.7312 9.75251 8.97805 8.03148 9.87616 6.40365C10.5657 5.15381 11.097 3.87294 11.4688
+										      2.73296C11.6065 2.79228 11.703 2.85406 11.7697 2.90665C11.956 3.05352 12.1278 3.29856 12.2209
+										      3.80168C12.4364 4.96525 12.0893 6.65732 11.577 8.45056L10.8485 11Z"
+											      fill-rule="evenodd" clip-rule="evenodd"></path>
+											<path transform="translate(26, 29) rotate(180)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
+											      clip-rule="evenodd"></path>
+										</svg>
+										-
+									</p>
+									<p>
+										<svg class="ui-lib-mitten-icon _theme_white mitten-dislike-button_theme_undefined"
+										     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+										<path d="m18 15a3.989 3.989 0 0 0 -3.222 1.65l-5.015-3.343a3.722 3.722 0 0 0
+										0-2.614l5.015-3.343a3.985 3.985 0 1 0 -.778-2.35 3.883 3.883 0 0 0 .044.435l-5.391 3.594a4 4 0 1 0
+										0 5.942l5.391 3.594a3.883 3.883 0 0 0 -.044.435 4 4 0 1 0 4-4z" fill="#000000"
+										      data-original="#000000" class=""></path>
+										</svg>Share
+									</p>
+								</div>
+								<div class="col-md-11" id="description">
+									<p>
+										Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Aliquam eget sapien
+										sapien. Curabitur in metus urna. In hac habitasse platea dictumst. Phasellus eu sem sapien, sed
+										vestibulum velit. Nam purus nibh, lacinia non faucibus et, pharetra in dolor. Sed iaculis posuere
+										diam ut cursus. <em>Morbi commodo sodales nisi id sodales. Proin consectetur, nisi id commodo
+										imperdiet, metus nunc consequat lectus, id bibendum diam velit et dui.</em> Proin massa magna,
+										vulputate nec bibendum nec, posuere nec lacus. Aliquam mi erat, aliquam vel luctus eu, pharetra
+										quis elit. Nulla euismod ultrices massa, et feugiat ipsum consequat eu.
+									</p>
+									<div class="d-flex ps-relative">
+										<a href="" class="post-tag js-gps-track" title="" rel="tag">#lorem_ipsum</a>&nbsp;
+										<a href="" class="post-tag js-gps-track" title="" rel="tag">#wordpress</a>&nbsp;
+										<a href="" class="post-tag js-gps-track" title="" rel="tag">#link</a>
+									</div>
+									<p>
+									<div class="user-info" style="float: right; display: table">
+										<div class="user-action-time" style="color: #b7b1af; display: table-cell">
+											задан 21 мар '17 в 11:07
+										</div>
+										<div class="user-gravatar" style="display: table-cell;">
+											<img src="https://platform.kata.academy/uploads/2021/1/1/course_2.jpg"
+											     alt="" width="32" height="32" class="bar-sm">
+										</div>
+										<div class="user-details" itemprop="author" itemscope="" itemtype="" style="display: table-cell;">
+											<a href="">Николай</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<hr/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <footer id="footer"></footer>
 <script type="module" src="../static/js/authorization_check.js"></script>
