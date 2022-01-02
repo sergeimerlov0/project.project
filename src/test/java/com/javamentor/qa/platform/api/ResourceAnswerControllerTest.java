@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -103,6 +104,7 @@ class ResourceAnswerControllerTest extends AbstractApiTest {
     }
 
     @Test
+    @WithMockUser(username = "test@test.ru", password = "123", roles = "USER")
     @DataSet(value = {
             "datasets/votingApiDatasets/answer.yml",
             "datasets/votingApiDatasets/question.yml",
@@ -119,56 +121,6 @@ class ResourceAnswerControllerTest extends AbstractApiTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @DataSet(value = {
-            "datasets/votingApiDatasets/answer.yml",
-            "datasets/votingApiDatasets/question.yml",
-            "datasets/votingApiDatasets/questionHasTag.yml",
-            "datasets/votingApiDatasets/tag.yml",
-            "datasets/votingApiDatasets/reputation.yml",
-            "datasets/votingApiDatasets/role.yml",
-            "datasets/votingApiDatasets/user.yml",
-            "datasets/votingApiDatasets/voteAnswer.yml"
-    })
-    public void setDownVoteAnswerByAnswerId() throws Exception {
-        this.mvc.perform(post("/api/user/question/100/answer/100/downVote"))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
 
-    @Test
-    @DataSet(value = {
-            "datasets/votingApiDatasets/answer.yml",
-            "datasets/votingApiDatasets/question.yml",
-            "datasets/votingApiDatasets/questionHasTag.yml",
-            "datasets/votingApiDatasets/tag.yml",
-            "datasets/votingApiDatasets/reputation.yml",
-            "datasets/votingApiDatasets/role.yml",
-            "datasets/votingApiDatasets/user.yml",
-            "datasets/votingApiDatasets/votingWithDuplicateUserAndAnswer/voteAnswer.yml"
-    })
-    public void setUpVoteAnswerByAnswerIdDuplicate() throws Exception {
-        this.mvc.perform(post("/api/user/question/100/answer/100/upVote"))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-
-    }
-
-    @Test
-    @DataSet(value = {
-            "datasets/votingApiDatasets/answer.yml",
-            "datasets/votingApiDatasets/question.yml",
-            "datasets/votingApiDatasets/questionHasTag.yml",
-            "datasets/votingApiDatasets/tag.yml",
-            "datasets/votingApiDatasets/reputation.yml",
-            "datasets/votingApiDatasets/role.yml",
-            "datasets/votingApiDatasets/user.yml",
-            "datasets/votingApiDatasets/votingWithDuplicateUserAndAnswer/voteAnswer.yml"
-    })
-    public void setDownVoteAnswerByAnswerIdDuplicate() throws Exception {
-        this.mvc.perform(post("/api/user/question/100/answer/100/downVote"))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
 
 }

@@ -16,10 +16,13 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,9 +35,6 @@ public class AnswerResourceController {
     private final VoteAnswerService voteAnswerService;
     private final UserService userService;
     private final ReputationService reputationService;
-
-    private final static Integer UP_VOTE = 10;
-    private final static Integer DOWN_VOTE = -5;
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {
@@ -62,17 +62,9 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное голосование"),
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/upVote")
-    public ResponseEntity<Long> setUpVoteAnswerByAnswerId(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
-        Long id = 100L; // todo убрать когда будет готово секьюрити
-        try {
-            User userSender = userService.getById(id).get();
-            Answer answer = answerService.getById(answerId).get();
-            voteAnswerService.persist(new VoteAnswer(userSender, answer, VoteType.UP_VOTE));
-            reputationService.persist(new Reputation(answer.getUser(), userSender, UP_VOTE, ReputationType.VoteAnswer, answer));
-            return new ResponseEntity<>(voteAnswerService.getTotalVotesByAnswerId(answerId), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Long> setUpVoteAnswerByAnswerId(@PathVariable("id") Long answerId, Principal principal) {
+
+        return voteAnswerService.postVoteUp(answerId, principal);
     }
 
     @ApiOperation(value = "Голосование против ответа", tags = {"Получение общего количества голосов"})
@@ -80,17 +72,9 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное голосование"),
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/downVote")
-    public ResponseEntity<Long> setDownVoteAnswerByAnswerId(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
-        Long id = 100L; // todo убрать когда будет готово секьюрити
-        try {
-            User userSender = userService.getById(id).get();
-            Answer answer = answerService.getById(answerId).get();
-            voteAnswerService.persist(new VoteAnswer(userSender, answer, VoteType.DOWN_VOTE));
-            reputationService.persist(new Reputation(answer.getUser(), userSender, DOWN_VOTE, ReputationType.VoteAnswer, answer));
-            return new ResponseEntity<>(voteAnswerService.getTotalVotesByAnswerId(answerId), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Long> setDownVoteAnswerByAnswerId(@PathVariable("id") Long answerId, Principal principal) {
+
+        return voteAnswerService.postVoteDown(answerId, principal);
     }
 
 }
