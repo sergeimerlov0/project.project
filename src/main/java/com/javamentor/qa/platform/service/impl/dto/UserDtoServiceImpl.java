@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class UserDtoServiceImpl implements UserDtoService {
+public class UserDtoServiceImpl  implements UserDtoService {
 
     @Autowired
     private UserDtoDao userDtoDao;
