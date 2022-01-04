@@ -11,8 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
-public class QuestionDtoServiceIml implements QuestionDtoService {
+public class QuestionDtoServiceImpl extends PaginationServiceDtoImpl<QuestionDto> implements QuestionDtoService {
     private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
 

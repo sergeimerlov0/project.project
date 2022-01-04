@@ -5,10 +5,13 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.service.abstracts.dto.PaginationServiceDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Map;
 
 //Сервис для конструирования страницы PageDTO<T>
 @Service
+@Transactional
 public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
 
     private Map<String, PaginationDtoAble<T>> map;
