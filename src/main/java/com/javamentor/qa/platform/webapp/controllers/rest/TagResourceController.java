@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -74,12 +75,14 @@ public class TagResourceController {
             @ApiResponse(code = 400, message = "Тег уже добавлен")})
     @PostMapping("/{id}/tracked")
     public ResponseEntity<List<TagDto>> addTrackedTag(Authentication authentication, @PathVariable Long id) {
-        Long userId = 2L; // todo убрать когда будет готово секьюрити
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Long userId = user.getId();
         TrackedTag trackedTag = new TrackedTag();
-        User user = userService.getById(userId).get();
         Tag tag = tagService.getById(id).get();
         trackedTag.setTrackedTag(tag);
         trackedTag.setUser(user);
+
+        //Создание списка отслеживаемых тегов принадлежащих авторизованному юзеру
         List<TrackedTag> allTrackedTags = trackedTagService.getAll();
         List<TrackedTag> trackedTagsByUser = new ArrayList<>();
         for (TrackedTag eachTrackedTag : allTrackedTags) {
@@ -88,12 +91,15 @@ public class TagResourceController {
             }
         }
 
+        //Выбрасывание 400 если в списке отслеживаемых тегов юзера уже имеется добавляемый тег
         for (TrackedTag trackedTagByUser: trackedTagsByUser) {
             if (trackedTagByUser.getTrackedTag().getId() == trackedTag.getTrackedTag().getId()) {
                 return new ResponseEntity<>(tagDtoService
                         .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.BAD_REQUEST);
             }
         }
+
+        //Создание списка игнорируемых тегов принадлежащих авторизованному юзеру
         List<IgnoredTag> allIgnoredTags = ignoredTagService.getAll();
         List<IgnoredTag> ignoredTagsByUser = new ArrayList<>();
         for (IgnoredTag eachIgnoredTag : allIgnoredTags) {
@@ -101,12 +107,15 @@ public class TagResourceController {
                 ignoredTagsByUser.add(eachIgnoredTag);
             }
         }
-        trackedTagService.persist(trackedTag);
+
+        //Удаление тега добавленного в отслеживаемые из списка игнорируемых
         for (IgnoredTag ignoredTagByUser: ignoredTagsByUser) {
             if (ignoredTagByUser.getIgnoredTag().getId() == id) {
                 ignoredTagService.deleteById(ignoredTagByUser.getId());
             }
         }
+
+        trackedTagService.persist(trackedTag);
         return new ResponseEntity<>(tagDtoService
                 .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
     }
@@ -117,12 +126,14 @@ public class TagResourceController {
             @ApiResponse(code = 400, message = "Тег уже добавлен")})
     @PostMapping("/{id}/ignored")
     public ResponseEntity<List<TagDto>> addIgnoredTag(Authentication authentication, @PathVariable Long id) {
-        Long userId = 2L; // todo убрать когда будет готово секьюрити
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Long userId = user.getId();
         IgnoredTag ignoredTag = new IgnoredTag();
-        User user = userService.getById(userId).get();
         Tag tag = tagService.getById(id).get();
         ignoredTag.setIgnoredTag(tag);
         ignoredTag.setUser(user);
+
+        //Создание списка игнорируемых тегов принадлежащих авторизованному юзеру
         List<IgnoredTag> allIgnoredTags = ignoredTagService.getAll();
         List<IgnoredTag> ignoredTagsByUser = new ArrayList<>();
         for (IgnoredTag eachIgnoredTag : allIgnoredTags) {
@@ -131,12 +142,15 @@ public class TagResourceController {
             }
         }
 
+        //Выбрасывание 400 если в списке игнорируемых тегов юзера уже имеется добавляемый тег
         for (IgnoredTag ignoredTagByUser: ignoredTagsByUser) {
             if (ignoredTagByUser.getIgnoredTag().getId() == ignoredTag.getIgnoredTag().getId()) {
                 return new ResponseEntity<>(tagDtoService
                         .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.BAD_REQUEST);
             }
         }
+
+        //Создание списка отслеживаемых тегов принадлежащих авторизованному юзеру
         List<TrackedTag> allTrackedTags = trackedTagService.getAll();
         List<TrackedTag> trackedTagsByUser = new ArrayList<>();
         for (TrackedTag eachTrackedTag : allTrackedTags) {
@@ -144,12 +158,15 @@ public class TagResourceController {
                 trackedTagsByUser.add(eachTrackedTag);
             }
         }
-        ignoredTagService.persist(ignoredTag);
+
+        //Удаление тега добавленного в игнорируемые из списка отслеживаемых
         for (TrackedTag trackedTagByUser: trackedTagsByUser) {
             if (trackedTagByUser.getTrackedTag().getId() == id) {
                 trackedTagService.deleteById(trackedTagByUser.getId());
             }
         }
+
+        ignoredTagService.persist(ignoredTag);
         return new ResponseEntity<>(tagDtoService
                 .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
     }
