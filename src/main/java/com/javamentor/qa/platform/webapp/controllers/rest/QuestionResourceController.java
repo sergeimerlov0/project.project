@@ -6,7 +6,6 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +14,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -29,7 +29,6 @@ public class QuestionResourceController {
     private final QuestionDtoService questionDtoService;
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
-    private final UserService userService; //удалить когда будет готова авторизация через JWT
 
     @GetMapping("{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -43,12 +42,15 @@ public class QuestionResourceController {
                 new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(id), HttpStatus.OK);
     }
 
-    //когда будет готова авторизация через JWT - добавить в параметры @AuthenticationPrincipal User user
     @PostMapping("{questionId}/upVote")
-    public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
+    @ApiOperation(value = "Голосование за Question по Question id", tags = {"VoteQuestion up"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Голосование успешно произведено"),
+            @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
+    })
+    public ResponseEntity<Integer> upVote(@AuthenticationPrincipal(expression = "@userService.getUser(#this)") User user, @PathVariable Long questionId) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
-            User user = userService.getById(100L).get();//удалить когда будет готова авторизация через JWT
             Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.UP_VOTE);
@@ -59,12 +61,15 @@ public class QuestionResourceController {
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    //когда будет готова авторизация через JWT - добавить в параметры @AuthenticationPrincipal User user
     @PostMapping("{questionId}/downVote")
-    public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
+    @ApiOperation(value = "Голосование за Question по Question id", tags = {"VoteQuestion down"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Голосование успешно произведено"),
+            @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
+    })
+    public ResponseEntity<Integer> downVote(@AuthenticationPrincipal User user, @PathVariable Long questionId) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
-            User user = userService.getById(101L).get();//удалить когда будет готова авторизация через JWT
             Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.DOWN_VOTE);
