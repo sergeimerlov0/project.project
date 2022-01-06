@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.api;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
+import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.webapp.configs.JmApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +22,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = "spring.config.location = src/test/resources/application-test.properties")
 @AutoConfigureMockMvc
 @DBUnit(caseSensitiveTableNames = true, cacheConnection = false, allowEmptyFields = true)
-public class TestUserResourseController {
+public class TestUserResourseController extends AbstractApiTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @DataSet(value = {"dataset/UserResourceController/users.yml",
-            "dataset/UserResourceController/answer.yml",
-            "dataset/UserResourceController/question.yml",
-            "dataset/UserResourceController/reputations.yml",
-            "dataset/UserResourceController/roles.yml"})
+    @DataSet(value = {"datasets/UserResourceController/users.yml",
+            "datasets/UserResourceController/answer.yml",
+            "datasets/UserResourceController/question.yml",
+            "datasets/UserResourceController/reputations.yml",
+            "datasets/UserResourceController/roles.yml"})
     void getUserById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/user/101"))
                 .andDo(print())
@@ -45,11 +46,11 @@ public class TestUserResourseController {
     }
 
     @Test
-    @DataSet(value = {"dataset/UserResourceController/users.yml",
-            "dataset/UserResourceController/answer.yml",
-            "dataset/UserResourceController/question.yml",
-            "dataset/UserResourceController/reputations.yml",
-            "dataset/UserResourceController/roles.yml"})
+    @DataSet(value = {"datasets/UserResourceController/users.yml",
+            "datasets/UserResourceController/answer.yml",
+            "datasets/UserResourceController/question.yml",
+            "datasets/UserResourceController/reputations.yml",
+            "datasets/UserResourceController/roles.yml"})
     void shouldNotGetUserById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/user/105"))
                 .andDo(print())
