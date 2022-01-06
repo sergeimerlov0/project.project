@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserTestDto;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserDtoTestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -25,11 +24,11 @@ import java.util.Map;
 public class TestController {
 
     //Внедряем сервис для работы с нужной Dto
-    private UserDtoTestService userDtoTestService;
+    private UserDtoService userDtoService;
 
     @Autowired
-    public void setUserDtoTestServiceService(UserDtoTestService userDtoTestService) {
-        this.userDtoTestService = userDtoTestService;
+    public void setUserDtoService(UserDtoService userDtoService) {
+        this.userDtoService = userDtoService;
     }
 
     @ApiOperation(value = "API to GET of Test String List", notes = "Get all string list", tags = {"TestString"})
@@ -41,12 +40,12 @@ public class TestController {
         return new ArrayList<>();
     }
 
-    @GetMapping("/pagination")
-    public ResponseEntity<PageDto<UserTestDto>> getTest2() {//Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
-        Map<String, Object> objectMap = new HashMap<>();
-        //Помещаем в мапу под ключ class нужный бин с нужной реализацией пагинации. Например, AllUser.
-        objectMap.put("class","AllUser");
-        //Получаем страницу с нужной Dto
-        return ResponseEntity.ok(userDtoTestService.getPageDto(1,3, objectMap));
-    }
+//    @GetMapping("/pagination")
+//    public ResponseEntity<PageDto<UserTestDto>> getTest2() {//Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
+//        Map<String, Object> objectMap = new HashMap<>();
+//        //Помещаем в мапу под ключ class нужный бин с нужной реализацией пагинации. Например, AllUser.
+//        objectMap.put("class","AllUser");
+//        //Получаем страницу с нужной Dto
+//        return ResponseEntity.ok(userDtoService.getPageDto(1,3, objectMap));
+//    }
 }
