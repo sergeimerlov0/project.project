@@ -4,14 +4,9 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import java.util.Arrays;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,7 +15,6 @@ import java.util.Arrays;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -29,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * \* User: Rustam
  */
 
-@DataSet(cleanBefore = true)
+@DataSet(cleanBefore = true, cleanAfter = true)
 public class TestTagResourceController extends AbstractApiTest {
 
     @PersistenceContext
@@ -73,64 +67,81 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/tagDatasets/role.yml",
-            "datasets/tagDatasets/user.yml",
-            "datasets/tagDatasets/tag.yml",
-            "datasets/tagDatasets/tagIgnore.yml"
-    })
-    void getAllIgnoredTagDto() throws Exception {
-        this.mvc.perform(get("/api/user/tag/ignored"))
-                .andExpect(status().isOk());
-        Assertions.assertTrue(entityManager.createQuery("select t.ignoredTag.id from IgnoredTag t where t.user.id=:id", Long.class)
-                .setParameter("id", 2L)
-                .getResultList()
-                .containsAll(Arrays.asList(100L, 101L)));
-    }
-    @Test
-    @DataSet(value = {
             "datasets/tagAddTrackedAndIgnoredDataset/role.yml",
             "datasets/tagAddTrackedAndIgnoredDataset/user.yml",
             "datasets/tagAddTrackedAndIgnoredDataset/tag.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/tagIgnored.yml",
             "datasets/tagAddTrackedAndIgnoredDataset/tagTracked.yml"
     })
-    public void testAddTrackedTag() throws Exception {
-        this.mvc.perform(post("/api/user/tag/105/tracked"))
-                .andDo(print())
+    void getAllIgnoredTagDto() throws Exception {
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/ignored")
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
-        Assertions.assertTrue(entityManager.createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
-                .setParameter("id", 2L)
+        Assertions.assertTrue(entityManager.createQuery("select t.ignoredTag.id from IgnoredTag t where t.user.id=:id", Long.class)
+                .setParameter("id", 101L)
                 .getResultList()
-                .containsAll(Arrays.asList(103L, 104L, 105L)));
+                .containsAll(Arrays.asList(100L, 101L)));
     }
 
     @Test
     @DataSet(value = {
-            "datasets/tagDatasets/tagTrack.yml"
-    })
-    void getAllTrackedTagDto() throws Exception {
-        this.mvc.perform(get("/api/user/tag/tracked"))
-                .andExpect(status().isOk());
-        Assertions.assertTrue(entityManager.createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
-                .setParameter("id", 2L)
-                .getResultList()
-                .containsAll(Arrays.asList(102L, 103L)));
-    }
-    @Test
-    @DataSet(value = {
             "datasets/tagAddTrackedAndIgnoredDataset/role.yml",
             "datasets/tagAddTrackedAndIgnoredDataset/user.yml",
             "datasets/tagAddTrackedAndIgnoredDataset/tag.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tagIgnored.yml"
+            "datasets/tagAddTrackedAndIgnoredDataset/tagIgnored.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/tagTracked.yml"
     })
     public void testAddIgnoredTag() throws Exception {
-        this.mvc.perform(post("/api/user/tag/102/ignored"))
-                .andDo(print())
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
+
+        mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/102/ignored")
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
         Assertions.assertTrue(entityManager.createQuery("select t.ignoredTag.id from IgnoredTag t where t.user.id=:id", Long.class)
-                .setParameter("id", 2L)
+                .setParameter("id", 101L)
                 .getResultList()
                 .containsAll(Arrays.asList(100L, 101L, 102L)));
     }
 
+    @Test
+    @DataSet(value = {
+            "datasets/tagAddTrackedAndIgnoredDataset/role.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/user.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/tag.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/tagIgnored.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/tagTracked.yml"
+    })
+    void getAllTrackedTagDto() throws Exception {
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
 
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/tracked")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        Assertions.assertTrue(entityManager.createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
+                .setParameter("id", 101L)
+                .getResultList()
+                .containsAll(Arrays.asList(103L, 104L)));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/tagAddTrackedAndIgnoredDataset/role.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/user.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/tag.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/tagIgnored.yml",
+            "datasets/tagAddTrackedAndIgnoredDataset/tagTracked.yml"
+    })
+    public void testAddTrackedTag() throws Exception {
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
+
+        mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/105/tracked")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        Assertions.assertTrue(entityManager.createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
+                .setParameter("id", 101L)
+                .getResultList()
+                .containsAll(Arrays.asList(103L, 104L, 105L)));
+    }
 }

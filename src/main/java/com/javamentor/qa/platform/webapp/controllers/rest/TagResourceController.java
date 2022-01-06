@@ -53,9 +53,10 @@ public class TagResourceController {
             @ApiResponse(code = 400, message = "TrackedTagDto not exist")})
     @GetMapping("/tracked")
     public ResponseEntity<List<TagDto>> getAllTrackedTagDto(Authentication authentication) {
-        Long id = 2L; // todo убрать когда будет готово секьюрити
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Long userId = user.getId();
         return new ResponseEntity<>(tagDtoService
-                .getTrackedTagById(userService.getById(id).get().getId()), HttpStatus.OK);
+                .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Getting all IgnoredTagDto", tags = {"IgnoredTagDto"})
@@ -64,9 +65,10 @@ public class TagResourceController {
             @ApiResponse(code = 400, message = "IgnoredTagDto not exist")})
     @GetMapping("/ignored")
     public ResponseEntity<List<TagDto>> getAllIgnoredTagDto(Authentication authentication) {
-        Long id = 2L; // todo убрать когда будет готово секьюрити
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Long userId = user.getId();
         return new ResponseEntity<>(tagDtoService
-                .getTrackedTagById(userService.getById(id).get().getId()), HttpStatus.OK);
+                .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Добавление тега в TrackedTag", tags = {"TrackedTag"})
