@@ -1,10 +1,7 @@
 package com.javamentor.qa.platform.models.entity.question;
 
 import com.javamentor.qa.platform.exception.ConstrainException;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
@@ -21,6 +18,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tag")
+@ToString
 public class Tag implements Serializable {
 
     private static final long serialVersionUID = 6264105282197120461L;
@@ -41,6 +39,7 @@ public class Tag implements Serializable {
     private LocalDateTime persistDateTime;
 
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<Question> questions;
 
     @PrePersist
