@@ -15,10 +15,6 @@ public class QuestionCommentDtoServiceImpl implements QuestionCommentDtoService 
 
     private final QuestionCommentDtoDao questionCommentDtoDao;
 
-    public QuestionCommentDtoServiceImpl(QuestionCommentDtoDao questionCommentDtoDao) {
-        this.questionCommentDtoDao = questionCommentDtoDao;
-    }
-
     @Override
     @Transactional
     public List<QuestionCommentDto> getQuestionCommentByQuestionId(Long id) {
