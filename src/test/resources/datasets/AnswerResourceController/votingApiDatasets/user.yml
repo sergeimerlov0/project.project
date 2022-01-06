@@ -1,7 +1,7 @@
 user_entity:
   - id: 100
-    email: "test@test.ru"
-    password: "123"
+    email: "3user@mail.ru"
+    password: "3111"
     role_id: 100
     last_redaction_date: "[DAY,NOW]"
     image_link: "image100"
@@ -14,4 +14,12 @@ user_entity:
     last_redaction_date: "[DAY,NOW]"
     image_link: "image101"
     nickname: "user101"
+
+  - id: 102
+    email: "test3@test.ru"
+    password: "123"
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image102"
+    nickname: "user102"
 

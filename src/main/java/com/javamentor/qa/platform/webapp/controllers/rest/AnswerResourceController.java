@@ -2,24 +2,16 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
-import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.user.reputation.ReputationService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +26,6 @@ public class AnswerResourceController {
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
     private final UserService userService;
-    private final ReputationService reputationService;
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {
@@ -63,8 +54,14 @@ public class AnswerResourceController {
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/upVote")
     public ResponseEntity<Long> setUpVoteAnswerByAnswerId(@PathVariable("id") Long answerId, Principal principal) {
-
-        return voteAnswerService.postVoteUp(answerId, principal);
+        Optional<User> optionalUser = userService.getByEmail(principal.getName());
+        Optional<Answer> optionalAnswer = answerService.getById(answerId);
+        if (optionalUser.isEmpty() || optionalAnswer.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        User userSender = optionalUser.get();
+        Answer answer = optionalAnswer.get();
+        return new ResponseEntity<>(voteAnswerService.postVoteUp(answerId, userSender, answer), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Голосование против ответа", tags = {"Получение общего количества голосов"})
@@ -73,8 +70,14 @@ public class AnswerResourceController {
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/downVote")
     public ResponseEntity<Long> setDownVoteAnswerByAnswerId(@PathVariable("id") Long answerId, Principal principal) {
-
-        return voteAnswerService.postVoteDown(answerId, principal);
+        Optional<User> optionalUser = userService.getByEmail(principal.getName());
+        Optional<Answer> optionalAnswer = answerService.getById(answerId);
+        if (optionalUser.isEmpty() || optionalAnswer.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        User userSender = optionalUser.get();
+        Answer answer = optionalAnswer.get();
+        return new ResponseEntity<>(voteAnswerService.postVoteDown(answerId, userSender, answer), HttpStatus.OK);
     }
 
 }

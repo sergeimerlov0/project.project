@@ -84,8 +84,7 @@ public class Reputation implements Serializable {
         this.question = question;
     }
 
-    public Reputation(LocalDateTime persistDate, User author, User sender, Integer count, ReputationType type, Answer answer) {
-        this.persistDate = persistDate;
+    public Reputation(User author, User sender, Integer count, ReputationType type, Answer answer) {
         this.author = author;
         this.sender = sender;
         this.count = count;
