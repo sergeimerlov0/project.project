@@ -30,6 +30,9 @@ public class TestDataInitService {
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway, AnswerService answerService, QuestionService questionService, TagService tagService, TrackedTagService trackedTagService, IgnoredTagService ignoredTagService) {
+    public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway,
+                               AnswerService answerService, QuestionService questionService,
+                               TagService tagService) {
         this.roleService = roleService;
         this.userService = userService;
         this.flyway = flyway;
@@ -106,7 +109,7 @@ public class TestDataInitService {
     private void addAnswer() {
         StringBuilder htmlBody = new StringBuilder();
         Random random = new Random();
-        // добавление радномного количества ответов [1;50]
+        // добавление рандомного количества ответов [1;50]
         for (int x = 1 + (int) (Math.random() * 49); x <= 50; x++) {
             htmlBody.delete(0, htmlBody.length()).append("htmlBody:").append(x);
             Answer answer = new Answer();
@@ -138,7 +141,7 @@ public class TestDataInitService {
 
         User admin = new User();
         admin.setRole(adminRole);
-        admin.setEmail(email.append("Vasya@mail.ru").toString());
+        admin.setEmail(email.append("vasya@mail.ru").toString());
         admin.setPassword(password.append("password").toString());
         admin.setFullName(fullName.append("Vasya").toString());
         admin.setCity(city.append("Vasya's City").toString());
@@ -147,24 +150,24 @@ public class TestDataInitService {
         admin.setLinkVk(linkVk.append("vk.com/vasya").toString());
         admin.setAbout(about.append("Hello my name is Vasya").toString());
         admin.setImageLink(imageLink.append("vasya.ru/myphoto/1").toString());
-        admin.setNickname(nickname.append("Vasya1337").toString());
+        admin.setNickname(nickname.append("Vasya").toString());
         userService.persist(admin);
 
         User admin1 = new User();
         admin1.setRole(adminRole);
-        admin1.setEmail(email.delete(0, email.length()).append("123@mail.ru").toString());
+        admin1.setEmail(email.delete(0, email.length()).append("volodya@mail.ru").toString());
         admin1.setPassword(password.delete(0, password.length()).append("123").toString());
         admin1.setFullName(fullName.delete(0, fullName.length()).append("Volodya").toString());
         admin1.setCity(city.delete(0, city.length()).append("Volodya's City").toString());
-        admin1.setLinkSite(linkSite.delete(0, linkSite.length()).append("Volodya.ru").toString());
-        admin1.setLinkGitHub(linkGitHub.delete(0, linkGitHub.length()).append("github.com/Volodya").toString());
-        admin1.setLinkVk(linkVk.delete(0, linkVk.length()).append("github.com/Volodya").toString());
+        admin1.setLinkSite(linkSite.delete(0, linkSite.length()).append("volodya.ru").toString());
+        admin1.setLinkGitHub(linkGitHub.delete(0, linkGitHub.length()).append("github.com/volodya").toString());
+        admin1.setLinkVk(linkVk.delete(0, linkVk.length()).append("github.com/volodya").toString());
         admin1.setAbout(about.delete(0, about.length()).append("Hello my name is Volodya").toString());
-        admin1.setImageLink(imageLink.delete(0, imageLink.length()).append("Volodya.ru/myphoto/1").toString());
+        admin1.setImageLink(imageLink.delete(0, imageLink.length()).append("volodya.ru/myphoto/1").toString());
         admin1.setNickname(nickname.delete(0, nickname.length()).append("Vova").toString());
         userService.persist(admin1);
 
-        for (int x = 2; x <= 50; x++) {
+        for (int x = 3; x <= 50; x++) {
 
             email.delete(0, email.length()).append(x).append("user@mail.ru");
             password.delete(0, password.length()).append(x).append(111);
