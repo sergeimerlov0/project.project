@@ -68,7 +68,7 @@ public class TagResourceController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
         return new ResponseEntity<>(tagDtoService
-                .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
+                .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Добавление тега в TrackedTag", tags = {"TrackedTag"})
