@@ -29,10 +29,10 @@ public class TestDataInitService {
     private final IgnoredTagService ignoredTagService;
 
     @Autowired
-    public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway, AnswerService answerService, QuestionService questionService, TagService tagService, TrackedTagService trackedTagService, IgnoredTagService ignoredTagService) {
     public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway,
                                AnswerService answerService, QuestionService questionService,
-                               TagService tagService) {
+                               TagService tagService, TrackedTagService trackedTagService,
+                               IgnoredTagService ignoredTagService) {
         this.roleService = roleService;
         this.userService = userService;
         this.flyway = flyway;
