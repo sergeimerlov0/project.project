@@ -45,4 +45,11 @@ public class VoteQuestion implements Serializable {
         this.question = question;
         this.vote = vote;
     }
+
+    public VoteQuestion(User user, Question question, LocalDateTime localDateTime, VoteType vote) {
+        this.user = user;
+        this.question = question;
+        this.localDateTime = localDateTime;
+        this.vote = vote;
+    }
 }
