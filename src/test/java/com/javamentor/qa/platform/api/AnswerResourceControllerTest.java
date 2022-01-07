@@ -1,11 +1,18 @@
 package com.javamentor.qa.platform.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
+import com.javamentor.qa.platform.JwtTokenTest;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import static org.hamcrest.Matchers.*;
@@ -111,8 +118,18 @@ class AnswerResourceControllerTest extends AbstractApiTest {
             "datasets/AnswerResourceController/votingApiDatasets/voteAnswer.yml"
     })
     public void setUpVoteAnswerByAnswerId() throws Exception {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMTExIiwianRpIjoiM3VzZXJAbWFpbC5ydSJ9.TI4PpDRYsIAnufhQufAJNDcFuQb09d5-IMBSdHZtA5M";
-        //todo переделать после исправления получения токена в тестах
+        ObjectMapper mapper = new ObjectMapper();
+        AuthenticationRequest request = new AuthenticationRequest();
+        request.setEmail("3user@mail.ru");
+        request.setPassword("3111");
+        String json = mapper.writeValueAsString(request);
+        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
         //проверяем возвращаемое значение. В датасетах в базе данных уже было 2 голоса ЗА ответ с id 100
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
@@ -153,8 +170,18 @@ class AnswerResourceControllerTest extends AbstractApiTest {
             "datasets/AnswerResourceController/votingApiDatasets/voteAnswer.yml"
     })
     public void setDownVoteAnswerByAnswerId() throws Exception {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMTExIiwianRpIjoiM3VzZXJAbWFpbC5ydSJ9.TI4PpDRYsIAnufhQufAJNDcFuQb09d5-IMBSdHZtA5M";
-        //todo переделать после исправления получения токена в тестах
+        ObjectMapper mapper = new ObjectMapper();
+        AuthenticationRequest request = new AuthenticationRequest();
+        request.setEmail("3user@mail.ru");
+        request.setPassword("3111");
+        String json = mapper.writeValueAsString(request);
+        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
         //проверяем возвращаемое значение. В датасетах в базе данных уже было 2 голоса ЗА ответ с id 100
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
