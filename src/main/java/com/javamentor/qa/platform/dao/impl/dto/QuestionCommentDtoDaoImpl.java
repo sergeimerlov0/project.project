@@ -23,9 +23,9 @@ public class QuestionCommentDtoDaoImpl implements QuestionCommentDtoDao {
                         "c.text," +
                         "c.user.id," +
                         "u.imageLink," +
-                        "(SELECT sum (r.count) from Reputation r where r.author.id = c.user.id))" +
+                        "(SELECT sum (r.count) from Reputation r where r.question.id = :id))" +
                         "FROM Comment c " +
-                        "LEFT OUTER JOIN CommentQuestion cq ON(c.id = cq.question.id)" +
+                        "INNER JOIN CommentQuestion cq ON(c.id = cq.comment.id)" +
                         "LEFT OUTER JOIN User u ON(c.user.id = u.id)" +
                         "WHERE cq.question.id = :id"
                 , QuestionCommentDto.class)
