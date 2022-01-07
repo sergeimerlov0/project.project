@@ -9,10 +9,12 @@ import org.junit.jupiter.api.Test;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class QuestionResourceControllerTest extends AbstractApiTest {
 
@@ -98,5 +100,56 @@ class QuestionResourceControllerTest extends AbstractApiTest {
     void downUpVoteQuestionByNullQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/102/downVote"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/questionDatasets/comment.yml",
+            "datasets/questionDatasets/commentQuestion.yml",
+            "datasets/questionDatasets/answer.yml",
+            "datasets/questionDatasets/tag.yml",
+            "datasets/questionCommentDatasets/user.yml",
+            "datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/questionHasTag.yml",
+            "datasets/questionDatasets/reputation.yml"
+    })
+    public void getAllQuestionCommentByQuestionId() throws Exception {
+//        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6InRlc3RAbWFpbC5ydSJ9.KWuFTAd1XAlmFAIqqLlIxv4kho8zGQXXVUROZ2L_J-U";
+        this.mvc.perform(get("/api/user/question/100/comment")
+//                .header("Authorization", "Bearer " + token)
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(100)))
+                .andExpect(jsonPath("$[0].questionId", is(100)))
+                .andExpect(jsonPath("$[0].text", is("some text 1")))
+                .andExpect(jsonPath("$[0].userId", is(100)))
+                .andExpect(jsonPath("$[0].reputation", is(6)))
+                .andExpect(jsonPath("$[1].id", is(101)))
+                .andExpect(jsonPath("$[1].questionId", is(100)))
+                .andExpect(jsonPath("$[1].text", is("some text 2")))
+                .andExpect(jsonPath("$[1].userId", is(101)));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/questionDatasets/comment.yml",
+            "datasets/questionDatasets/commentQuestion.yml",
+            "datasets/questionDatasets/answer.yml",
+            "datasets/questionDatasets/tag.yml",
+            "datasets/questionCommentDatasets/user.yml",
+            "datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/questionHasTag.yml",
+            "datasets/questionDatasets/reputation.yml"
+    })
+    public void getEmptyListQuestionCommentByQuestionId() throws Exception {
+//        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6InRlc3RAbWFpbC5ydSJ9.KWuFTAd1XAlmFAIqqLlIxv4kho8zGQXXVUROZ2L_J-U";
+        mvc.perform(get("/api/user/question/500/comment")
+//                .header("Authorization", "Bearer " + token)
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
     }
 }
