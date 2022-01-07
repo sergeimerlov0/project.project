@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserTestDto;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoTestService;
@@ -23,12 +24,7 @@ public class UserResourceController {
 
     @Autowired
     private UserDtoService userDtoService;
-    private UserDtoTestService userDtoTestService;
 
-    @Autowired
-    public void setUserDtoTestServiceService(UserDtoTestService userDtoTestService) {
-        this.userDtoTestService = userDtoTestService;
-    }
 
     @GetMapping("/api/user/{userId}")
     @ApiOperation("Получение пользователя по ID")
@@ -45,15 +41,11 @@ public class UserResourceController {
             @ApiResponse(code = 200, message = "Success"),
             @ApiResponse(code = 400, message = "UserTestDto not exist")})
     @GetMapping("/paginationRega")
-    public ResponseEntity<PageDto<UserTestDto>> getUserRega(@RequestParam("page") int currentPageNumber, @RequestParam(value = "items", required = false) Integer itemsOnPage) {//Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
+    public ResponseEntity<PageDto<UserDto>> getUserRega(@RequestParam("page") int currentPageNumber, @RequestParam(value = "items", required = false) Integer itemsOnPage) {//Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
         Map<String, Object> objectMap = new HashMap<>();
         //Помещаем в мапу под ключ class нужный бин с нужной реализацией пагинации. Например, AllUser.
         objectMap.put("class", "RegaUser");
-        //Получаем страницу с нужной Dto
-        if (itemsOnPage == null) {
-            return ResponseEntity.ok(userDtoTestService.getPageDto(currentPageNumber, 10, objectMap));
-        }
-        return ResponseEntity.ok(userDtoTestService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
+        return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
     }
 
 }

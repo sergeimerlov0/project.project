@@ -58,24 +58,4 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.id").doesNotExist());
     }
 
-    @Test
-    @DataSet(value = {"dataset/UserResourceController/users.yml",
-            "dataset/UserResourceController/answer.yml",
-            "dataset/UserResourceController/question.yml",
-            "dataset/UserResourceController/reputations.yml",
-            "dataset/UserResourceController/roles.yml"})
-    void getUserRega() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/paginationRega"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(101))
-                .andExpect(jsonPath("$.email").value("SomeEmail@mail.mail"))
-                .andExpect(jsonPath("$.fullName").value("Max"))
-                .andExpect(jsonPath("$.linkImage").value("link"))
-                .andExpect(jsonPath("$.city").value("Moscow"))
-                .andExpect(jsonPath("$.reputation").value(101));
-    }
-
-
-
 }
