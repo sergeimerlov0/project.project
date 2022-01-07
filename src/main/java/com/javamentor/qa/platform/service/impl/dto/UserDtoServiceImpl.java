@@ -31,7 +31,6 @@ public class UserDtoServiceImpl  implements UserDtoService {
     }
 
 
-
     @Override
     public PageDto<UserDto> getPageDto(int currentPageNumber, int itemsOnPage, Map<String, Object> param) {
         //Здесь мы достаем нужную пагинацию, которая была помещена в контроллере по ключу class, и собираем PageDto
