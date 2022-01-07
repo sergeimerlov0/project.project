@@ -33,7 +33,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "question.persistDateTime, question.lastUpdateDateTime) " +
                 "from Question question " +
                 "join question.user as author " +
-                "join question.answers as answer " +
+                "left outer join question.answers as answer " +
                 "where question.id = :id", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
     }
 }
