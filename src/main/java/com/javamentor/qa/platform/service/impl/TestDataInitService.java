@@ -186,11 +186,7 @@ public class TestDataInitService {
             u.setNickname(nickname.toString());
 
             userService.persist(u);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
         }
     }
 }

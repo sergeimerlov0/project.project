@@ -40,11 +40,15 @@ public class UserResourceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success"),
             @ApiResponse(code = 400, message = "UserTestDto not exist")})
-    @GetMapping("/paginationRega")
-    public ResponseEntity<PageDto<UserDto>> getUserRega(@RequestParam("page") int currentPageNumber, @RequestParam(value = "items", required = false) Integer itemsOnPage) {//Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
+    @GetMapping("/paginationReg")
+    public ResponseEntity<PageDto<UserDto>> getUserByReg(@RequestParam("page") int currentPageNumber,
+                                                         @RequestParam(value = "items" , defaultValue = "10", required = false) Integer itemsOnPage) {
+        //Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
         Map<String, Object> objectMap = new HashMap<>();
         //Помещаем в мапу под ключ class нужный бин с нужной реализацией пагинации. Например, AllUser.
-        objectMap.put("class", "RegaUser");
+        objectMap.put("class", "RegUser");
+        objectMap.put("page", currentPageNumber);
+        objectMap.put("items", itemsOnPage);
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
     }
 
