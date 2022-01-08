@@ -55,7 +55,7 @@ public class AllQuestionDtoByTagId implements PaginationDtoAble<QuestionDto> {
     public int getTotalResultCount(Map<String, Object> param) {
         Long id = (Long) param.get("tagId");
         return Math.toIntExact((Long) entityManager.createQuery(
-                        "SELECT count(*) from Question question left outer join question.tags as tag where tag.id=:id")
+                        "SELECT count(*) from Question question left outer join question.tags as tag where tag.id=:id and question.isDeleted=false")
                 .setParameter("id", id).getSingleResult());
     }
 }

@@ -128,7 +128,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 .getContentAsString();
 
         //проверяем возвращаемое значение. В датасетах 3 вопроса с TagId 100, но один из них с IsDeleted=true
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/tag/100")
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/tag/100?page=1")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
