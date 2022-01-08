@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -35,5 +36,10 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "join question.user as author " +
                 "left outer join question.answers as answer " +
                 "where question.id = :id", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
+    }
+
+    @Override
+    public List<QuestionDto> getQuestionDtoNoAnswer() {
+        return null;
     }
 }

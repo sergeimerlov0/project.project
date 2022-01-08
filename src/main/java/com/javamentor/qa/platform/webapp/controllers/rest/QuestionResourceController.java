@@ -1,5 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
@@ -18,11 +20,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/user/question/")
+@RequestMapping("api/user/question")
 @Api(value = "Работа с вопросами", tags = {"Вопросы"})
 public class QuestionResourceController {
 
@@ -30,7 +32,7 @@ public class QuestionResourceController {
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
@@ -42,7 +44,22 @@ public class QuestionResourceController {
                 new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(id), HttpStatus.OK);
     }
 
-    @PostMapping("{questionId}/upVote")
+    @GetMapping("/noanswer")
+    @ApiOperation(value = "Получение QuestionDto, на которые нет ответов", tags = {"Получение QuestionDto"})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "QuestionDto успешно получено")})
+    public List<QuestionDto> getQuestionDtoNoAnswer() {
+        return new ArrayList<>();
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<PageDto<QuestionDto>> getQuestionDtoNoAnswerPagination(@PathVariable int currentPageNumber,
+                                                                                 int itemsOnPage) {
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("class", "QuestionDtoNoAnswer");
+        return ResponseEntity.ok(questionDtoService.getPageDto(1, 10, objectMap));
+    }
+
+    @PostMapping("/{questionId}/upVote")
     @ApiOperation(value = "Голосование за Question по Question id", tags = {"VoteQuestion up"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
@@ -61,7 +78,7 @@ public class QuestionResourceController {
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("{questionId}/downVote")
+    @PostMapping("/{questionId}/downVote")
     @ApiOperation(value = "Голосование за Question по Question id", tags = {"VoteQuestion down"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
@@ -79,5 +96,7 @@ public class QuestionResourceController {
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
+
+
 }
 
