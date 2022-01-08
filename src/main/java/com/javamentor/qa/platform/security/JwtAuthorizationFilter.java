@@ -32,31 +32,27 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException, NullPointerException {
-        String path = request.getServletPath();
-        if (path.equals("/api/auth/token")) {
+        String authHeader = request.getHeader(AUTHORIZATION);
+        if (authHeader == null) filterChain.doFilter(request, response);
+        else if (authHeader.startsWith("Bearer ")) {
+            String jwtToken = authHeader.substring("Bearer ".length());
+            DecodedJWT jwt = JWT.require(Algorithm.HMAC256("PrinceNanadaime".getBytes())).build().verify(jwtToken);
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(jwt.getId(), jwt.getSubject());
+            if (!authentication.isAuthenticated()) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
             filterChain.doFilter(request, response);
         } else {
-            String authHeader = request.getHeader(AUTHORIZATION);
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                String jwtToken = authHeader.substring("Bearer ".length());
-                DecodedJWT jwt = JWT.require(Algorithm.HMAC256("PrinceNanadaime".getBytes())).build().verify(jwtToken);
-
-                Authentication authentication = new UsernamePasswordAuthenticationToken(jwt.getId(), jwt.getSubject());
-                if (!authentication.isAuthenticated()) {
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-                filterChain.doFilter(request, response);
-            } else {
-                response.setContentType(APPLICATION_JSON_VALUE);
-                response.setStatus(FORBIDDEN.value());
-                Map<String, String> error = new LinkedHashMap<>();
-                error.put("timestamp", String.valueOf(new Date().getTime()));
-                error.put("status", "Forbidden");
-                error.put("message", "Forbidden");
-                error.put("path", request.getServletPath());
-                error.put("Generate token to get access: ", "/api/auth/token");
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
-            }
+            response.setContentType(APPLICATION_JSON_VALUE);
+            response.setStatus(FORBIDDEN.value());
+            Map<String, String> error = new LinkedHashMap<>();
+            error.put("timestamp", String.valueOf(new Date().getTime()));
+            error.put("status", "Forbidden");
+            error.put("message", "Forbidden");
+            error.put("path", request.getServletPath());
+            error.put("Generate token to get access: ", "/api/auth/token");
+            new ObjectMapper().writeValue(response.getOutputStream(), error);
         }
     }
 }
