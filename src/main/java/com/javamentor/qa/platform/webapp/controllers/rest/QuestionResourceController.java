@@ -44,19 +44,19 @@ public class QuestionResourceController {
                 new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(id), HttpStatus.OK);
     }
 
-    @GetMapping("/noanswer")
+    @GetMapping("/noAnswer")
     @ApiOperation(value = "Получение QuestionDto, на которые нет ответов", tags = {"Получение QuestionDto"})
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "QuestionDto успешно получено")})
-    public List<QuestionDto> getQuestionDtoNoAnswer() {
-        return new ArrayList<>();
-    }
-
-    @GetMapping("/pagination")
-    public ResponseEntity<PageDto<QuestionDto>> getQuestionDtoNoAnswerPagination(@PathVariable int currentPageNumber,
-                                                                                 int itemsOnPage) {
-        Map<String, Object> objectMap = new HashMap<>();
-        objectMap.put("class", "QuestionDtoNoAnswer");
-        return ResponseEntity.ok(questionDtoService.getPageDto(1, 10, objectMap));
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
+            @ApiResponse(code = 400, message = "Параметры заданы неверно")
+    })
+    public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int currentPageNumber,
+                                                    @RequestParam(required = false, defaultValue = "10")
+                                                            int itemsOnPage) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("class", "QuestionDtoNoAnswer");
+        PageDto<QuestionDto> page = questionDtoService.getPageDto(currentPageNumber, itemsOnPage, map);
+        return ResponseEntity.ok(page);
     }
 
     @PostMapping("/{questionId}/upVote")

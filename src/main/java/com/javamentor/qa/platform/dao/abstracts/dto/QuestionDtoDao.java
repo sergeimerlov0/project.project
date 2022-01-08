@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface QuestionDtoDao {
     Optional<QuestionDto> getQuestionDtoByQuestionId(Long id);
-    List<QuestionDto> getQuestionDtoNoAnswer();
 }
