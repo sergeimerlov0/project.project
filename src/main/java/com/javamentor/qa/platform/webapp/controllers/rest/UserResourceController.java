@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@Api("Rest Contoller to get a User by ID")
+@Api("Rest Controller to get a User by ID")
 public class UserResourceController {
 
     @Autowired
