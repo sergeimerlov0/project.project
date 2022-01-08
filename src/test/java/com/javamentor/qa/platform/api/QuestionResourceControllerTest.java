@@ -127,14 +127,22 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 .getResponse()
                 .getContentAsString();
 
-        //проверяем возвращаемое значение. В датасетах 3 вопроса с TagId 100, но один из них с IsDeleted=true
+        //проверяем возвращаемый Response. В датасетах 3 вопроса c id 100, 101, 102, имеющих связь с TagId 100,
+        //но вопрос c id 102 имеет поле IsDeleted=true
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/tag/100?page=1")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
+                //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
                 .andExpect(jsonPath("$.totalPageCount").value(1))
-                .andExpect(jsonPath("$.totalResultCount").value(2)) //
-//                .andExpect(jsonPath("$.items").value(6L))
-                .andExpect(jsonPath("$.itemsOnPage").value(10));
+                .andExpect(jsonPath("$.totalResultCount").value(2))
+                .andExpect(jsonPath("$.itemsOnPage").value(10))
+                //Проверяем, что в pageDto подтянулись нужные QuestionDto
+                .andExpect(jsonPath("$.items.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[1].id").value(101))
+                //Проверяем, что нужные QuestionDto также выгрузили список всех tags, связанныех с ними
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(101))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[2].id").value(102));
     }
 }
