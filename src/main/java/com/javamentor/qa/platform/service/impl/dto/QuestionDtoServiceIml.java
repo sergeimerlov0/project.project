@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class QuestionDtoServiceIml extends PaginationServiceDtoImpl<QuestionDto> implements QuestionDtoService {
     private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
 
     @Override
-    @Transactional
     public Optional<QuestionDto> getQuestionDtoByQuestionId(Long id) {
         Optional<QuestionDto> questionDto = questionDtoDao.getQuestionDtoByQuestionId(id);
         questionDto.ifPresent(dto -> dto.setListTagDto(tagDtoDao.getTagsByQuestionId(id)));

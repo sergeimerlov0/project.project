@@ -50,13 +50,14 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
             @ApiResponse(code = 400, message = "Параметры заданы неверно")
     })
-    public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int currentPageNumber,
-                                                    @RequestParam(required = false, defaultValue = "10")
-                                                            int itemsOnPage) {
+    public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int page,
+                                                    @RequestParam(defaultValue = "10") int items) {
         Map<String, Object> map = new HashMap<>();
         map.put("class", "QuestionDtoNoAnswer");
-        PageDto<QuestionDto> page = questionDtoService.getPageDto(currentPageNumber, itemsOnPage, map);
-        return ResponseEntity.ok(page);
+        map.put("currentPageNumber", page);
+        map.put("itemsOnPage", items);
+        PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, map);
+        return new ResponseEntity<>(pageDto, HttpStatus.OK);
     }
 
     @PostMapping("/{questionId}/upVote")
