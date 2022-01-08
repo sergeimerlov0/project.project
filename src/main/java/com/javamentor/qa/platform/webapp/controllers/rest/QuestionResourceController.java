@@ -1,10 +1,15 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -16,6 +21,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -23,7 +30,11 @@ import java.util.Optional;
 @RequestMapping("api/user/question/")
 @Api(value = "Работа с вопросами", tags = {"Вопросы"})
 public class QuestionResourceController {
+
     private final QuestionDtoService questionDtoService;
+    private final QuestionService questionService;
+    private final VoteQuestionService voteQuestionService;
+    private final TagService tagService;
 
     @GetMapping("{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -84,15 +95,15 @@ public class QuestionResourceController {
     public ResponseEntity<?> getQuestionDtoByTagId(@PathVariable Long id,
                                                                       @RequestParam int page,
                                                                       @RequestParam(defaultValue="10") int items) {
-        Map<String, Object> objectMap = new HashMap<>();
-        objectMap.put("class","AllQuestionDtoByTagId");
-        objectMap.put("tagId", id);
-        objectMap.put("currentPageNumber", page);
-        objectMap.put("itemsOnPage", items);
-        PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
-        if (pageDto.getItems().isEmpty()) {
-            return new ResponseEntity<>("Questions with tagId " + id + " not found!",HttpStatus.BAD_REQUEST);
+        if (tagService.existsById(id)) {
+            Map<String, Object> objectMap = new HashMap<>();
+            objectMap.put("class", "AllQuestionDtoByTagId");
+            objectMap.put("tagId", id);
+            objectMap.put("currentPageNumber", page);
+            objectMap.put("itemsOnPage", items);
+            PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
+            return new ResponseEntity<>(pageDto, HttpStatus.OK);
         }
-        return new ResponseEntity<>(pageDto, HttpStatus.OK);
+        return new ResponseEntity<>("Question with TagId " + id + " not found", HttpStatus.BAD_REQUEST);
     }
 }

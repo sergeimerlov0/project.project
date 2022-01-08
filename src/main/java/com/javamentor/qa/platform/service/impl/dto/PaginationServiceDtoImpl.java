@@ -11,7 +11,6 @@ import java.util.Map;
 
 //Сервис для конструирования страницы PageDTO<T>
 @Service
-@Transactional
 public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
 
     private Map<String, PaginationDtoAble<T>> map;
@@ -22,6 +21,7 @@ public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
     }
 
     @Override
+    @Transactional
     public PageDto<T> getPageDto(int currentPageNumber, int itemsOnPage, Map<String, Object> param) {
         //Здесь мы достаем нужную пагинацию, которая была помещена в контроллере по ключу class, и собираем PageDto
         PaginationDtoAble<T> dtoAble = map.get(param.get("class"));

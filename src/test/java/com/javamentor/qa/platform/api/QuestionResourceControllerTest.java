@@ -1,18 +1,22 @@
 package com.javamentor.qa.platform.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class QuestionResourceControllerTest extends AbstractApiTest {
 
@@ -98,5 +102,39 @@ class QuestionResourceControllerTest extends AbstractApiTest {
     void downUpVoteQuestionByNullQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/102/downVote"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DataSet(value = {"datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/answer.yml",
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/question.yml",
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/questionHasTag.yml",
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/reputation.yml",
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/role.yml",
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/tag.yml",
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/user.yml",
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/voteQuestion.yml",})
+    void getQuestionDtoByTagId() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        AuthenticationRequest request = new AuthenticationRequest();
+        request.setEmail("3user@mail.ru");
+        request.setPassword("3111");
+        String json = mapper.writeValueAsString(request);
+        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //проверяем возвращаемое значение. В датасетах 3 вопроса с TagId 100, но один из них с IsDeleted=true
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/tag/100")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(2)) //
+//                .andExpect(jsonPath("$.items").value(6L))
+                .andExpect(jsonPath("$.itemsOnPage").value(10));
     }
 }
