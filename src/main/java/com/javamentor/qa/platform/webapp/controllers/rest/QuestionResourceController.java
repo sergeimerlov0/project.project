@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.QuestionCommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
@@ -20,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +31,6 @@ public class QuestionResourceController {
 
     private final QuestionDtoService questionDtoService;
     private final QuestionService questionService;
-    private final QuestionCommentDtoService questionCommentDtoService;
     private final VoteQuestionService voteQuestionService;
 
     @GetMapping("{id}")
@@ -49,9 +48,14 @@ public class QuestionResourceController {
     @GetMapping("{id}/comment")
     @ApiOperation(value = "Получение списка QuestionCommentDto по Question id",
             tags = {"список", "комментарий", "вопрос"})
-    @ApiResponse(code = 200, message = "Список QuestionCommentDto успешно получен")
-    public ResponseEntity<List<QuestionCommentDto>> getQuestionCommentById(@PathVariable Long id) {
-        return new ResponseEntity<>(questionCommentDtoService.getQuestionCommentByQuestionId(id), HttpStatus.OK);
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Список QuestionCommentDto успешно получен"),
+            @ApiResponse(code = 404, message = "Вопрос с таким ID не найден")
+    })
+    public ResponseEntity<?> getQuestionCommentById(@PathVariable Long id) {
+        return questionService.getById(id).isPresent() ?
+                new ResponseEntity<>(questionDtoService.getQuestionCommentByQuestionId(id), HttpStatus.OK) :
+                new ResponseEntity<>("Question with id " + id + " not found!", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("{questionId}/upVote")
