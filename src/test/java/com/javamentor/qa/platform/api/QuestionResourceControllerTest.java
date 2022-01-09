@@ -145,11 +145,32 @@ class QuestionResourceControllerTest extends AbstractApiTest {
     })
     public void getEmptyListQuestionCommentByQuestionId() throws Exception {
 //        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6InRlc3RAbWFpbC5ydSJ9.KWuFTAd1XAlmFAIqqLlIxv4kho8zGQXXVUROZ2L_J-U";
-        mvc.perform(get("/api/user/question/500/comment")
+        mvc.perform(get("/api/user/question/101/comment")
 //                .header("Authorization", "Bearer " + token)
         )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/questionDatasets/comment.yml",
+            "datasets/questionDatasets/commentQuestion.yml",
+            "datasets/questionDatasets/answer.yml",
+            "datasets/questionDatasets/tag.yml",
+            "datasets/questionCommentDatasets/user.yml",
+            "datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/questionHasTag.yml",
+            "datasets/questionDatasets/reputation.yml"
+    })
+    public void shouldNotGetQuestionCommentByQuestionId() throws Exception {
+//        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6InRlc3RAbWFpbC5ydSJ9.KWuFTAd1XAlmFAIqqLlIxv4kho8zGQXXVUROZ2L_J-U";
+        mvc.perform(get("/api/user/question/500/comment")
+//                .header("Authorization", "Bearer " + token)
+        )
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Question with id 500 not found!"));
     }
 }
