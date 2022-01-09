@@ -1,4 +1,4 @@
-fetch('./api/user')
+fetch('./api/check/status')
     .then(
         function (response) {
             if (response.status === 403) {
