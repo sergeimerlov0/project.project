@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = "spring.config.location = src/test/resources/application-test.properties")
 @AutoConfigureMockMvc
 @DBUnit(caseSensitiveTableNames = true, cacheConnection = false, allowEmptyFields = true)
-public class TestUserResourceController extends AbstractApiTest {
+public class TestUserResourceController {
 
     @Autowired
     private MockMvc mockMvc;
