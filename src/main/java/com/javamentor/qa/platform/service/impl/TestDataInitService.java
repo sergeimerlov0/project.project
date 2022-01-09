@@ -38,8 +38,6 @@ public class TestDataInitService {
     }
 
     public void init() {
-        flyway.clean();
-        flyway.migrate();
         addRole();
         addUser();
         addTag();
