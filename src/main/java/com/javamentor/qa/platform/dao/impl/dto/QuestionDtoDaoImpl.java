@@ -1,12 +1,14 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
+import com.javamentor.qa.platform.models.dto.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -35,5 +37,25 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "join question.user as author " +
                 "left outer join question.answers as answer " +
                 "where question.id = :id", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
+    }
+
+    @Override
+    public List<QuestionCommentDto> getQuestionCommentByQuestionId(Long id) {
+        return entityManager.createQuery(
+                "SELECT new com.javamentor.qa.platform.models.dto.QuestionCommentDto (c.id, " +
+                        "cq.question.id," +
+                        "c.lastUpdateDateTime," +
+                        "c.persistDateTime," +
+                        "c.text," +
+                        "c.user.id," +
+                        "u.imageLink," +
+                        "(SELECT sum (r.count) from Reputation r where r.author.id = u.id))" +
+                        "FROM Comment c " +
+                        "INNER JOIN CommentQuestion cq ON(c.id = cq.comment.id)" +
+                        "LEFT OUTER JOIN User u ON(c.user.id = u.id)" +
+                        "WHERE cq.question.id = :id"
+                , QuestionCommentDto.class)
+                .setParameter("id", id)
+                .getResultList();
     }
 }
