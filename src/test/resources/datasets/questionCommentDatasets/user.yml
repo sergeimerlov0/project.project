@@ -1,0 +1,40 @@
+user_entity:
+  - id: 100
+    about: "Something"
+    city: "Moscow"
+    email: "test@mail.ru"
+    full_name: "Max"
+    image_link: "image.jpg"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2022-01-01 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName"
+    password: "password"
+    persist_date: 2022-01-01 00:00:00
+    role_id: 101
+
+  - id: 101
+    about: "Something else"
+    city: "Sankt-Peterburg"
+    email: "test1@mail.ru"
+    full_name: "Mex"
+    image_link: "image.jpg"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2022-01-01 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName"
+    password: "password"
+    persist_date: 2022-01-01 00:00:00
+    role_id: 100
+
+role:
+  - id: 100
+    name: ADMIN
+  - id : 101
+    name: USER
