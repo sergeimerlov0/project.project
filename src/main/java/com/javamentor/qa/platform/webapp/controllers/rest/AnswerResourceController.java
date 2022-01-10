@@ -7,13 +7,24 @@ import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.security.Principal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -25,7 +36,6 @@ public class AnswerResourceController {
     private final AnswerService answerService;
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
-    private final UserService userService;
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {
@@ -53,15 +63,17 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное голосование"),
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/upVote")
-    public ResponseEntity<Long> setUpVoteAnswerByAnswerId(@PathVariable("id") Long answerId, Principal principal) {
-        Optional<User> optionalUser = userService.getByEmail(principal.getName());
+    public ResponseEntity<?> setUpVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
-        if (optionalUser.isEmpty() || optionalAnswer.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (optionalAnswer.isEmpty()) {
+            return new ResponseEntity<>("Answer with id " + answerId + " not found", HttpStatus.BAD_REQUEST);
         }
-        User userSender = optionalUser.get();
         Answer answer = optionalAnswer.get();
-        return new ResponseEntity<>(voteAnswerService.postVoteUp(answerId, userSender, answer), HttpStatus.OK);
+        if (Objects.equals(answer.getUser().getId(), user.getId())) {
+            return new ResponseEntity<>("Voting for your answer with id " + answerId + " not allowed", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(voteAnswerService.postVoteUp(user, answer), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Голосование против ответа", tags = {"Получение общего количества голосов"})
@@ -69,15 +81,16 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное голосование"),
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/downVote")
-    public ResponseEntity<Long> setDownVoteAnswerByAnswerId(@PathVariable("id") Long answerId, Principal principal) {
-        Optional<User> optionalUser = userService.getByEmail(principal.getName());
+    public ResponseEntity<?> setDownVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
-        if (optionalUser.isEmpty() || optionalAnswer.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (optionalAnswer.isEmpty()) {
+            return new ResponseEntity<>("Answer with id " + answerId + " not found", HttpStatus.BAD_REQUEST);
         }
-        User userSender = optionalUser.get();
         Answer answer = optionalAnswer.get();
-        return new ResponseEntity<>(voteAnswerService.postVoteDown(answerId, userSender, answer), HttpStatus.OK);
+        if (Objects.equals(answer.getUser().getId(), user.getId())) {
+            return new ResponseEntity<>("Voting for your answer with id " + answerId + " not allowed", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(voteAnswerService.postVoteDown(user, answer), HttpStatus.OK);
     }
-
 }

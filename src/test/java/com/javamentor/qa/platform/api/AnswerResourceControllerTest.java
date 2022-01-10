@@ -1,24 +1,21 @@
 package com.javamentor.qa.platform.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
-import com.javamentor.qa.platform.JwtTokenTest;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AnswerResourceControllerTest extends AbstractApiTest {
 
@@ -118,22 +115,10 @@ class AnswerResourceControllerTest extends AbstractApiTest {
             "datasets/AnswerResourceController/votingApiDatasets/voteAnswer.yml"
     })
     public void setUpVoteAnswerByAnswerId() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        AuthenticationRequest request = new AuthenticationRequest();
-        request.setEmail("3user@mail.ru");
-        request.setPassword("3111");
-        String json = mapper.writeValueAsString(request);
-        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
 
         //проверяем возвращаемое значение. В датасетах в базе данных уже было 2 голоса ЗА ответ с id 100
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("3"));
 
@@ -146,14 +131,28 @@ class AnswerResourceControllerTest extends AbstractApiTest {
                 .toString()
                 .contentEquals("UP_VOTE"));
 
+        //Проверяем, что в БД изменилась репутация пользователя с id 101 (автор) по ответу с id 100. В датасетах изначальная репутация была 106
+        Assertions.assertTrue(entityManager.createQuery("select sum(r.count) from Reputation r where r.author.id=:author")
+                .setParameter("author", 101L)
+                .getSingleResult()
+                .toString()
+                .contentEquals("116"));
+
+        //Проверяем, что невозможно проголосовать за свой ответ. Ответ с id 100 принадлежит пользователю с id 101("test2@test.ru","123")
+        Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
+                        .header("Authorization", getJwtToken("test2@test.ru","123")))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString().contains("Voting for your answer with id " + 100 + " not allowed"));
+
+
         //проверяем невозможность проголосовать дважды за один ответ, как за, так и против
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
 
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
     }
@@ -170,22 +169,10 @@ class AnswerResourceControllerTest extends AbstractApiTest {
             "datasets/AnswerResourceController/votingApiDatasets/voteAnswer.yml"
     })
     public void setDownVoteAnswerByAnswerId() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        AuthenticationRequest request = new AuthenticationRequest();
-        request.setEmail("3user@mail.ru");
-        request.setPassword("3111");
-        String json = mapper.writeValueAsString(request);
-        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
 
         //проверяем возвращаемое значение. В датасетах в базе данных уже было 2 голоса ЗА ответ с id 100
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
 
@@ -198,15 +185,30 @@ class AnswerResourceControllerTest extends AbstractApiTest {
                 .toString()
                 .contentEquals("DOWN_VOTE"));
 
+        //Проверяем, что в БД изменилась репутация пользователя с id 101 (автор) по ответу с id 100. В датасетах изначальная репутация была 106
+        Assertions.assertTrue(entityManager.createQuery("select sum(r.count) from Reputation r where r.author.id=:author")
+                .setParameter("author", 101L)
+                .getSingleResult()
+                .toString()
+                .contentEquals("101"));
+
+        //Проверяем, что невозможно проголосовать за свой ответ. Ответ с id 100 принадлежит пользователю с id 101("test2@test.ru","123")
+        Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
+                        .header("Authorization", getJwtToken("test2@test.ru","123")))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString().contains("Voting for your answer with id " + 100 + " not allowed"));
+
+
         //проверяем невозможность проголосовать дважды за один ответ, как за, так и против
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
 
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
+
     }
 }

@@ -8,7 +8,7 @@ public interface VoteAnswerService extends ReadWriteService<VoteAnswer, Long> {
 
     Long getTotalVotesByAnswerId(Long id);
 
-    Long postVoteUp(Long answerId, User userSender, Answer answer);
+    Long postVoteUp(User userSender, Answer answer);
 
-    Long postVoteDown(Long answerId, User userSender, Answer answer);
+    Long postVoteDown(User userSender, Answer answer);
 }

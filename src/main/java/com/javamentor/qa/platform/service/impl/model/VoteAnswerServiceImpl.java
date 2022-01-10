@@ -36,17 +36,17 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
     @Override
     @Transactional
-    public Long postVoteUp(Long answerId, User userSender, Answer answer) {
+    public Long postVoteUp(User userSender, Answer answer) {
         voteAnswerDao.persist(new VoteAnswer(userSender, answer, VoteType.UP_VOTE));
         reputationDao.persist(new Reputation(answer.getUser(), userSender, UP_VOTE, ReputationType.VoteAnswer, answer));
-        return voteAnswerDao.getTotalVotesByAnswerId(answerId);
+        return voteAnswerDao.getTotalVotesByAnswerId(answer.getId());
     }
 
     @Override
     @Transactional
-    public Long postVoteDown(Long answerId, User userSender, Answer answer) {
+    public Long postVoteDown(User userSender, Answer answer) {
         voteAnswerDao.persist(new VoteAnswer(userSender, answer, VoteType.DOWN_VOTE));
         reputationDao.persist(new Reputation(answer.getUser(), userSender, DOWN_VOTE, ReputationType.VoteAnswer, answer));
-        return voteAnswerDao.getTotalVotesByAnswerId(answerId);
+        return voteAnswerDao.getTotalVotesByAnswerId(answer.getId());
     }
 }
