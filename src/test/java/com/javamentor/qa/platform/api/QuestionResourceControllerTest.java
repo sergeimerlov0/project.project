@@ -3,8 +3,11 @@ package com.javamentor.qa.platform.api;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -114,10 +117,8 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/questionDatasets/reputation.yml"
     })
     public void getAllQuestionCommentByQuestionId() throws Exception {
-//        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6InRlc3RAbWFpbC5ydSJ9.KWuFTAd1XAlmFAIqqLlIxv4kho8zGQXXVUROZ2L_J-U";
         this.mvc.perform(get("/api/user/question/100/comment")
-//                .header("Authorization", "Bearer " + token)
-        )
+                .header("Authorization", getJwtToken("test@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -144,10 +145,8 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/questionDatasets/reputation.yml"
     })
     public void getEmptyListQuestionCommentByQuestionId() throws Exception {
-//        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6InRlc3RAbWFpbC5ydSJ9.KWuFTAd1XAlmFAIqqLlIxv4kho8zGQXXVUROZ2L_J-U";
         mvc.perform(get("/api/user/question/101/comment")
-//                .header("Authorization", "Bearer " + token)
-        )
+                .header("Authorization", getJwtToken("test@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
@@ -165,12 +164,21 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/questionDatasets/reputation.yml"
     })
     public void shouldNotGetQuestionCommentByQuestionId() throws Exception {
-//        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6InRlc3RAbWFpbC5ydSJ9.KWuFTAd1XAlmFAIqqLlIxv4kho8zGQXXVUROZ2L_J-U";
         mvc.perform(get("/api/user/question/500/comment")
-//                .header("Authorization", "Bearer " + token)
-        )
+                .header("Authorization", getJwtToken("test@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Question with id 500 not found!"));
+    }
+
+    public String getJwtToken(String email, String password) throws Exception {
+        AuthenticationRequest request = new AuthenticationRequest();
+        request.setEmail(email);
+        request.setPassword(password);
+        String json = objectMapper.writeValueAsString(request);
+        MvcResult m = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andReturn();
+        return "Bearer " + m.getResponse().getContentAsString();
     }
 }
