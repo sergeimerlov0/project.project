@@ -3,11 +3,8 @@ package com.javamentor.qa.platform.api;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
-import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -169,16 +166,5 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Question with id 500 not found!"));
-    }
-
-    public String getJwtToken(String email, String password) throws Exception {
-        AuthenticationRequest request = new AuthenticationRequest();
-        request.setEmail(email);
-        request.setPassword(password);
-        String json = objectMapper.writeValueAsString(request);
-        MvcResult m = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andReturn();
-        return "Bearer " + m.getResponse().getContentAsString();
     }
 }
