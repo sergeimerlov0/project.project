@@ -62,7 +62,7 @@ public class TagResourceController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
         return new ResponseEntity<>(tagDtoService
-                .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
+                .getTrackedTagById(userId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Getting all IgnoredTagDto", tags = {"IgnoredTagDto"})
@@ -74,7 +74,7 @@ public class TagResourceController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
         return new ResponseEntity<>(tagDtoService
-                .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
+                .getIgnoreTagById(userId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Добавление тега в TrackedTag", tags = {"TrackedTag"})
@@ -86,6 +86,13 @@ public class TagResourceController {
     public ResponseEntity<List<TagDto>> addTrackedTag(Authentication authentication, @PathVariable Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
+
+        //Проверка существования тега
+        if(!tagService.existsById(id)) {
+            return new ResponseEntity<>(tagDtoService
+                    .getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
+        }
+
         TrackedTag trackedTag = new TrackedTag();
         Tag tag = tagService.getById(id).get();
         trackedTag.setTrackedTag(tag);
@@ -99,7 +106,7 @@ public class TagResourceController {
         //Выбрасывание 400 если в списке отслеживаемых тегов юзера уже имеется добавляемый тег
         if(trackedTagsByUserIds.contains(trackedTag.getTrackedTag().getId())) {
             return new ResponseEntity<>(tagDtoService
-                    .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.BAD_REQUEST);
+                    .getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
         }
 
         //Создание списка игнорируемых тегов принадлежащих авторизованному юзеру
@@ -116,7 +123,7 @@ public class TagResourceController {
 
         trackedTagService.persist(trackedTag);
         return new ResponseEntity<>(tagDtoService
-                .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
+                .getTrackedTagById(userId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Добавление тега в IgnoredTag", tags = {"IgnoredTag"})
@@ -128,6 +135,13 @@ public class TagResourceController {
     public ResponseEntity<List<TagDto>> addIgnoredTag(Authentication authentication, @PathVariable Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
+
+        //Проверка существования тега
+        if(!tagService.existsById(id)) {
+            return new ResponseEntity<>(tagDtoService
+                    .getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
+        }
+
         IgnoredTag ignoredTag = new IgnoredTag();
         Tag tag = tagService.getById(id).get();
         ignoredTag.setIgnoredTag(tag);
@@ -141,7 +155,7 @@ public class TagResourceController {
         //Выбрасывание 400 если в списке игнорируемых тегов юзера уже имеется добавляемый тег
         if(ignoredTagsByUserIds.contains(ignoredTag.getIgnoredTag().getId())) {
             return new ResponseEntity<>(tagDtoService
-                    .getTrackedTagById(userService.getById(userId).get().getId()), HttpStatus.BAD_REQUEST);
+                    .getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
         }
 
         //Создание списка отслеживаемых тегов принадлежащих авторизованному юзеру
@@ -157,6 +171,6 @@ public class TagResourceController {
         }
         ignoredTagService.persist(ignoredTag);
         return new ResponseEntity<>(tagDtoService
-                .getIgnoreTagById(userService.getById(userId).get().getId()), HttpStatus.OK);
+                .getIgnoreTagById(userId), HttpStatus.OK);
     }
 }
