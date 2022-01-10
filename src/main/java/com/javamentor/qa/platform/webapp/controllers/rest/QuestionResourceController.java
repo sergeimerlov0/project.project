@@ -17,7 +17,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -51,11 +56,15 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Параметры заданы неверно")
     })
     public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int page,
-                                                    @RequestParam(defaultValue = "10") int items) {
+                                                    @RequestParam(defaultValue = "10") int items,
+                                                    @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags,
+                                                    @RequestParam(required = false) List<Long> trackedTags) {
         Map<String, Object> map = new HashMap<>();
         map.put("class", "QuestionDtoNoAnswer");
         map.put("currentPageNumber", page);
         map.put("itemsOnPage", items);
+        map.put("ignoredTags", ignoredTags);
+        map.put("trackedTags", trackedTags);
         PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, map);
         return new ResponseEntity<>(pageDto, HttpStatus.OK);
     }
