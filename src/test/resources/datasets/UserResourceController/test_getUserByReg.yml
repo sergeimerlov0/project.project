@@ -1,0 +1,84 @@
+role:
+  - id: 100
+    name: "ROLE_USER"
+user_entity:
+  - id: 100
+    about: "Something"
+    city: "Moscow"
+    email: "SomeEmail0@mail.mail"
+    full_name: "Max"
+    image_link: "link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName"
+    password: "password"
+    persist_date: 2021-12-16 00:00:00
+    role_id: 100
+  - id: 101
+    about: "Something"
+    city: "Moscow"
+    email: "SomeEmail1@mail.mail"
+    full_name: "Max"
+    image_link: "link"
+    is_deleted: true
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName1"
+    password: "someHardPassword"
+    persist_date: 2021-12-16 00:00:00
+    role_id: 100
+  - id: 102
+    about: "Something"
+    city: "Moscow"
+    email: "SomeEmail2@mail.mail"
+    full_name: "Max"
+    image_link: "link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName2"
+    password: "someHardPassword"
+    persist_date: 2021-12-16 00:00:00
+    role_id: 100
+  - id: 103
+    about: "Something"
+    city: "Moscow"
+    email: "SomeEmail3@mail.mail"
+    full_name: "Max"
+    image_link: "link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName3"
+    password: "someHardPassword"
+    persist_date: 2021-12-16 00:00:00
+    role_id: 100
+  - id: 104
+    about: "Something"
+    city: "Moscow"
+    email: "SomeEmail4@mail.mail"
+    full_name: "Max"
+    image_link: "link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName4"
+    password: "someHardPassword"
+    persist_date: 2021-12-16 00:00:00
+    role_id: 100

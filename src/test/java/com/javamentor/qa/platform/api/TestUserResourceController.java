@@ -58,4 +58,17 @@ public class TestUserResourceController {
                 .andExpect(jsonPath("$.id").doesNotExist());
     }
 
+    @Test
+    @DataSet(value = {"dataset/UserResourceController/test_getUserByReg.yml"})
+
+    void getUserByReg() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/new"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(100))
+                .andExpect(jsonPath("$.email").value("SomeEmail0@mail.mail"))
+                .andExpect(jsonPath("$.fullName").value("Max"))
+                .andExpect(jsonPath("$.linkImage").value("link"))
+                .andExpect(jsonPath("$.city").value("Moscow"));
+    }
 }

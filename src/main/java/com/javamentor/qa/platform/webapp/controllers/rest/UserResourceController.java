@@ -2,9 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
-import com.javamentor.qa.platform.models.dto.UserTestDto;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserDtoTestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -26,7 +24,7 @@ public class UserResourceController {
     private UserDtoService userDtoService;
 
 
-    @GetMapping("/api/user/{userId}")
+    @GetMapping("/user/{userId}")
     @ApiOperation("Получение пользователя по ID")
     public ResponseEntity<?> getUserById(@PathVariable("userId") Long userId) {
 
@@ -36,13 +34,14 @@ public class UserResourceController {
 
     }
 
-    @ApiOperation(value = "Get users by Date Register", tags = {"UserTestDto"})
+    @ApiOperation(value = "Get users by Date Register")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success"),
-            @ApiResponse(code = 400, message = "UserTestDto not exist")})
-    @GetMapping("/paginationReg")
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "UserDto not exist")})
+
+    @GetMapping("/user/new")
     public ResponseEntity<PageDto<UserDto>> getUserByReg(@RequestParam("page") int currentPageNumber,
-                                                         @RequestParam(value = "items" , defaultValue = "10", required = false) Integer itemsOnPage) {
+                                                         @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage) {
         //Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
         Map<String, Object> objectMap = new HashMap<>();
         //Помещаем в мапу под ключ class нужный бин с нужной реализацией пагинации. Например, AllUser.
