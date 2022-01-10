@@ -47,6 +47,7 @@ public class TestDataInitService {
 
     private void addRole() {
         // изменить при необходимости
+        // TODO: 10.01.2022 почему роли без "ROLE_"
         roleService.persist(new Role("ADMIN"));
         roleService.persist(new Role("USER"));
     }
@@ -130,7 +131,7 @@ public class TestDataInitService {
         StringBuilder nickname = new StringBuilder();
 
         User admin = new User();
-        admin.setRole(adminRole);
+        admin.setRole(userRole);
         admin.setEmail(email.append("vasya@mail.ru").toString());
         admin.setPassword(password.append("password").toString());
         admin.setFullName(fullName.append("Vasya").toString());

@@ -68,7 +68,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http.cors();
         http.authorizeRequests()
                 .antMatchers("/api/auth/token").permitAll()
+                // TODO: 10.01.2022 почему "USER" , а не "ROLE_USER"
                 .antMatchers("/api/user/**").hasAuthority("USER")
+                //.antMatchers("/api/user/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

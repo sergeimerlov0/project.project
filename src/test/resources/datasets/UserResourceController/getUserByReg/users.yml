@@ -1,11 +1,8 @@
-role:
-  - id: 100
-    name: "ROLE_USER"
 user_entity:
   - id: 100
     about: "Something"
     city: "Moscow"
-    email: "SomeEmail0@mail.mail"
+    email: "test@mail.ru"
     full_name: "Max"
     image_link: "link"
     is_deleted: false
@@ -16,8 +13,8 @@ user_entity:
     link_vk: "vk@link"
     nickname: "NickName"
     password: "password"
-    persist_date: 2021-12-16 00:00:00
-    role_id: 100
+    persist_date: 2021-01-05 00:00:00
+    role_id: 101
   - id: 101
     about: "Something"
     city: "Moscow"
@@ -32,8 +29,8 @@ user_entity:
     link_vk: "vk@link"
     nickname: "NickName1"
     password: "someHardPassword"
-    persist_date: 2021-12-16 00:00:00
-    role_id: 100
+    persist_date: 2021-01-04 00:00:00
+    role_id: 101
   - id: 102
     about: "Something"
     city: "Moscow"
@@ -48,8 +45,8 @@ user_entity:
     link_vk: "vk@link"
     nickname: "NickName2"
     password: "someHardPassword"
-    persist_date: 2021-12-16 00:00:00
-    role_id: 100
+    persist_date: 2021-01-03 00:00:00
+    role_id: 101
   - id: 103
     about: "Something"
     city: "Moscow"
@@ -64,8 +61,8 @@ user_entity:
     link_vk: "vk@link"
     nickname: "NickName3"
     password: "someHardPassword"
-    persist_date: 2021-12-16 00:00:00
-    role_id: 100
+    persist_date: 2021-01-02 00:00:00
+    role_id: 101
   - id: 104
     about: "Something"
     city: "Moscow"
@@ -80,5 +77,21 @@ user_entity:
     link_vk: "vk@link"
     nickname: "NickName4"
     password: "someHardPassword"
-    persist_date: 2021-12-16 00:00:00
+    persist_date: 2021-01-01 00:00:00
+    role_id: 101
+  - id: 105
+    about: "Something"
+    city: "Moscow"
+    email: "admin@mail.ru"
+    full_name: "Max"
+    image_link: "link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName"
+    password: "password"
+    persist_date: 2022-01-01 00:00:00
     role_id: 100

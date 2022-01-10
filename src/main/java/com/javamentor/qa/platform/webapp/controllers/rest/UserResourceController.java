@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 @Api("Rest Controller to get a User by ID")
 public class UserResourceController {
 
@@ -24,7 +24,7 @@ public class UserResourceController {
     private UserDtoService userDtoService;
 
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/{userId}")
     @ApiOperation("Получение пользователя по ID")
     public ResponseEntity<?> getUserById(@PathVariable("userId") Long userId) {
 
@@ -39,7 +39,7 @@ public class UserResourceController {
             @ApiResponse(code = 200, message = "Success", response = PageDto.class),
             @ApiResponse(code = 400, message = "UserDto not exist")})
 
-    @GetMapping("/user/new")
+    @GetMapping("/new")
     public ResponseEntity<PageDto<UserDto>> getUserByReg(@RequestParam("page") int currentPageNumber,
                                                          @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage) {
         //Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
