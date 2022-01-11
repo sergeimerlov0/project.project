@@ -47,7 +47,6 @@ public class TestDataInitService {
 
     private void addRole() {
         // изменить при необходимости
-        // TODO: 10.01.2022 почему роли без "ROLE_"
         roleService.persist(new Role("ADMIN"));
         roleService.persist(new Role("USER"));
     }
