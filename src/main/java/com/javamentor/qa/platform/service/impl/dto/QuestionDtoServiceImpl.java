@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionDtoServiceIml implements QuestionDtoService {
+public class QuestionDtoServiceImpl extends PaginationServiceDtoImpl<QuestionDto> implements QuestionDtoService {
     private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
 
