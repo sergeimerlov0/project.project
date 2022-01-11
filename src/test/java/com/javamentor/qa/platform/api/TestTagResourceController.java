@@ -18,12 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * \* Created with IntelliJ IDEA.
- * \* User: Rustam
- */
-
-@DataSet(cleanBefore = true, cleanAfter = true)
 public class TestTagResourceController extends AbstractApiTest {
 
     @PersistenceContext
@@ -67,17 +61,15 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/TagResourseController/role.yml",
-            "datasets/TagResourseController/user.yml",
-            "datasets/TagResourseController/tag.yml",
-            "datasets/TagResourseController/tagIgnored.yml",
-            "datasets/TagResourseController/tagTracked.yml"
-    })
+            "datasets/TagResourceController/role.yml",
+            "datasets/TagResourceController/user.yml",
+            "datasets/TagResourceController/tag.yml",
+            "datasets/TagResourceController/tagIgnored.yml",
+            "datasets/TagResourceController/tagTracked.yml"
+    }, cleanBefore = true, cleanAfter = true)
     void getAllIgnoredTagDto() throws Exception {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
-
         mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/ignored")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("123@mail.com", "password")))
                 .andExpect(status().isOk());
         Assertions.assertTrue(entityManager.createQuery("select t.ignoredTag.id from IgnoredTag t where t.user.id=:id", Long.class)
                 .setParameter("id", 101L)
@@ -87,17 +79,15 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/TagResourseController/role.yml",
-            "datasets/TagResourseController/user.yml",
-            "datasets/TagResourseController/tag.yml",
-            "datasets/TagResourseController/tagIgnored.yml",
-            "datasets/TagResourseController/tagTracked.yml"
-    })
+            "datasets/TagResourceController/role.yml",
+            "datasets/TagResourceController/user.yml",
+            "datasets/TagResourceController/tag.yml",
+            "datasets/TagResourceController/tagIgnored.yml",
+            "datasets/TagResourceController/tagTracked.yml"
+    }, cleanBefore = true, cleanAfter = true)
     public void testAddIgnoredTag() throws Exception {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
-
         mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/102/ignored")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("123@mail.com", "password")))
                 .andExpect(status().isOk());
         Assertions.assertTrue(entityManager.createQuery("select t.ignoredTag.id from IgnoredTag t where t.user.id=:id", Long.class)
                 .setParameter("id", 101L)
@@ -107,17 +97,15 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/TagResourseController/role.yml",
-            "datasets/TagResourseController/user.yml",
-            "datasets/TagResourseController/tag.yml",
-            "datasets/TagResourseController/tagIgnored.yml",
-            "datasets/TagResourseController/tagTracked.yml"
-    })
+            "datasets/TagResourceController/role.yml",
+            "datasets/TagResourceController/user.yml",
+            "datasets/TagResourceController/tag.yml",
+            "datasets/TagResourceController/tagIgnored.yml",
+            "datasets/TagResourceController/tagTracked.yml"
+    }, cleanBefore = true, cleanAfter = true)
     void getAllTrackedTagDto() throws Exception {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
-
         mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/tracked")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("123@mail.com", "password")))
                 .andExpect(status().isOk());
         Assertions.assertTrue(entityManager.createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
                 .setParameter("id", 101L)
@@ -127,17 +115,15 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/TagResourseController/role.yml",
-            "datasets/TagResourseController/user.yml",
-            "datasets/TagResourseController/tag.yml",
-            "datasets/TagResourseController/tagIgnored.yml",
-            "datasets/TagResourseController/tagTracked.yml"
-    })
+            "datasets/TagResourceController/role.yml",
+            "datasets/TagResourceController/user.yml",
+            "datasets/TagResourceController/tag.yml",
+            "datasets/TagResourceController/tagIgnored.yml",
+            "datasets/TagResourceController/tagTracked.yml"
+    }, cleanBefore = true, cleanAfter = true)
     public void testAddTrackedTag() throws Exception {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
-
         mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/105/tracked")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("123@mail.com", "password")))
                 .andExpect(status().isOk());
         Assertions.assertTrue(entityManager.createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
                 .setParameter("id", 101L)
