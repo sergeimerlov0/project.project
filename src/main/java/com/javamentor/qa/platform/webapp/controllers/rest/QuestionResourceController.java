@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -19,13 +18,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -106,7 +107,7 @@ public class QuestionResourceController {
     @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto по tagId"})
     @ApiResponses( value = {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
-            @ApiResponse(code = 400, message = "Вопросы с таким TagId не найдены")
+            @ApiResponse(code = 400, message = "Данный TagId не найден")
     })
     public ResponseEntity<?> getQuestionDtoByTagId(@PathVariable Long id,
                                                                       @RequestParam int page,
@@ -120,6 +121,6 @@ public class QuestionResourceController {
             PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
             return new ResponseEntity<>(pageDto, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Question with TagId " + id + " not found", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("TagId " + id + " not found", HttpStatus.BAD_REQUEST);
     }
 }

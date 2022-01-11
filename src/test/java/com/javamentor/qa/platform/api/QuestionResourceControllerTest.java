@@ -1,26 +1,21 @@
 package com.javamentor.qa.platform.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
-import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class QuestionResourceControllerTest extends AbstractApiTest {
 
@@ -184,23 +179,11 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/user.yml",
             "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/voteQuestion.yml",})
     void getQuestionDtoByTagId() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        AuthenticationRequest request = new AuthenticationRequest();
-        request.setEmail("3user@mail.ru");
-        request.setPassword("3111");
-        String json = mapper.writeValueAsString(request);
-        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
 
         //проверяем возвращаемый Response. В датасетах 3 вопроса c id 100, 101, 102, имеющих связь с TagId 100,
         //но вопрос c id 102 имеет поле IsDeleted=true
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/tag/100?page=1")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -210,8 +193,20 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 //Проверяем, что в pageDto подтянулись нужные QuestionDto
                 .andExpect(jsonPath("$.items.[0].id").value(100))
                 .andExpect(jsonPath("$.items.[1].id").value(101))
+                //Проверяем, что значения полей QuestionDto, например, с id 100 заполнены
+                .andExpect(jsonPath("$.items.[0].title").value("title by question 100"))
+                .andExpect(jsonPath("$.items.[0].authorId").value(100))
+                .andExpect(jsonPath("$.items.[0].authorReputation").value(6))
+                .andExpect(jsonPath("$.items.[0].authorName").value("User with id 100"))
+                .andExpect(jsonPath("$.items.[0].authorImage").value("image100"))
+                .andExpect(jsonPath("$.items.[0].description").value("description by question 100"))
+                .andExpect(jsonPath("$.items.[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items.[0].countAnswer").value(3))
+                .andExpect(jsonPath("$.items.[0].countValuable").value(1))
                 //Проверяем, что нужные QuestionDto также выгрузили список всех tags, связанныех с ними
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].name").value("test tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].description").value("description for tag 100"))
                 .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(101))
                 .andExpect(jsonPath("$.items.[0].listTagDto.[2].id").value(102));
     }

@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.dao.impl.dto.pagination.questionDto;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +14,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AllQuestionDtoByTagId implements PaginationDtoAble<QuestionDto> {
 
-    private final TagDtoDao tagDtoDao;
-
     @PersistenceContext
     EntityManager entityManager;
 
@@ -25,7 +22,7 @@ public class AllQuestionDtoByTagId implements PaginationDtoAble<QuestionDto> {
         Long id = (Long) param.get("tagId");
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
-        List<QuestionDto> questionDtoList = entityManager.createQuery(
+        return entityManager.createQuery(
                 "SELECT DISTINCT new com.javamentor.qa.platform.models.dto." +
                         "QuestionDto(question.id, question.title, author.id, " +
                         "(SELECT sum (reputation.count) from Reputation reputation where reputation.author.id = author.id), " +
@@ -45,10 +42,6 @@ public class AllQuestionDtoByTagId implements PaginationDtoAble<QuestionDto> {
                 .setParameter("id", id)
                 .getResultStream()
                 .skip((currentPageNumber-1)*itemsOnPage).limit(itemsOnPage).collect(Collectors.toList());
-        for (QuestionDto questionDto: questionDtoList) {
-            questionDto.setListTagDto(tagDtoDao.getTagsByQuestionId(questionDto.getId()));
-        }
-        return questionDtoList;
     }
 
     @Override
