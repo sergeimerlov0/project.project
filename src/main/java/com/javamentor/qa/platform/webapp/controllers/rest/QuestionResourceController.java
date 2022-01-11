@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.dto.QuestionCommentDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
@@ -25,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.*;
 
 @RestController
@@ -49,6 +53,20 @@ public class QuestionResourceController {
                 new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(id), HttpStatus.OK);
     }
 
+    @GetMapping("{id}/comment")
+    @ApiOperation(value = "Получение списка QuestionCommentDto по Question id",
+            tags = {"список", "комментарий", "вопрос"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Список QuestionCommentDto успешно получен"),
+            @ApiResponse(code = 404, message = "Вопрос с таким ID не найден")
+    })
+    public ResponseEntity<?> getQuestionCommentById(@PathVariable Long id) {
+        return questionService.getById(id).isPresent() ?
+                new ResponseEntity<>(questionDtoService.getQuestionCommentByQuestionId(id), HttpStatus.OK) :
+                new ResponseEntity<>("Question with id " + id + " not found!", HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("{questionId}/upVote")
     @GetMapping("/noAnswer")
     @ApiOperation(value = "Получение QuestionDto, на которые нет ответов", tags = {"Получение QuestionDto"})
     @ApiResponses(value = {
