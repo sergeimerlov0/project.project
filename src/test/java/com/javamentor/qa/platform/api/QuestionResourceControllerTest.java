@@ -14,8 +14,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class QuestionResourceControllerTest extends AbstractApiTest {
@@ -102,6 +106,72 @@ class QuestionResourceControllerTest extends AbstractApiTest {
     void downUpVoteQuestionByNullQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/102/downVote"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/questionDatasets/comment.yml",
+            "datasets/questionDatasets/commentQuestion.yml",
+            "datasets/questionDatasets/answer.yml",
+            "datasets/questionDatasets/tag.yml",
+            "datasets/questionCommentDatasets/user.yml",
+            "datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/questionHasTag.yml",
+            "datasets/questionDatasets/reputation.yml"
+    })
+    public void getAllQuestionCommentByQuestionId() throws Exception {
+        this.mvc.perform(get("/api/user/question/100/comment")
+                .header("Authorization", getJwtToken("test@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(100)))
+                .andExpect(jsonPath("$[0].questionId", is(100)))
+                .andExpect(jsonPath("$[0].text", is("some text 1")))
+                .andExpect(jsonPath("$[0].userId", is(100)))
+                .andExpect(jsonPath("$[0].reputation", is(6)))
+                .andExpect(jsonPath("$[1].id", is(101)))
+                .andExpect(jsonPath("$[1].questionId", is(100)))
+                .andExpect(jsonPath("$[1].text", is("some text 2")))
+                .andExpect(jsonPath("$[1].userId", is(101)));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/questionDatasets/comment.yml",
+            "datasets/questionDatasets/commentQuestion.yml",
+            "datasets/questionDatasets/answer.yml",
+            "datasets/questionDatasets/tag.yml",
+            "datasets/questionCommentDatasets/user.yml",
+            "datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/questionHasTag.yml",
+            "datasets/questionDatasets/reputation.yml"
+    })
+    public void getEmptyListQuestionCommentByQuestionId() throws Exception {
+        mvc.perform(get("/api/user/question/101/comment")
+                .header("Authorization", getJwtToken("test@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/questionDatasets/comment.yml",
+            "datasets/questionDatasets/commentQuestion.yml",
+            "datasets/questionDatasets/answer.yml",
+            "datasets/questionDatasets/tag.yml",
+            "datasets/questionCommentDatasets/user.yml",
+            "datasets/questionDatasets/question.yml",
+            "datasets/questionDatasets/questionHasTag.yml",
+            "datasets/questionDatasets/reputation.yml"
+    })
+    public void shouldNotGetQuestionCommentByQuestionId() throws Exception {
+        mvc.perform(get("/api/user/question/500/comment")
+                .header("Authorization", getJwtToken("test@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Question with id 500 not found!"));
     }
 
     @Test
