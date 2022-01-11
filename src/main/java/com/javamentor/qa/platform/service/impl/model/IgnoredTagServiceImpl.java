@@ -6,6 +6,8 @@ import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class IgnoredTagServiceImpl extends ReadWriteServiceImpl<IgnoredTag, Long> implements IgnoredTagService {
     private final IgnoredTagDao ignoredTagDao;
@@ -14,6 +16,11 @@ public class IgnoredTagServiceImpl extends ReadWriteServiceImpl<IgnoredTag, Long
     public IgnoredTagServiceImpl(IgnoredTagDao ignoredTagDao) {
         super(ignoredTagDao);
         this.ignoredTagDao = ignoredTagDao;
+    }
+
+    @Override
+    public List<Long> ignoredTagsByUserId(Long userId) {
+        return ignoredTagDao.ignoredTagsByUserId(userId);
     }
 
     @Override

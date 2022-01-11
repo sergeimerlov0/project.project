@@ -49,8 +49,7 @@ public class TestDataInitService {
         addTag();
         addQuestion();
         addAnswer();
-        addTrackedTag();
-        addIgnoredTag();
+        addTrackedAndIgnoredTag();
     }
 
     private void addRole() {
@@ -195,42 +194,25 @@ public class TestDataInitService {
         }
     }
 
-    private void addTrackedTag() {
+    private void addTrackedAndIgnoredTag() {
         List<Tag> tags = new ArrayList<>();
 
-        // добавление тегов юзерам. Первый юзер без тегов
         for (int x = 2; x <= 50; x++) {
             tags.clear();
+            int countTrackedTag = (int) (Math.random() * 4);
+            int countIgnoredTag = (int) (Math.random() * 4);
             User user = userService.getById((long) x).get();
 
-            // добавление рандомных тегов в рандомном количестве [0;3]
-            for (int y = ((int) (Math.random() * 4)); y <= 2; y++) {
+            for (int y = 0; y <= 5; y++) {
                 TrackedTag trackedTag = new TrackedTag();
+                IgnoredTag ignoredTag = new IgnoredTag();
                 Tag tag = tagService.getById((long) (1 + (int) (Math.random() * 49))).get();
-                if (!tags.contains(tag)) {
+                if (!tags.contains(tag) && trackedTagService.trackedTagsByUserId(user.getId()).size() < countTrackedTag) {
                     tags.add(tag);
                     trackedTag.setTrackedTag(tag);
                     trackedTag.setUser(user);
                     trackedTagService.persist(trackedTag);
-                }
-            }
-
-        }
-    }
-
-    private void addIgnoredTag() {
-        List<Tag> tags = new ArrayList<>();
-
-        // добавление тегов юзерам. Первый юзер без тегов
-        for (int x = 2; x <= 50; x++) {
-            tags.clear();
-            User user = userService.getById((long) x).get();
-
-            // добавление рандомных тегов в рандомном количестве [0;3]
-            for (int y = ((int) (Math.random() * 4)); y <= 2; y++) {
-                IgnoredTag ignoredTag = new IgnoredTag();
-                Tag tag = tagService.getById((long) (1 + (int) (Math.random() * 49))).get();
-                if (!tags.contains(tag)) {
+                } else if (!tags.contains(tag) && ignoredTagService.ignoredTagsByUserId(user.getId()).size() < countIgnoredTag) {
                     tags.add(tag);
                     ignoredTag.setIgnoredTag(tag);
                     ignoredTag.setUser(user);

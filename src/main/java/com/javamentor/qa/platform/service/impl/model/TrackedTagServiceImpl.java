@@ -6,6 +6,8 @@ import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long> implements TrackedTagService {
     private final TrackedTagDao trackedTagDao;
@@ -14,6 +16,11 @@ public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long
     public TrackedTagServiceImpl(TrackedTagDao trackedTagDao) {
         super(trackedTagDao);
         this.trackedTagDao = trackedTagDao;
+    }
+
+    @Override
+    public List<Long> trackedTagsByUserId(Long userId) {
+        return trackedTagDao.trackedTagsByUserId(userId);
     }
 
     @Override

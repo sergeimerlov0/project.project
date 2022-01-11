@@ -6,12 +6,20 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 public class TrackedTagDaoImpl extends ReadWriteDaoImpl<TrackedTag, Long> implements TrackedTagDao {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Override
+    public List<Long> trackedTagsByUserId(Long userId) {
+        return entityManager
+                .createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
+                .setParameter("id", userId).getResultList();
+    }
 
     @Override
     public boolean tagIsPresentInTheListOfUser(Long userId, Long tagId) {
