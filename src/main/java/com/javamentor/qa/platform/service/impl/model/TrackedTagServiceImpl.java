@@ -8,9 +8,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long> implements TrackedTagService {
+    private final TrackedTagDao trackedTagDao;
 
     @Autowired
     public TrackedTagServiceImpl(TrackedTagDao trackedTagDao) {
         super(trackedTagDao);
+        this.trackedTagDao = trackedTagDao;
+    }
+
+    @Override
+    public boolean tagIsPresentInTheListOfUser(Long userId, Long tagId) {
+        return trackedTagDao.tagIsPresentInTheListOfUser(userId, tagId);
     }
 }

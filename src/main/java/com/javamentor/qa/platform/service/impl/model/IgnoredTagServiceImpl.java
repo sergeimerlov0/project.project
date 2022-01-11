@@ -8,9 +8,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class IgnoredTagServiceImpl extends ReadWriteServiceImpl<IgnoredTag, Long> implements IgnoredTagService {
+    private final IgnoredTagDao ignoredTagDao;
 
     @Autowired
     public IgnoredTagServiceImpl(IgnoredTagDao ignoredTagDao) {
         super(ignoredTagDao);
+        this.ignoredTagDao = ignoredTagDao;
+    }
+
+    @Override
+    public boolean tagIsPresentInTheListOfUser(Long userId, Long tagId) {
+        return ignoredTagDao.tagIsPresentInTheListOfUser(userId, tagId);
     }
 }

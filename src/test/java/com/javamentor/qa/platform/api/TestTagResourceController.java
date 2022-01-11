@@ -67,11 +67,11 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/tagAddTrackedAndIgnoredDataset/role.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/user.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tag.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tagIgnored.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tagTracked.yml"
+            "datasets/TagResourseController/role.yml",
+            "datasets/TagResourseController/user.yml",
+            "datasets/TagResourseController/tag.yml",
+            "datasets/TagResourseController/tagIgnored.yml",
+            "datasets/TagResourseController/tagTracked.yml"
     })
     void getAllIgnoredTagDto() throws Exception {
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
@@ -87,11 +87,11 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/tagAddTrackedAndIgnoredDataset/role.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/user.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tag.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tagIgnored.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tagTracked.yml"
+            "datasets/TagResourseController/role.yml",
+            "datasets/TagResourseController/user.yml",
+            "datasets/TagResourseController/tag.yml",
+            "datasets/TagResourseController/tagIgnored.yml",
+            "datasets/TagResourseController/tagTracked.yml"
     })
     public void testAddIgnoredTag() throws Exception {
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
@@ -107,11 +107,11 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/tagAddTrackedAndIgnoredDataset/role.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/user.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tag.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tagIgnored.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tagTracked.yml"
+            "datasets/TagResourseController/role.yml",
+            "datasets/TagResourseController/user.yml",
+            "datasets/TagResourseController/tag.yml",
+            "datasets/TagResourseController/tagIgnored.yml",
+            "datasets/TagResourseController/tagTracked.yml"
     })
     void getAllTrackedTagDto() throws Exception {
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";
@@ -127,11 +127,11 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/tagAddTrackedAndIgnoredDataset/role.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/user.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tag.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tagIgnored.yml",
-            "datasets/tagAddTrackedAndIgnoredDataset/tagTracked.yml"
+            "datasets/TagResourseController/role.yml",
+            "datasets/TagResourseController/user.yml",
+            "datasets/TagResourseController/tag.yml",
+            "datasets/TagResourseController/tagIgnored.yml",
+            "datasets/TagResourseController/tagTracked.yml"
     })
     public void testAddTrackedTag() throws Exception {
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6IjEyM0BtYWlsLmNvbSJ9.kDkK1CEr1C6RVXwsvid1w451Ykmw6BjpbbFFEjLgYJw";

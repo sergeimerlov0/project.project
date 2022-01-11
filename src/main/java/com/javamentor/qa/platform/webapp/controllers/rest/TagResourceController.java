@@ -23,9 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,10 +31,6 @@ import java.util.List;
 @RequestMapping("/api/user/tag")
 @Api(value = "Работа с тэгами на вопросы", tags = {"Тэг и вопросы"})
 public class TagResourceController {
-
-    @PersistenceContext
-    EntityManager entityManager;
-
     private final TrackedTagService trackedTagService;
     private final IgnoredTagService ignoredTagService;
     private final TagDtoService tagDtoService;
@@ -61,8 +54,7 @@ public class TagResourceController {
     public ResponseEntity<List<TagDto>> getAllTrackedTagDto(Authentication authentication) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
-        return new ResponseEntity<>(tagDtoService
-                .getTrackedTagById(userId), HttpStatus.OK);
+        return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Getting all IgnoredTagDto", tags = {"IgnoredTagDto"})
@@ -73,8 +65,7 @@ public class TagResourceController {
     public ResponseEntity<List<TagDto>> getAllIgnoredTagDto(Authentication authentication) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
-        return new ResponseEntity<>(tagDtoService
-                .getIgnoreTagById(userId), HttpStatus.OK);
+        return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Добавление тега в TrackedTag", tags = {"TrackedTag"})
@@ -83,14 +74,12 @@ public class TagResourceController {
             @ApiResponse(code = 400, message = "Тег уже добавлен")})
     @PostMapping("/{id}/tracked")
     @Transactional
-    public ResponseEntity<List<TagDto>> addTrackedTag(Authentication authentication, @PathVariable Long id) {
+    public ResponseEntity<List<TagDto>> addTrackedTag(@PathVariable Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
 
-        //Проверка существования тега
-        if(!tagService.existsById(id)) {
-            return new ResponseEntity<>(tagDtoService
-                    .getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
+        if (!tagService.existsById(id)) {
+            return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
         }
 
         TrackedTag trackedTag = new TrackedTag();
@@ -98,32 +87,12 @@ public class TagResourceController {
         trackedTag.setTrackedTag(tag);
         trackedTag.setUser(user);
 
-        //Создание списка отслеживаемых тегов принадлежащих авторизованному юзеру
-        List<Long> trackedTagsByUserIds = entityManager
-                .createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
-                .setParameter("id", userId).getResultList();
-
-        //Выбрасывание 400 если в списке отслеживаемых тегов юзера уже имеется добавляемый тег
-        if(trackedTagsByUserIds.contains(trackedTag.getTrackedTag().getId())) {
-            return new ResponseEntity<>(tagDtoService
-                    .getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
-        }
-
-        //Создание списка игнорируемых тегов принадлежащих авторизованному юзеру
-        List<Long> allIgnoredTagsIds = entityManager
-                .createQuery("select t.ignoredTag.id from IgnoredTag t where t.user.id=:id", Long.class)
-                .setParameter("id", userId).getResultList();
-
-        //Удаление тега добавленного в отслеживаемые из списка игнорируемых
-        if(allIgnoredTagsIds.contains(id)) {
-            entityManager.joinTransaction();
-            entityManager.createQuery("delete from IgnoredTag t where t.ignoredTag.id=:id")
-                    .setParameter("id", id).executeUpdate();
+        if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id) || trackedTagService.tagIsPresentInTheListOfUser(userId, id)) {
+            return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
         }
 
         trackedTagService.persist(trackedTag);
-        return new ResponseEntity<>(tagDtoService
-                .getTrackedTagById(userId), HttpStatus.OK);
+        return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Добавление тега в IgnoredTag", tags = {"IgnoredTag"})
@@ -132,14 +101,12 @@ public class TagResourceController {
             @ApiResponse(code = 400, message = "Тег уже добавлен")})
     @PostMapping("/{id}/ignored")
     @Transactional
-    public ResponseEntity<List<TagDto>> addIgnoredTag(Authentication authentication, @PathVariable Long id) {
+    public ResponseEntity<List<TagDto>> addIgnoredTag(@PathVariable Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
 
-        //Проверка существования тега
-        if(!tagService.existsById(id)) {
-            return new ResponseEntity<>(tagDtoService
-                    .getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
+        if (!tagService.existsById(id)) {
+            return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
         }
 
         IgnoredTag ignoredTag = new IgnoredTag();
@@ -147,30 +114,11 @@ public class TagResourceController {
         ignoredTag.setIgnoredTag(tag);
         ignoredTag.setUser(user);
 
-        //Создание списка игнорируемых тегов принадлежащих авторизованному юзеру
-        List<Long> ignoredTagsByUserIds = entityManager
-                .createQuery("select t.ignoredTag.id from IgnoredTag t where t.user.id=:id", Long.class)
-                .setParameter("id", userId).getResultList();
-
-        //Выбрасывание 400 если в списке игнорируемых тегов юзера уже имеется добавляемый тег
-        if(ignoredTagsByUserIds.contains(ignoredTag.getIgnoredTag().getId())) {
-            return new ResponseEntity<>(tagDtoService
-                    .getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
+        if (trackedTagService.tagIsPresentInTheListOfUser(userId, id) || ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
+            return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.BAD_REQUEST);
         }
 
-        //Создание списка отслеживаемых тегов принадлежащих авторизованному юзеру
-        List<Long> allTrackedTagsIds = entityManager
-                .createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
-                .setParameter("id", userId).getResultList();
-
-        //Удаление тега добавленного в игнорируемые из списка отслеживаемых
-        if(allTrackedTagsIds.contains(id)) {
-            entityManager.joinTransaction();
-            entityManager.createQuery("delete from TrackedTag t where t.trackedTag.id=:id")
-                    .setParameter("id", id).executeUpdate();
-        }
         ignoredTagService.persist(ignoredTag);
-        return new ResponseEntity<>(tagDtoService
-                .getIgnoreTagById(userId), HttpStatus.OK);
+        return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.OK);
     }
 }
