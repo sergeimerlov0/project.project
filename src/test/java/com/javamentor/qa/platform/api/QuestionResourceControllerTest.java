@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -166,5 +167,41 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Question with id 500 not found!"));
+    }
+
+    @Test
+    @DataSet(value = {"datasets/QuestionResourceController/getQuestionDtoNoAnswer/answer.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/question.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/questionHasTag.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/role.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/tag.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/user.yml"})
+    void getQuestionDtoNoAnswer() throws Exception {
+
+        //В датасетах 2 вопроса c id 100 и 102, на которые нет ответа,
+        //но вопрос c id 102 имеет поле IsDeleted=true
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1")
+                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(1))
+                .andExpect(jsonPath("$.itemsOnPage").value(10))
+                //Проверяем, что в pageDto подтянулась нужная QuestionDto
+                .andExpect(jsonPath("$.items.[0].id").value(100))
+                //Проверяем, что значения полей QuestionDto, например, с id 100 заполнены
+                .andExpect(jsonPath("$.items.[0].title").value("title by question 100"))
+                .andExpect(jsonPath("$.items.[0].authorId").value(100))
+                .andExpect(jsonPath("$.items.[0].authorName").value("User with id 100"))
+                .andExpect(jsonPath("$.items.[0].authorImage").value("image100"))
+                .andExpect(jsonPath("$.items.[0].description").value("description by question 100"))
+                .andExpect(jsonPath("$.items.[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items.[0].countAnswer").value(0))
+                .andExpect(jsonPath("$.items.[0].countValuable").value(0))
+                //Проверяем, что нужнае QuestionDto также выгрузила список всех tags, связанных с ним
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].name").value("test tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(101));
     }
 }

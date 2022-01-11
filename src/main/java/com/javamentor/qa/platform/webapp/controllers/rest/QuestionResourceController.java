@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.models.dto.QuestionCommentDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
@@ -26,10 +25,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,7 +52,7 @@ public class QuestionResourceController {
                 new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(id), HttpStatus.OK);
     }
 
-    @GetMapping("{id}/comment")
+    @GetMapping("/{id}/comment")
     @ApiOperation(value = "Получение списка QuestionCommentDto по Question id",
             tags = {"список", "комментарий", "вопрос"})
     @ApiResponses(value = {
@@ -66,7 +65,6 @@ public class QuestionResourceController {
                 new ResponseEntity<>("Question with id " + id + " not found!", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("{questionId}/upVote")
     @GetMapping("/noAnswer")
     @ApiOperation(value = "Получение QuestionDto, на которые нет ответов", tags = {"Получение QuestionDto"})
     @ApiResponses(value = {
@@ -75,7 +73,8 @@ public class QuestionResourceController {
     })
     public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int page,
                                                     @RequestParam(defaultValue = "10") int items,
-                                                    @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags,
+                                                    @RequestParam(required = false, defaultValue = "0")
+                                                                List<Long> ignoredTags,
                                                     @RequestParam(required = false) List<Long> trackedTags) {
         Map<String, Object> map = new HashMap<>();
         map.put("class", "QuestionDtoNoAnswer");
@@ -93,14 +92,17 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> upVote(@AuthenticationPrincipal(expression = "@userService.getUser(#this)") User user, @PathVariable Long questionId) {
+    public ResponseEntity<Integer> upVote(@AuthenticationPrincipal(expression = "@userService.getUser(#this)")
+                                                      User user,
+                                          @PathVariable Long questionId) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.UP_VOTE);
                 voteQuestionService.persist(voteQuestion);
-                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId), HttpStatus.OK);
+                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId),
+                        HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -119,12 +121,11 @@ public class QuestionResourceController {
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.DOWN_VOTE);
                 voteQuestionService.persist(voteQuestion);
-                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId), HttpStatus.OK);
+                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId),
+                        HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
-
-
 }
 
