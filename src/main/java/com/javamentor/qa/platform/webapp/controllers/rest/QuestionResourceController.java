@@ -1,12 +1,14 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.QuestionCommentDto;
+import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,11 +18,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -32,6 +38,7 @@ public class QuestionResourceController {
     private final QuestionDtoService questionDtoService;
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
+    private final TagService tagService;
 
     @GetMapping("{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -95,5 +102,25 @@ public class QuestionResourceController {
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
-}
 
+    @GetMapping("tag/{id}")
+    @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto по tagId"})
+    @ApiResponses( value = {
+            @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
+            @ApiResponse(code = 400, message = "Данный TagId не найден")
+    })
+    public ResponseEntity<?> getQuestionDtoByTagId(@PathVariable Long id,
+                                                                      @RequestParam int page,
+                                                                      @RequestParam(defaultValue="10") int items) {
+        if (tagService.existsById(id)) {
+            Map<String, Object> objectMap = new HashMap<>();
+            objectMap.put("class", "AllQuestionDtoByTagId");
+            objectMap.put("tagId", id);
+            objectMap.put("currentPageNumber", page);
+            objectMap.put("itemsOnPage", items);
+            PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
+            return new ResponseEntity<>(pageDto, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("TagId " + id + " not found", HttpStatus.BAD_REQUEST);
+    }
+}
