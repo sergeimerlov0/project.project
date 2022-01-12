@@ -5,8 +5,8 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.service.abstracts.dto.PaginationServiceDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Map;
 
 //Сервис для конструирования страницы PageDTO<T>
@@ -20,8 +20,8 @@ public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
         this.map = map;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public PageDto<T> getPageDto(int currentPageNumber, int itemsOnPage, Map<String, Object> param) {
         //Здесь мы достаем нужную пагинацию, которая была помещена в контроллере по ключу class, и собираем PageDto
         PaginationDtoAble<T> dtoAble = map.get(param.get("class"));
