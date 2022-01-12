@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>QuestionById</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
 <header id="header"></header>
@@ -19,15 +19,29 @@
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-12">
-						<h3 class="fs-headline1 mb24" id="title-642380">Question title</h3>
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-md-10">
+									<h3 id="title">Question title</h3>
+								</div>
+								<div class="col-md-2">
+									<a class="btn btn-primary text-nowrap" style="flex-basis: 15%;" href="/templates/question.html">
+										Задать вопрос</a>
+								</div>
+							</div>
+						</div>
 						<div class="d-flex">
 							<div class="flex--item">
-								<span class="fc-light mr2" style="color: #b7b1af;" id="persistDateTime">Вопрос задан</span>
+								<span class="fc-light mr2" style="color: gray;" id="persistDateTime">Вопрос задан</span>
 								<time datetime="" title="">4 года 9 месяцев назад</time>
 							</div>&nbsp;
 							<div class="flex--item">
-								<span class="fc-light mr2" style="color: #b7b1af;" id="lastUpdateDateTime">Последняя активность</span>
+								<span class="fc-light mr2" style="color: gray;" id="lastUpdateDateTime">Последняя активность</span>
 								<time datetime="" title="">4 года 9 месяцев назад</time>
+							</div>&nbsp;
+							<div class="flex--item">
+								<span class="fc-light mr2" style="color: gray;" id="views-counter">Просмотрен</span>
+								9
 							</div>
 						</div>
 						<hr/>
@@ -35,10 +49,11 @@
 							<div class="row">
 								<div class="col-md-1 text-center">
 									<p>
-										<svg class="ui-lib-mitten-icon _theme_white mitten-like-button_theme_undefined"
-										     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-											<path transform="translate(6, 3)"
-											      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5
+										<a href="" title="Вопрос отражает стремление разобраться; он понятен и несёт пользу.">
+											<svg class="ui-lib-mitten-icon _theme_white mitten-like-button_theme_undefined"
+											     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+												<path transform="translate(6, 3)"
+												      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5
 											      9H21C21 9.6985 20.9758 10.3647 20.9305 11C20.2622 20.3689 15 23 15 23H5L4 9.99999C7.5
 											      8 9.5 3 10 0.5ZM10.8485 11H18.925C18.6206 14.939 17.4419 17.4475 16.3661
 											      18.9716C15.7342 19.8667 15.1166 20.4525 14.6828 20.8019C14.5868 20.8792 14.4998 20.945
@@ -46,40 +61,38 @@
 											      5.15381 11.097 3.87294 11.4688 2.73296C11.6065 2.79228 11.703 2.85406 11.7697
 											      2.90665C11.956 3.05352 12.1278 3.29856 12.2209 3.80168C12.4364 4.96525 12.0893 6.65732
 											      11.577 8.45056L10.8485 11Z"
-											      fill-rule="evenodd" clip-rule="evenodd"></path>
-											<path transform="translate(6, 3)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
-											      clip-rule="evenodd"></path>
-										</svg>
-										+
+												      fill-rule="evenodd" clip-rule="evenodd"></path>
+												<path transform="translate(6, 3)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
+												      clip-rule="evenodd"></path>
+											</svg>
+										</a>
 									</p>
 									<p><span class="ai-center" data-value="0">0</span></p>
 									<p>
-										<svg class="ui-lib-mitten-icon _theme_white mitten-dislike-button_theme_undefined"
-										     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-											<path transform="translate(26, 29) rotate(180)"
-											      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5 9H21C21
-										      9.6985 20.9758 10.3647 20.9305 11C20.2622 20.3689 15 23 15 23H5L4 9.99999C7.5 8 9.5 3 10
-										      0.5ZM10.8485 11H18.925C18.6206 14.939 17.4419 17.4475 16.3661 18.9716C15.7342 19.8667 15.1166
-										      20.4525 14.6828 20.8019C14.5868 20.8792 14.4998 20.945 14.4236 21H6.85206L6.08364
+										<a href="" title="Вопрос не отражает стремления разобраться; он непонятен или не несёт пользы.">
+											<svg class="ui-lib-mitten-icon _theme_white mitten-dislike-button_theme_undefined"
+											     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+												<path transform="translate(26, 29) rotate(180)"
+												      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5
+										      9H21C21 9.6985 20.9758 10.3647 20.9305 11C20.2622 20.3689 15 23 15 23H5L4 9.99999C7.5 8 9.5
+										      3 10 0.5ZM10.8485 11H18.925C18.6206 14.939 17.4419 17.4475 16.3661 18.9716C15.7342 19.8667
+										      15.1166 20.4525 14.6828 20.8019C14.5868 20.8792 14.4998 20.945 14.4236 21H6.85206L6.08364
 										      11.0105C7.7312 9.75251 8.97805 8.03148 9.87616 6.40365C10.5657 5.15381 11.097 3.87294 11.4688
 										      2.73296C11.6065 2.79228 11.703 2.85406 11.7697 2.90665C11.956 3.05352 12.1278 3.29856 12.2209
 										      3.80168C12.4364 4.96525 12.0893 6.65732 11.577 8.45056L10.8485 11Z"
-											      fill-rule="evenodd" clip-rule="evenodd"></path>
-											<path transform="translate(26, 29) rotate(180)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
-											      clip-rule="evenodd"></path>
-										</svg>
-										-
+												      fill-rule="evenodd" clip-rule="evenodd"></path>
+												<path transform="translate(26, 29) rotate(180)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
+												      clip-rule="evenodd"></path>
+											</svg>
+										</a>
 									</p>
-									<p>
-										<svg class="ui-lib-mitten-icon _theme_white mitten-dislike-button_theme_undefined"
-										     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-											<path d="m18 15a3.989 3.989 0 0 0 -3.222 1.65l-5.015-3.343a3.722 3.722 0 0 0
-										0-2.614l5.015-3.343a3.985 3.985 0 1 0 -.778-2.35 3.883 3.883 0 0 0 .044.435l-5.391 3.594a4 4 0 1 0
-										0 5.942l5.391 3.594a3.883 3.883 0 0 0 -.044.435 4 4 0 1 0 4-4z" fill="#000000"
-											      data-original="#000000" class=""></path>
+									<a href="" title="Добавить вопрос в закладки.">
+										<svg aria-hidden="true" class="svg-icon iconBookmark" width="18" height="18"
+										     viewBox="0 0 18 18">
+											<path d="M6 1a2 2 0 00-2 2v14l5-4 5 4V3a2 2 0 00-2-2H6Zm3.9 3.83h2.9l-2.35 1.7.9 2.77L9
+												7.59l-2.35 1.7.9-2.76-2.35-1.7h2.9L9 2.06l.9 2.77Z"></path>
 										</svg>
-										Share
-									</p>
+									</a>
 								</div>
 								<div class="col-md-11" id="description">
 									<p>
@@ -93,50 +106,83 @@
 									<div class="d-flex ps-relative">
 										<a href="" class="post-tag js-gps-track" title="" rel="tag">#ajax</a>&nbsp;
 										<a href="" class="post-tag js-gps-track" title="" rel="tag">#wordpress</a>&nbsp;
-										<a href="" class="post-tag js-gps-track" title="" rel="tag">#link</a>
+										<a href="" class="post-tag js-gps-track" title="" rel="tag">#link</a>&nbsp;
 									</div>
-									<p>
-									<div class="user-info" style="float: right; display: table">
-										<div class="user-action-time" style="color: #b7b1af; display: table-cell">
-											вопрос задан 21 мар '17 в 11:07
+									<br/>
+									<div class="more-info d-flex justify-content-between align-items-center" style="flex-basis: 75%;">
+										<div class="share-edit-follow" style="align-self: baseline;">
+											<a href="" title="Короткая постоянная ссылка на этот вопрос">
+												<span style="color: gray;">Поделиться</span></a>
+											<a href="" title="Отредактируйте сообщение, чтобы улучшить его">
+												<span style="color: gray;">Править</span></a>
+											<a href="" title="Нажмите отслеживать, чтобы получать уведомления">
+												<span style="color: gray;">Отслеживать</span></a>
 										</div>
-										<div class="user-gravatar" style="display: table-cell;">
-											<img src="https://platform.kata.academy/uploads/2021/1/1/course_2.jpg"
-											     alt="" width="32" height="32" class="bar-sm">
-										</div>
-										<div class="user-details" itemprop="author" itemscope="" itemtype="" style="display: table-cell;">
-											<div class="-flair">
-												<a href="">Николай</a>
-												<span class="reputation-score" title="уровень репутации 1" dir="ltr">1</span>
+										<div class="card text-white bg-secondary border-dark mb-3">
+											<div class="text font-weight-light" style="margin-right:5px; margin-left:5px;">
+												<p>задан<span class="relativetime"> 21 мар '17 в 11:07</span></p>
+											</div>
+											<div class="d-flex">
+												<div class="user-avatar" style="margin-left:5px; margin-bottom:3px;">
+													<a href="">
+														<div class="gravatar-wrapper-32">
+															<img src="https://platform.kata.academy/uploads/2021/1/1/course_2.jpg"
+															     alt="" width="32" height="32" class="bar-sm">
+														</div>
+													</a>
+												</div>
+												<div class="user-name d-flex" style="margin-left:3px;">
+													<a class="text-info" href="/templates/user.html">Николай</a>&nbsp;
+													<span class="reputation-score" title="уровень репутации 1" dir="ltr">1</span>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
+						<div class="add comment" style="margin-top:10px;">
+							<a href=""
+							   title="Используйте комментарии для запроса дополнительной информации или предложения улучшений. Избегайте публикации ответа на вопросы в комментариях">
+								<span style="color: gray;">Добавить комментарий</span>
+							</a>
+						</div>
 						<hr/>
 					</div>
 					<div class="col-md-12">
-						<div class="d-flex bd-highlight mb-3">
-							<div class="mr-auto p-2 bd-highlight">
-								<h5 class="mb0" data-answercount="1">
-									1 ответ
-									<span style="display:none;" itemprop="answerCount">1</span>
-								</h5>
-							</div>
-							<div class="p-2 bd-highlight">
-								<a href="">По дате публикации</a>
-								<a href="">По голосам</a>
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-md-7">
+									<h4 id="countanswer">1 ответ</h4>
+								</div>
+								<div class="col-md-5">
+									<span class="answers-sort">
+										<span class="border" style="padding: 10px; margin: 30px;">
+											<a href="" class="text-secondary">
+												<span class="border-right" style="padding-top: 10px; padding-bottom: 10px;
+												padding-right: 10px;">Текущие</span>
+											</a>
+											<a href="" class="text-secondary">
+												<span class="border-right" style="padding: 10px;">По дате публикации</span>
+											</a>
+											<a href="" class="text-secondary">
+												<span style="padding-left: 10px;">Голоса</span>
+											</a>
+										</span>
+									</span>
+								</div>
 							</div>
 						</div>
+						<br/>
 						<div class="container-fluid">
 							<div class="row">
 								<div class="col-md-1 text-center">
 									<p>
-										<svg class="ui-lib-mitten-icon _theme_white mitten-like-button_theme_undefined"
-										     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-											<path transform="translate(6, 3)"
-											      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5
+										<a href="" title="Ответ отражает стремление помочь; он понятен и несёт пользу.">
+											<svg class="ui-lib-mitten-icon _theme_white mitten-like-button_theme_undefined"
+											     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+												<path transform="translate(6, 3)"
+												      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5
 											      9H21C21 9.6985 20.9758 10.3647 20.9305 11C20.2622 20.3689 15 23 15 23H5L4 9.99999C7.5
 											      8 9.5 3 10 0.5ZM10.8485 11H18.925C18.6206 14.939 17.4419 17.4475 16.3661
 											      18.9716C15.7342 19.8667 15.1166 20.4525 14.6828 20.8019C14.5868 20.8792 14.4998 20.945
@@ -144,30 +190,39 @@
 											      5.15381 11.097 3.87294 11.4688 2.73296C11.6065 2.79228 11.703 2.85406 11.7697
 											      2.90665C11.956 3.05352 12.1278 3.29856 12.2209 3.80168C12.4364 4.96525 12.0893 6.65732
 											      11.577 8.45056L10.8485 11Z"
-											      fill-rule="evenodd" clip-rule="evenodd"></path>
-											<path transform="translate(6, 3)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
-											      clip-rule="evenodd"></path>
-										</svg>
-										+
+												      fill-rule="evenodd" clip-rule="evenodd"></path>
+												<path transform="translate(6, 3)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
+												      clip-rule="evenodd"></path>
+											</svg>
+										</a>
 									</p>
 									<p><span class="ai-center" data-value="0">0</span></p>
 									<p>
-										<svg class="ui-lib-mitten-icon _theme_white mitten-dislike-button_theme_undefined"
-										     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-											<path transform="translate(26, 29) rotate(180)"
-											      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5 9H21C21
+										<a href="" title="Ответ не отражает стремление помочь; он непонятен и не несёт пользу.">
+											<svg class="ui-lib-mitten-icon _theme_white mitten-dislike-button_theme_undefined"
+											     width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+												<path transform="translate(26, 29) rotate(180)"
+												      d="M10 0.5C14.509 0.5 14.6493 3.8605 14.0025 7C13.8604 7.69002 13.6802 8.36936 13.5 9H21C21
 										      9.6985 20.9758 10.3647 20.9305 11C20.2622 20.3689 15 23 15 23H5L4 9.99999C7.5 8 9.5 3 10
 										      0.5ZM10.8485 11H18.925C18.6206 14.939 17.4419 17.4475 16.3661 18.9716C15.7342 19.8667 15.1166
 										      20.4525 14.6828 20.8019C14.5868 20.8792 14.4998 20.945 14.4236 21H6.85206L6.08364
 										      11.0105C7.7312 9.75251 8.97805 8.03148 9.87616 6.40365C10.5657 5.15381 11.097 3.87294 11.4688
 										      2.73296C11.6065 2.79228 11.703 2.85406 11.7697 2.90665C11.956 3.05352 12.1278 3.29856 12.2209
 										      3.80168C12.4364 4.96525 12.0893 6.65732 11.577 8.45056L10.8485 11Z"
-											      fill-rule="evenodd" clip-rule="evenodd"></path>
-											<path transform="translate(26, 29) rotate(180)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
-											      clip-rule="evenodd"></path>
-										</svg>
-										-
+												      fill-rule="evenodd" clip-rule="evenodd"></path>
+												<path transform="translate(26, 29) rotate(180)" d="M3 23L2 10H0V23H3Z" fill-rule="evenodd"
+												      clip-rule="evenodd"></path>
+											</svg>
+										</a>
 									</p>
+									<div style="text-indent: 2px;">
+										<a href="" title="Автор вопроса принял ответ 21 марта '17 в 18:01.">
+											<svg aria-hidden="true" class="svg-icon iconCheckmarkLg" width="36" height="36"
+											     viewBox="0 0 36 36">
+												<path d="m6 14 8 8L30 6v8L14 30l-8-8v-8Z"></path>
+											</svg>
+										</a>
+									</div>
 								</div>
 								<div class="col-md-11" id="answers">
 									<p>
@@ -179,24 +234,44 @@
 										<a href="" class="post-tag js-gps-track" title="" rel="tag">#ajax</a>&nbsp;
 										<a href="" class="post-tag js-gps-track" title="" rel="tag">#elision</a>
 									</div>
-									<p>
-									<div class="user-info" style="float: right; display: table">
-										<div class="user-action-time" style="color: #b7b1af; display: table-cell">
-											ответ дан 21 мар '17 в 12:35
+									<br/>
+									<div class="more-info d-flex justify-content-between align-items-center" style="flex-basis: 75%;">
+										<div class="share-edit-follow" style="align-self: baseline;">
+											<a href="" title="Короткая постоянная ссылка на этот вопрос">
+												<span style="color: gray;">Поделиться</span></a>
+											<a href="" title="Отредактируйте сообщение, чтобы улучшить его">
+												<span style="color: gray;">Править</span></a>
+											<a href="" title="Нажмите отслеживать, чтобы получать уведомления">
+												<span style="color: gray;">Отслеживать</span></a>
 										</div>
-										<div class="user-gravatar" style="display: table-cell;">
-											<img src="https://platform.kata.academy/uploads/2021/1/1/course_2.jpg"
-											     alt="" width="32" height="32" class="bar-sm">
-										</div>
-										<div class="user-details" itemprop="author" itemscope="" itemtype="" style="display: table-cell;">
-											<div class="-flair">
-												<a href="">Константин</a>
-												<span class="reputation-score" title="уровень репутации 28" dir="ltr">28</span>
+										<div class="card text-white bg-secondary border-dark mb-3">
+											<div class="text font-weight-light" style="margin-right:5px; margin-left:5px;">
+												<p>ответ дан<span class="relativetime"> 21 мар '17 в 12:35</span></p>
+											</div>
+											<div class="d-flex">
+												<div class="user-avatar" style="margin-left:5px; margin-bottom:3px;">
+													<a href="">
+														<div class="gravatar-wrapper-32">
+															<img src="https://platform.kata.academy/uploads/2021/1/1/course_2.jpg"
+															     alt="" width="32" height="32" class="bar-sm">
+														</div>
+													</a>
+												</div>
+												<div class="user-name d-flex" style="margin-left:3px;">
+													<a class="text-info" href="/templates/user.html">Константин</a>&nbsp;
+													<span class="reputation-score" title="уровень репутации 28" dir="ltr">28</span>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+						</div>
+						<div class="add comment" style="margin-top:10px;">
+							<a href=""
+							   title="Используйте комментарии для запроса дополнительной информации или предложения улучшений. Избегайте публикации ответа на вопросы в комментариях">
+								<span style="color: gray;">Добавить комментарий</span>
+							</a>
 						</div>
 						<hr/>
 					</div>
@@ -216,7 +291,7 @@
 												<div class="d-inline-flex ai-center">
 													–&nbsp;<a href="" title="1 балл репутации" class="comment-user owner">Николай</a>
 												</div>
-												<span class="comment-date" dir="ltr"><a class="comment-link" href="#comment912556_642380">
+												<span class="comment-date" dir="ltr"><a class="comment-link" href="#">
 												<span title="" class="relativetime-clean">21 мар '17 в 13:05</span></a></span>
 											</div>
 										</div>
@@ -231,7 +306,7 @@
 												<div class="d-inline-flex ai-center">
 													–&nbsp;<a href="" title="28 баллов репутации" class="comment-user">Константин</a>
 												</div>
-												<span class="comment-date" dir="ltr"><a class="comment-link" href="#comment912589_642380">
+												<span class="comment-date" dir="ltr"><a class="comment-link" href="#">
 												<span title="" class="relativetime-clean">21 мар '17 в 13:47</span></a></span>
 											</div>
 										</div>
@@ -246,8 +321,8 @@
 												<div class="d-inline-flex ai-center">
 													–&nbsp;<a href="" title="1 балл репутации" class="comment-user owner">Николай</a>
 												</div>
-												<span class="comment-date" dir="ltr"><a class="comment-link" href="#comment915474_642380">
-												<span title="" class="relativetime-clean">24 мар '17 в 14:18</span></a></span>
+												<span class="comment-date" dir="ltr"><a class="comment-link" href="#">
+												<span title="" class="relativetime-clean">21 мар '17 в 14:18</span></a></span>
 												<span title="комментарий был изменён 2 раза">
                             <svg aria-hidden="true" class="va-text-bottom o50 svg-icon iconPencilSm" width="14"
                                  height="14" viewBox="0 0 14 14"><path
@@ -268,8 +343,8 @@
 												<div class="d-inline-flex ai-center">
 													–&nbsp;<a href="" title="28 баллов репутации" class="comment-user">Константин</a>
 												</div>
-												<span class="comment-date" dir="ltr"><a class="comment-link" href="#comment915513_642380">
-												<span title="" class="relativetime-clean">24 мар '17 в 14:54</span></a></span>
+												<span class="comment-date" dir="ltr"><a class="comment-link" href="#">
+												<span title="" class="relativetime-clean">21 мар '17 в 14:54</span></a></span>
 											</div>
 										</div>
 									</li>
@@ -285,8 +360,8 @@
 												<div class="d-inline-flex ai-center">
 													–&nbsp;<a href="" title="1 балл репутации" class="comment-user owner">Николай</a>
 												</div>
-												<span class="comment-date" dir="ltr"><a class="comment-link" href="#comment918254_642380">
-												<span title="" class="relativetime-clean">27 мар '17 в 17:04</span></a></span>
+												<span class="comment-date" dir="ltr"><a class="comment-link" href="#">
+												<span title="" class="relativetime-clean">21 мар '17 в 17:04</span></a></span>
 												<span title="комментарий был изменён 1 раз">
                             <svg aria-hidden="true" class="va-text-bottom o50 svg-icon iconPencilSm" width="14"
                                  height="14" viewBox="0 0 14 14"><path
@@ -304,24 +379,23 @@
 												<div class="d-inline-flex ai-center">
 													–&nbsp;<a href="" title="28 баллов репутации" class="comment-user">Константин</a>
 												</div>
-												<span class="comment-date" dir="ltr"><a class="comment-link" href="#comment918300_642380">
-												<span title="" class="relativetime-clean">27 мар '17 в 17:49</span></a></span>
+												<span class="comment-date" dir="ltr"><a class="comment-link" href="#">
+												<span title="" class="relativetime-clean">21 мар '17 в 17:49</span></a></span>
 											</div>
 										</div>
 									</li>
-									<br/>
-									<div id="comments-link-642380" data-rep="50" data-anon="true">
-										&nbsp;<a class="js-add-link comments-link disabled-link"
-										         title="Используйте комментарии для запроса дополнительной информации или предложения улучшений."
-										         href="#" role="button">Добавить комментарий</a>
-									</div>
 								</ul>
 							</div>
+						</div>
+						<div class="add comment" style="margin-top:10px;">
+							<a href=""
+							   title="Используйте комментарии для запроса дополнительной информации или предложения улучшений. Избегайте публикации ответа на вопросы в комментариях">
+								<span style="color: gray;">Добавить комментарий</span>
+							</a>
 						</div>
 						<hr/>
 					</div>
 					<div class="col-md-12">
-
 						<form id="post-form" action="" method="post" class="js-add-answer-component post-form">
 							<input type="hidden" id="post-id" value="642353">
 							<h2 class="space">Ваш ответ</h2>
@@ -352,18 +426,29 @@
 											<li>Просьб помощи, уточнений или ответов на темы не относящиеся к вопросу.</li>
 											<li>Ответов, основанных на мнениях; приводите аргументы основанные только на реальном опыте.</li>
 										</ul>
-										<p>Также обратите внимание на заметку в справочном центре о том, <a href="">как
-											писать ответы</a>.</p>
+										<p>Также обратите внимание на заметку в справочном центре о том,
+											<a href="">как писать ответы</a>.</p>
 									</div>
 								</aside>
 							</div>
 							<div class="form-submit cbt d-flex gsx gs4">
-								<button id="submit-button" class="flex--item s-btn s-btn__primary s-btn__icon" type="submit"
-								        tabindex="120" autocomplete="off" title="Нажимая на кнопку «Отправить ответ», вы соглашаетесь с нашим пользовательским соглашением, политикой конфиденциальности и политикой о куки">
+								<button id="submit-button" type="submit" class="btn btn-primary" tabindex="120"
+								        title="Нажимая на кнопку «Отправить ответ», вы соглашаетесь с нашим пользовательским соглашением, политикой конфиденциальности и политикой о куки">
 									Отправить ответ
 								</button>
 							</div>
 						</form>
+						<br/>
+						<div>
+							<p>
+								Всё ещё ищете ответ? Посмотрите другие вопросы с метками
+								<a href="" class="post-tag js-gps-track" title="" rel="tag">#ajax</a>
+								<a href="" class="post-tag js-gps-track" title="" rel="tag">#wordpress</a>
+								<a href="" class="post-tag js-gps-track" title="" rel="tag">#link</a>
+								или
+								<a href="/templates/question.html">задайте свой вопрос</a>.
+							</p>
+						</div>
 						<hr/>
 					</div>
 				</div>
