@@ -6,5 +6,6 @@ import java.util.Optional;
 
 public interface UserDtoDao {
     Optional<UserDto> getUserById(Long id);
+
 }
 

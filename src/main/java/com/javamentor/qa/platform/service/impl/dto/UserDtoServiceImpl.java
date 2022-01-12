@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class UserDtoServiceImpl implements UserDtoService {
+public class UserDtoServiceImpl extends PaginationServiceDtoImpl<UserDto> implements UserDtoService {
 
     @Autowired
     private UserDtoDao userDtoDao;
@@ -20,4 +20,5 @@ public class UserDtoServiceImpl implements UserDtoService {
     public Optional<UserDto> getUserById(Long id) {
         return userDtoDao.getUserById(id);
     }
+
 }
