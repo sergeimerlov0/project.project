@@ -21,6 +21,9 @@ public class GetQuestionDtoNoAnswer implements PaginationDtoAble<QuestionDto> {
         int itemsOnPage = (int) param.get("itemsOnPage");
         List<Long> trackedTags = ((List<Long>) param.get("trackedTags"));
         List<Long> ignoredTags = ((List<Long>) param.get("ignoredTags"));
+
+        //@Todo в дальнейшем реализовать подсчёт просмотров (пока стоит SUM(0))
+
         return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.QuestionDto" +
                         "(q.id, q.title, q.user.id, " +
                         "(SELECT SUM (r.count) FROM Reputation r WHERE q.user.id = r.author.id), " +

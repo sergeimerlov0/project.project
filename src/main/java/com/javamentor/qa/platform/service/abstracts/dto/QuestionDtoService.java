@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QuestionDtoService extends PaginationServiceDto<QuestionDto> {
+
     Optional<QuestionDto> getQuestionDtoByQuestionId(Long id);
     List<QuestionCommentDto> getQuestionCommentByQuestionId(Long id);
 }

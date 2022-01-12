@@ -40,23 +40,16 @@ public class QuestionDtoServiceImpl extends PaginationServiceDtoImpl<QuestionDto
     @Override
     @Transactional
     public PageDto<QuestionDto> getPageDto(int currentPageNumber, int itemsOnPage, Map<String, Object> map) {
-
         PageDto<QuestionDto> pageDto = super.getPageDto(currentPageNumber, itemsOnPage, map);
-
         List<QuestionDto> questionDtoList = pageDto.getItems();
-
         List<Long> questionIds = questionDtoList.stream()
                 .map(QuestionDto::getId)
                 .collect(Collectors.toList());
-
         Map<Long, List<TagDto>> tagsMap = tagDtoDao.getMapTagsByQuestionIds(questionIds);
-
         for (QuestionDto questionDto : questionDtoList) {
             questionDto.setListTagDto(tagsMap.get(questionDto.getId()));
         }
-
         pageDto.setItems(questionDtoList);
-
         return pageDto;
     }
 

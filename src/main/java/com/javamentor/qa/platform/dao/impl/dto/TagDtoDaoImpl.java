@@ -29,16 +29,16 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public Map<Long, List<TagDto>> getMapTagsByQuestionIds(List<Long> questionIds){
-        List<Tuple> tags = entityManager.createQuery("SELECT t.id as tag_id, t.name as tag_name, t.description as tag_description," +
-                        " q.id as question_id From Tag t JOIN t.questions q WHERE q.id in :ids", Tuple.class)
+        List<Tuple> tags = entityManager.createQuery("SELECT t.id as tag_id, t.name as tag_name, " +
+                        "t.description as tag_description, " +
+                        "q.id as question_id From Tag t JOIN t.questions q WHERE q.id in :ids", Tuple.class)
                 .setParameter("ids", questionIds)
                 .getResultList();
-
         Map<Long, List<TagDto>> tagsMap = new HashMap<>();
-        tags.forEach(tuple -> {
-            tagsMap.computeIfAbsent(tuple.get("question_id", Long.class), key -> new ArrayList<>())
-                    .add(new TagDto(tuple.get("tag_id", Long.class), tuple.get("tag_name", String.class), tuple.get("tag_description", String.class)));
-        });
+        tags.forEach(tuple -> tagsMap.computeIfAbsent(tuple.get("question_id", Long.class),
+                        key -> new ArrayList<>())
+                .add(new TagDto(tuple.get("tag_id", Long.class), tuple.get("tag_name", String.class),
+                        tuple.get("tag_description", String.class))));
         return tagsMap;
     }
 
@@ -66,21 +66,5 @@ public class TagDtoDaoImpl implements TagDtoDao {
                         "group by t.id order by t.questions.size desc ", RelatedTagsDto.class)
                 .setMaxResults(10)
                 .getResultList();
-    }
-
-    @Override
-    public Map<Long, List<TagDto>> getMapTagsByQuestionIds(List<Long> questionIds){
-        List<Tuple> tags = entityManager.createQuery("SELECT t.id as tag_id, t.name as tag_name, " +
-                        "t.description as tag_description," +
-                        " q.id as question_id From Tag t JOIN t.questions q WHERE q.id in :ids", Tuple.class)
-                .setParameter("ids", questionIds)
-                .getResultList();
-        Map<Long, List<TagDto>> tagsMap = new HashMap<>();
-        tags.forEach(tuple -> {
-            tagsMap.computeIfAbsent(tuple.get("question_id", Long.class), key -> new ArrayList<>())
-                    .add(new TagDto(tuple.get("tag_id", Long.class), tuple.get("tag_name", String.class),
-                            tuple.get("tag_description", String.class)));
-        });
-        return tagsMap;
     }
 }

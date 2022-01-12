@@ -11,7 +11,5 @@ public interface TagDtoDao {
     List<TagDto> getTrackedTagById(Long id);
     List<TagDto> getIgnoreTagById(Long id);
     List<RelatedTagsDto> getRelatedTagsDto();
-
-    Map<Long, List<TagDto>> getMapTagsByQuestionIds(List<Long> questionIds);
     Map<Long, List<TagDto>> getMapTagsByQuestionIds(List<Long> questionIds);
 }
