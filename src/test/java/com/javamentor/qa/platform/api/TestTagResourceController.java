@@ -18,7 +18,6 @@ public class TestTagResourceController extends AbstractApiTest {
     @Test
     @DataSet(value = {
             "datasets/TagResourceController/tagRelatedDatasets/tag.yml",
-            "datasets/TagResourceController/tagRelatedDatasets/answer.yml",
             "datasets/TagResourceController/tagRelatedDatasets/question.yml",
             "datasets/TagResourceController/tagRelatedDatasets/user.yml",
             "datasets/TagResourceController/tagRelatedDatasets/role.yml",
@@ -30,11 +29,18 @@ public class TestTagResourceController extends AbstractApiTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(10)))
                 .andExpect(jsonPath("$[0].id", is(100)))
-                .andExpect(jsonPath("$[0].countQuestion", is(10)))
                 .andExpect(jsonPath("$[4].id", is(104)))
-                .andExpect(jsonPath("$[4].countQuestion", is(6)))
                 .andExpect(jsonPath("$[8].id", is(108)))
-                .andExpect(jsonPath("$[8].countQuestion", is(2)));
+                .andExpect(jsonPath("$[0].countQuestion", is(10)))
+                .andExpect(jsonPath("$[1].countQuestion", is(9)))
+                .andExpect(jsonPath("$[2].countQuestion", is(8)))
+                .andExpect(jsonPath("$[3].countQuestion", is(7)))
+                .andExpect(jsonPath("$[4].countQuestion", is(6)))
+                .andExpect(jsonPath("$[5].countQuestion", is(5)))
+                .andExpect(jsonPath("$[6].countQuestion", is(4)))
+                .andExpect(jsonPath("$[7].countQuestion", is(3)))
+                .andExpect(jsonPath("$[8].countQuestion", is(2)))
+                .andExpect(jsonPath("$[9].countQuestion", is(1)));
     }
 
     @Test
