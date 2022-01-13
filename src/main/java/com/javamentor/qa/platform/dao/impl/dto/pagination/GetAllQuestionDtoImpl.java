@@ -22,11 +22,11 @@ public class GetAllQuestionDtoImpl implements PaginationDtoAble<QuestionDto> {
     public List<QuestionDto> getItems(Map<String, Object> param) {
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
-//        ArrayList<Long> trackedTag = (ArrayList<Long>) param.get("trackedTags");
-//        ArrayList<Long> ignoredTag = (ArrayList<Long>) param.get("ignoredTags");
+        List<Long> trackedTags = (List<Long>) param.get("trackedTags");
+        List<Long> ignoredTags = (List<Long>) param.get("ignoredTags");
 
         return entityManager.createQuery(
-                "SELECT new com.javamentor.qa.platform.models.dto.QuestionDto" +
+                "SELECT DISTINCT new com.javamentor.qa.platform.models.dto.QuestionDto" +
                         "(question.id, question.title, author.id, " +
                         "(SELECT SUM (reputation.count) " +
                         "FROM Reputation reputation " +
@@ -43,9 +43,17 @@ public class GetAllQuestionDtoImpl implements PaginationDtoAble<QuestionDto> {
                         "WHERE voteOnQuestion.vote = 'DOWN_VOTE' AND voteOnQuestion.question.id = question.id)), " +
                         "question.persistDateTime, question.lastUpdateDateTime)" +
                         "FROM Question question " +
+                        "JOIN question.tags as tags " +
                         "LEFT JOIN question.user AS author ON (question.user.id = author.id) " +
-                        "LEFT JOIN question.answers AS answer ON (question.id = answer.question.id)"
+                        "LEFT JOIN question.answers AS answer ON (question.id = answer.question.id) " +
+                        "WHERE question.id " +
+                        "IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE :trackedTags IS NULL OR tags.id IN :trackedTags) " +
+                        "AND question.id " +
+                        "NOT IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE tags.id IN :ignoredTags) " +
+                        "AND question.isDeleted = false"
                         , QuestionDto.class)
+                .setParameter("trackedTags", trackedTags)
+                .setParameter("ignoredTags", ignoredTags)
                 .getResultStream()
                 .skip(itemsOnPage * (currentPageNumber - 1))
                 .limit(itemsOnPage)
@@ -54,9 +62,19 @@ public class GetAllQuestionDtoImpl implements PaginationDtoAble<QuestionDto> {
 
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
+        List<Long> trackedTags = (List<Long>) param.get("trackedTags");
+        List<Long> ignoredTags = (List<Long>) param.get("ignoredTags");
         return Math.toIntExact((long) entityManager.createQuery(
-                "SELECT count (*) " +
-                        "FROM Question question")
+                "SELECT count (DISTINCT question.id) " +
+                        "FROM Question question " +
+                        "JOIN question.tags as tags " +
+                        "WHERE question.id " +
+                        "IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE :trackedTags IS NULL OR tags.id IN :trackedTags) " +
+                        "AND question.id " +
+                        "NOT IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE tags.id IN :ignoredTags) " +
+                        "AND question.isDeleted = false")
+                .setParameter("trackedTags", trackedTags)
+                .setParameter("ignoredTags", ignoredTags)
                 .getSingleResult());
     }
 }
