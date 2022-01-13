@@ -22,3 +22,19 @@ question:
     user_id: 101
     last_redaction_date: "[DAY,NOW]"
     is_deleted: true
+
+  - id: 103
+    title: "title by question 103"
+    description: "description by question 103"
+    persist_date: "[DAY,NOW]"
+    user_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+  - id: 104
+    title: "title by question 104"
+    description: "description by question 104"
+    persist_date: "[DAY,NOW]"
+    user_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
