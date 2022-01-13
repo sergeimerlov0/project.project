@@ -30,10 +30,10 @@ public class GetQuestionDtoNoAnswer implements PaginationDtoAble<QuestionDto> {
                         "q.user.fullName, q.user.imageLink, q.description, " +
                         "SUM(0), " +
                         "(SELECT COUNT(a.id) FROM Answer a WHERE a.question.id = q.id), " +
-                        "((SELECT COUNT (up.vote) FROM VoteQuestion up " +
-                        "WHERE up.vote = 'UP_VOTE' AND up.user.id = q.user.id) - " +
-                        "(SELECT COUNT(down.vote) FROM VoteQuestion down " +
-                        "WHERE down.vote = 'DOWN_VOTE' AND down.user.id = q.user.id)), " +
+                        "((SELECT COUNT (*) FROM VoteQuestion v " +
+                        "WHERE v.vote = 'UP_VOTE' AND v.question.id = question.id) - " +
+                        "(SELECT COUNT (*) FROM VoteQuestion v " +
+                        "WHERE v.vote = 'DOWN_VOTE' AND v.question.id = question.id)), " +
                         "q.persistDateTime, q.lastUpdateDateTime) " +
                         "FROM Question q  " +
                         "JOIN q.tags tgs " +

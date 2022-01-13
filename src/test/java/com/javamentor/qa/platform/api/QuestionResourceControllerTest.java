@@ -219,6 +219,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionDtoNoAnswer/questionHasTag.yml",
             "datasets/QuestionResourceController/getQuestionDtoNoAnswer/role.yml",
             "datasets/QuestionResourceController/getQuestionDtoNoAnswer/tag.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/voteQuestion.yml",
             "datasets/QuestionResourceController/getQuestionDtoNoAnswer/user.yml"})
     void getQuestionDtoNoAnswer() throws Exception {
 
@@ -242,7 +243,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].description").value("description by question 100"))
                 .andExpect(jsonPath("$.items.[0].viewCount").value(0))
                 .andExpect(jsonPath("$.items.[0].countAnswer").value(0))
-                .andExpect(jsonPath("$.items.[0].countValuable").value(0))
+                .andExpect(jsonPath("$.items.[0].countValuable").value(1))
                 //Проверяем, что нужнае QuestionDto также выгрузила список всех tags, связанных с ним
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].name").value("test tag 100"))
