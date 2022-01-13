@@ -1,0 +1,49 @@
+user_entity:
+  - id: 100
+    about: "user1"
+    city: "user1city"
+    email: "user@mail.ru"
+    full_name: "user1"
+    image_link: "user1link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github1@link"
+    link_site: "site1@link"
+    link_vk: "vk1@link"
+    nickname: "user1"
+    password: "password"
+    persist_date: 2021-12-16 00:00:00
+    role_id: 101
+  - id: 101
+    about: "user2"
+    city: "user2city"
+    email: "user2@mail.ru"
+    full_name: "user2"
+    image_link: "user2link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github2@link"
+    link_site: "site2@link"
+    link_vk: "vk2@link"
+    nickname: "user2"
+    password: "password"
+    persist_date: 2021-12-16 00:00:00
+    role_id: 101
+  - id: 102
+    about: "user3"
+    city: "user3city"
+    email: "user3@mail.ru"
+    full_name: "user3"
+    image_link: "user3link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github3@link"
+    link_site: "site3@link"
+    link_vk: "vk3@link"
+    nickname: "user3"
+    password: "password"
+    persist_date: 2021-12-16 00:00:00
+    role_id: 101
