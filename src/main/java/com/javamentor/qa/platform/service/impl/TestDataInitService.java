@@ -8,6 +8,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.*;
+import org.aspectj.apache.bcel.generic.RET;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -137,7 +138,7 @@ public class TestDataInitService {
         StringBuilder nickname = new StringBuilder();
 
         User admin = new User();
-        admin.setRole(adminRole);
+        admin.setRole(userRole);
         admin.setEmail(email.append("vasya@mail.ru").toString());
         admin.setPassword(password.append("password").toString());
         admin.setFullName(fullName.append("Vasya").toString());
@@ -191,6 +192,7 @@ public class TestDataInitService {
             u.setNickname(nickname.toString());
 
             userService.persist(u);
+
         }
     }
 
