@@ -17,31 +17,34 @@ public class TestUserResourceController extends AbstractApiTest {
     private String password;
 
     @Test
-    @DataSet(value = {"dataset/UserResourceController/users.yml",
-            "dataset/UserResourceController/answer.yml",
-            "dataset/UserResourceController/question.yml",
-            "dataset/UserResourceController/reputations.yml",
-            "dataset/UserResourceController/roles.yml"})
+    @DataSet(value = {"datasets/UserResourceController/getUserByReg/role.yml","datasets/UserResourceController/getUserByReg/users.yml"
+            })
     void getUserById() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/user/101"))
+        email = "test@mail.ru";
+        password = "password";
+
+        //проверяем что вернется 1 user
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/100")
+                .header("Authorization", getJwtToken(email,password)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(101))
-                .andExpect(jsonPath("$.email").value("SomeEmail@mail.mail"))
+                .andExpect(jsonPath("$.id").value(100))
+                .andExpect(jsonPath("$.email").value("test@mail.ru"))
                 .andExpect(jsonPath("$.fullName").value("Max"))
                 .andExpect(jsonPath("$.linkImage").value("link"))
-                .andExpect(jsonPath("$.city").value("Moscow"))
-                .andExpect(jsonPath("$.reputation").value(101));
+                .andExpect(jsonPath("$.city").value("Moscow"));
+
     }
 
     @Test
-    @DataSet(value = {"dataset/UserResourceController/users.yml",
-            "dataset/UserResourceController/answer.yml",
-            "dataset/UserResourceController/question.yml",
-            "dataset/UserResourceController/reputations.yml",
-            "dataset/UserResourceController/roles.yml"})
+    @DataSet(value = {"datasets/UserResourceController/getUserByReg/role.yml","datasets/UserResourceController/getUserByReg/users.yml",
+    })
     void shouldNotGetUserById() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/user/105"))
+        email = "SomeEmail1@mail.mail";
+        password = "someHardPassword";
+        //проверяем что такого юзера не существует
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/106")
+                        .header("Authorization", getJwtToken(email,password)))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.id").doesNotExist());
