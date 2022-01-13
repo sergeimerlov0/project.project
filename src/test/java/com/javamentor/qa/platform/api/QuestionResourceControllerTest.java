@@ -216,13 +216,13 @@ class QuestionResourceControllerTest extends AbstractApiTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/QuestionResourceController/getQuestionDtoNoAnswer/answer.yml",
-            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/question.yml",
-            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/questionHasTag.yml",
-            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/role.yml",
-            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/tag.yml",
-            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/voteQuestion.yml",
-            "datasets/QuestionResourceController/getQuestionDtoNoAnswer/user.yml"})
+    @DataSet(value = {"datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/answer.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/question.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/questionHasTag.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/role.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/tag.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/voteQuestion.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/user.yml"})
     void getQuestionDtoNoAnswer() throws Exception {
 
         //В датасетах 4 вопроса c id 100, 102, 103 и 104 на которые нет ответа,
