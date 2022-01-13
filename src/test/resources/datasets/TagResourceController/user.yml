@@ -1,0 +1,17 @@
+user_entity:
+  - id: 101
+    email: "123@mail.com"
+    password: "password"
+    full_name: "testName"
+    persist_date: "[DAY,NOW]"
+    is_enabled: true
+    is_deleted: false
+    city: "DefaultCity"
+    link_site: "site@link"
+    link_github: "github@link"
+    link_vk: "vk@link"
+    about: "Something"
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "link"
+    nickname: "NickName"
+    role_id: 100
