@@ -210,4 +210,17 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(101))
                 .andExpect(jsonPath("$.items.[0].listTagDto.[2].id").value(102));
     }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/question.yml",
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/role.yml",
+            "datasets/QuestionResourceController/getQuestionDtoByTagIdDatasets/user.yml"})
+    void getQuestionCount() throws Exception {
+        this.mvc.perform(get("/api/user/question/count")
+                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(4));
+    }
 }
