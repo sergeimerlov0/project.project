@@ -6,10 +6,10 @@ import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -18,12 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * \* Created with IntelliJ IDEA.
- * \* User: Rustam
- */
-
-@DataSet(cleanBefore = true)
 public class TestTagResourceController extends AbstractApiTest {
 
     @PersistenceContext
@@ -67,30 +61,73 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/tagDatasets/role.yml",
-            "datasets/tagDatasets/user.yml",
-            "datasets/tagDatasets/tag.yml",
-            "datasets/tagDatasets/tagIgnore.yml"
-    })
+            "datasets/TagResourceController/role.yml",
+            "datasets/TagResourceController/user.yml",
+            "datasets/TagResourceController/tag.yml",
+            "datasets/TagResourceController/tagIgnored.yml",
+            "datasets/TagResourceController/tagTracked.yml"
+    }, cleanBefore = true, cleanAfter = true)
     void getAllIgnoredTagDto() throws Exception {
-        this.mvc.perform(get("/api/user/tag/ignored"))
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/ignored")
+                        .header("Authorization", getJwtToken("123@mail.com", "password")))
                 .andExpect(status().isOk());
         Assertions.assertTrue(entityManager.createQuery("select t.ignoredTag.id from IgnoredTag t where t.user.id=:id", Long.class)
-                .setParameter("id", 2L)
+                .setParameter("id", 101L)
                 .getResultList()
                 .containsAll(Arrays.asList(100L, 101L)));
     }
 
     @Test
     @DataSet(value = {
-            "datasets/tagDatasets/tagTrack.yml"
-    })
+            "datasets/TagResourceController/role.yml",
+            "datasets/TagResourceController/user.yml",
+            "datasets/TagResourceController/tag.yml",
+            "datasets/TagResourceController/tagIgnored.yml",
+            "datasets/TagResourceController/tagTracked.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void testAddIgnoredTag() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/102/ignored")
+                        .header("Authorization", getJwtToken("123@mail.com", "password")))
+                .andExpect(status().isOk());
+        Assertions.assertTrue(entityManager.createQuery("select t.ignoredTag.id from IgnoredTag t where t.user.id=:id", Long.class)
+                .setParameter("id", 101L)
+                .getResultList()
+                .containsAll(Arrays.asList(100L, 101L, 102L)));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/TagResourceController/role.yml",
+            "datasets/TagResourceController/user.yml",
+            "datasets/TagResourceController/tag.yml",
+            "datasets/TagResourceController/tagIgnored.yml",
+            "datasets/TagResourceController/tagTracked.yml"
+    }, cleanBefore = true, cleanAfter = true)
     void getAllTrackedTagDto() throws Exception {
-        this.mvc.perform(get("/api/user/tag/tracked"))
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/tracked")
+                        .header("Authorization", getJwtToken("123@mail.com", "password")))
                 .andExpect(status().isOk());
         Assertions.assertTrue(entityManager.createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
-                .setParameter("id", 2L)
+                .setParameter("id", 101L)
                 .getResultList()
-                .containsAll(Arrays.asList(102L, 103L)));
+                .containsAll(Arrays.asList(103L, 104L)));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/TagResourceController/role.yml",
+            "datasets/TagResourceController/user.yml",
+            "datasets/TagResourceController/tag.yml",
+            "datasets/TagResourceController/tagIgnored.yml",
+            "datasets/TagResourceController/tagTracked.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void testAddTrackedTag() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/105/tracked")
+                        .header("Authorization", getJwtToken("123@mail.com", "password")))
+                .andExpect(status().isOk());
+        Assertions.assertTrue(entityManager.createQuery("select t.trackedTag.id from TrackedTag t where t.user.id=:id", Long.class)
+                .setParameter("id", 101L)
+                .getResultList()
+                .containsAll(Arrays.asList(103L, 104L, 105L)));
     }
 }
