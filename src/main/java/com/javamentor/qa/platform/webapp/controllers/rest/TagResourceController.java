@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -71,54 +72,59 @@ public class TagResourceController {
     @ApiOperation(value = "Добавление тега в TrackedTag", tags = {"TrackedTag"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Тег успешно добавлен в TrackedTag"),
-            @ApiResponse(code = 400, message = "Тег уже добавлен")})
+            @ApiResponse(code = 400, message = "Некорректный запрос")})
     @PostMapping("/{id}/tracked")
     @Transactional
-    public ResponseEntity<List<TagDto>> addTrackedTag(@PathVariable Long id) {
+    public ResponseEntity<?> addTrackedTag(@PathVariable Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
+        Optional<Tag> tag = tagService.getById(id);
 
-        if (!tagService.existsById(id)) {
-            return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
+        if (tag.isPresent()) {
+            if (trackedTagService.tagIsPresentInTheListOfUser(userId, id)) {
+                return new ResponseEntity<>("Tag with id found in tracked", HttpStatus.BAD_REQUEST);
+            }
+            if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
+                return new ResponseEntity<>("Tag with id found in ignored", HttpStatus.BAD_REQUEST);
+            }
+
+            TrackedTag trackedTag = new TrackedTag();
+            trackedTag.setTrackedTag(tag.get());
+            trackedTag.setUser(user);
+            trackedTagService.persist(trackedTag);
+            return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.OK);
         }
 
-        TrackedTag trackedTag = new TrackedTag();
-        Tag tag = tagService.getById(id).get();
-        trackedTag.setTrackedTag(tag);
-        trackedTag.setUser(user);
-
-        if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id) || trackedTagService.tagIsPresentInTheListOfUser(userId, id)) {
-            return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
-        }
-
-        trackedTagService.persist(trackedTag);
-        return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.OK);
+        return new ResponseEntity<>("Tag with this ID was not found", HttpStatus.BAD_REQUEST);
     }
 
     @ApiOperation(value = "Добавление тега в IgnoredTag", tags = {"IgnoredTag"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Тег успешно добавлен в IgnoredTag"),
-            @ApiResponse(code = 400, message = "Тег уже добавлен")})
+            @ApiResponse(code = 400, message = "Некорректный запрос")})
     @PostMapping("/{id}/ignored")
     @Transactional
-    public ResponseEntity<List<TagDto>> addIgnoredTag(@PathVariable Long id) {
+    public ResponseEntity<?> addIgnoredTag(@PathVariable Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
+        Optional<Tag> tag = tagService.getById(id);
 
-        if (!tagService.existsById(id)) {
-            return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.BAD_REQUEST);
+        if (tag.isPresent()) {
+            if (trackedTagService.tagIsPresentInTheListOfUser(userId, id)) {
+                return new ResponseEntity<>("Tag with id found in tracked", HttpStatus.BAD_REQUEST);
+            }
+            if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
+                return new ResponseEntity<>("Tag with id found in ignored", HttpStatus.BAD_REQUEST);
+            }
+
+            IgnoredTag ignoredTag = new IgnoredTag();
+            ignoredTag.setIgnoredTag(tag.get());
+            ignoredTag.setUser(user);
+            ignoredTagService.persist(ignoredTag);
+            return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.OK);
+
         }
 
-        IgnoredTag ignoredTag = new IgnoredTag();
-        Tag tag = tagService.getById(id).get();
-        ignoredTag.setIgnoredTag(tag);
-        ignoredTag.setUser(user);
-
-        if (trackedTagService.tagIsPresentInTheListOfUser(userId, id) || ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
-            return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.BAD_REQUEST);
-        }
-
-        ignoredTagService.persist(ignoredTag);
-        return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.OK);
+        return new ResponseEntity<>("Tag with this ID was not found", HttpStatus.BAD_REQUEST);
     }
 }
