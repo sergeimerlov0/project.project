@@ -137,8 +137,8 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Данный TagId не найден")
     })
     public ResponseEntity<?> getQuestionDtoByTagId(@PathVariable Long id,
-                                                                      @RequestParam int page,
-                                                                      @RequestParam(defaultValue="10") int items) {
+                                                   @RequestParam int page,
+                                                   @RequestParam(defaultValue="10") int items) {
         if (tagService.existsById(id)) {
             Map<String, Object> objectMap = new HashMap<>();
             objectMap.put("class", "AllQuestionDtoByTagId");
