@@ -223,7 +223,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionDtoNoAnswer/user.yml"})
     void getQuestionDtoNoAnswer() throws Exception {
 
-        //В датасетах 2 вопроса c id 100, 102 и 103 на которые нет ответа, но вопрос c id 102 имеет поле IsDeleted=true
+        //В датасетах 4 вопроса c id 100, 102, 103 и 104 на которые нет ответа, но вопрос c id 102 имеет поле IsDeleted=true
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1")
                         .header("Authorization", getJwtToken("3user@mail.ru","3111")))
                 .andExpect(status().isOk())
