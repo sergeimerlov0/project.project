@@ -1,0 +1,27 @@
+user_entity:
+  - id: 100
+    email: "3user@mail.ru"
+    full_name: "User with id 100"
+    password: "3111"
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image100"
+    nickname: "user100"
+
+  - id: 101
+    email: "4user@mail.ru"
+    full_name: "User with id 101"
+    password: "4111"
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image101"
+    nickname: "user101"
+
+  - id: 102
+    email: "5user@mail.ru"
+    full_name: "User with id 102"
+    password: "5111"
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image102"
+    nickname: "user102"
