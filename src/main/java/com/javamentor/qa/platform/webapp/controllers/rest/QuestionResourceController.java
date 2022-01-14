@@ -131,6 +131,27 @@ public class QuestionResourceController {
     }
 
     @GetMapping("/tag/{id}")
+    @GetMapping
+    @ApiOperation(value = "Получение всех QuestionDto с пагинацией", tags = {"Get All QuestionDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Все QuestionDto получены"),
+            @ApiResponse(code = 400, message = "QuestionDto не найдены")
+    })
+    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionDto(@RequestParam int currentPageNumber,
+                                                                  @RequestParam(defaultValue = "10") int itemsOnPage,
+                                                                  @RequestParam(required = false) List<Long> trackedTags,
+                                                                  @RequestParam(required = false) List<Long> ignoredTags) {
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "AllQuestionDto");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+        paginationMap.put("trackedTags", trackedTags);
+        paginationMap.put("ignoredTags", ignoredTags);
+
+        return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
+
+    @GetMapping("tag/{id}")
     @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto по tagId"})
     @ApiResponses( value = {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
