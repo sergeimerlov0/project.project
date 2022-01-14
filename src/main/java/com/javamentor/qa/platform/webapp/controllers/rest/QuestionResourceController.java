@@ -130,7 +130,6 @@ public class QuestionResourceController {
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/tag/{id}")
     @GetMapping
     @ApiOperation(value = "Получение всех QuestionDto с пагинацией", tags = {"Get All QuestionDto"})
     @ApiResponses(value = {
