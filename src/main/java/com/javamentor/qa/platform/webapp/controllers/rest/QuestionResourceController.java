@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -101,6 +103,26 @@ public class QuestionResourceController {
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping
+    @ApiOperation(value = "Получение всех QuestionDto с пагинацией", tags = {"Get All QuestionDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Все QuestionDto получены"),
+            @ApiResponse(code = 400, message = "QuestionDto не найдены")
+    })
+    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionDto(@RequestParam int currentPageNumber,
+                                                                  @RequestParam(defaultValue = "10") int itemsOnPage,
+                                                                  @RequestParam(required = false) List<Long> trackedTags,
+                                                                  @RequestParam(required = false) List<Long> ignoredTags) {
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "AllQuestionDto");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+        paginationMap.put("trackedTags", trackedTags);
+        paginationMap.put("ignoredTags", ignoredTags);
+
+        return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 
     @GetMapping("tag/{id}")

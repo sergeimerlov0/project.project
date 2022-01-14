@@ -1,0 +1,36 @@
+votes_on_questions:
+  - id: 100
+    user_id: 100
+    question_id: 100
+    persist_date: "[DAY,NOW]"
+    vote: "UP_VOTE"
+
+  - id: 101
+    user_id: 101
+    question_id: 100
+    persist_date: "[DAY,NOW]"
+    vote: "UP_VOTE"
+
+  - id: 102
+    user_id: 101
+    question_id: 100
+    persist_date: "[DAY,NOW]"
+    vote: "DOWN_VOTE"
+
+  - id: 103
+    user_id: 100
+    question_id: 101
+    persist_date: "[DAY,NOW]"
+    vote: "UP_VOTE"
+
+  - id: 104
+    user_id: 101
+    question_id: 101
+    persist_date: "[DAY,NOW]"
+    vote: "DOWN_VOTE"
+
+  - id: 105
+    user_id: 102
+    question_id: 101
+    persist_date: "[DAY,NOW]"
+    vote: "DOWN_VOTE"
