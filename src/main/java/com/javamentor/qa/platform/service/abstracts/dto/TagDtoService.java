@@ -11,7 +11,11 @@ public interface TagDtoService {
 
     List<TagDto> getTrackedTagById(Long id);
 
+    List<TagDto> getTrackedTagsByIds(Iterable<Long> ids);
+
     List<TagDto> getIgnoreTagById(Long id);
+
+    List<TagDto> getIgnoreTagsByIds(Iterable<Long> ids);
 
     List<RelatedTagsDto> getRelatedTagsDto();
 }

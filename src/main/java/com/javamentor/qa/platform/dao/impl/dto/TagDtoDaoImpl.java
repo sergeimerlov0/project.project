@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Tuple;
@@ -50,6 +51,16 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
+    public List<TagDto> getTrackedTagsByIds(Iterable<Long> ids) {
+        if (ids != null && ids.iterator().hasNext()) {
+            return entityManager.createQuery("select distinct new com.javamentor.qa.platform.models.dto.TagDto(e.id, e.name) from TrackedTag t join t.trackedTag e WHERE e.id IN :ids", TagDto.class)
+                    .setParameter("ids", ids).getResultList();
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
     public List<TagDto> getIgnoreTagById(Long id) {
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.TagDto(x.id, x.name) from IgnoredTag t join t.ignoredTag x where t.user.id=:id", TagDto.class)
                 .setParameter("id", id)
@@ -57,8 +68,18 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
+    public List<TagDto> getIgnoreTagsByIds(Iterable<Long> ids) {
+        if (ids != null && ids.iterator().hasNext()) {
+            return entityManager.createQuery("select distinct new com.javamentor.qa.platform.models.dto.TagDto(e.id, e.name) from IgnoredTag t join t.ignoredTag e WHERE e.id IN :ids", TagDto.class)
+                    .setParameter("ids", ids).getResultList();
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
     public List<RelatedTagsDto> getRelatedTagsDto() {
-        return entityManager.createQuery("SELECT  new  com.javamentor.qa.platform.models.dto.RelatedTagsDto" +
+        return entityManager.createQuery("SELECT new  com.javamentor.qa.platform.models.dto.RelatedTagsDto" +
                         "(t.id, t.name, t.questions.size) " +
                         "from Tag t inner join t.questions group by t.id order by t.questions.size desc ", RelatedTagsDto.class)
                 .setMaxResults(10)
