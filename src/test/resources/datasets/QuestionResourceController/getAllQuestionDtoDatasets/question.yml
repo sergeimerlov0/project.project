@@ -1,0 +1,48 @@
+question:
+  - id: 100
+    title: "test title by question 100"
+    description: "test description by question 100"
+    persist_date: "[DAY,NOW]"
+    user_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+  - id: 101
+    title: "test title by question 101"
+    description: "test description by question 101"
+    persist_date: "[DAY,NOW]"
+    user_id: 101
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+  - id: 102
+    title: "test title by question 102"
+    description: "test description by question 102"
+    persist_date: "[DAY,NOW]"
+    user_id: 101
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: true
+
+  - id: 103
+    title: "test title by question 103"
+    description: "test description by question 103"
+    persist_date: "[DAY,NOW]"
+    user_id: 102
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+  - id: 104
+    title: "test title by question 104"
+    description: "test description by question 104"
+    persist_date: "[DAY,NOW]"
+    user_id: 101
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+  - id: 105
+    title: "test title by question 105"
+    description: "test description by question 105"
+    persist_date: "[DAY,NOW]"
+    user_id: 102
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
