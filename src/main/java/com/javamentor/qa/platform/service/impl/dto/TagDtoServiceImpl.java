@@ -30,20 +30,8 @@ public class TagDtoServiceImpl implements TagDtoService {
 
     @Override
     @Transactional
-    public List<TagDto> getTrackedTagsByIds(Iterable<Long> ids) {
-        return tagDtoDao.getTrackedTagsByIds(ids);
-    }
-
-    @Override
-    @Transactional
     public List<TagDto> getIgnoreTagById(Long id) {
         return tagDtoDao.getIgnoreTagById(id);
-    }
-
-    @Override
-    @Transactional
-    public List<TagDto> getIgnoreTagsByIds(Iterable<Long> ids) {
-        return tagDtoDao.getIgnoreTagsByIds(ids);
     }
 
     @Override
