@@ -7,3 +7,12 @@ answer:
     is_deleted_by_moderator: false
     is_helpful: true
     update_date: "[DAY,NOW]"
+
+  - id: 101
+    user_id: 101
+    question_id: 101
+    html_body: "test1"
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: false
+    update_date: "[DAY,NOW]"
