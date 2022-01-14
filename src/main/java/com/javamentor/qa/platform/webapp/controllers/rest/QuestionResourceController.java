@@ -33,7 +33,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/user/question/")
+@RequestMapping("api/user/question")
 @Api(value = "Работа с вопросами", tags = {"Вопросы"})
 public class QuestionResourceController {
 
@@ -42,7 +42,7 @@ public class QuestionResourceController {
     private final VoteQuestionService voteQuestionService;
     private final TagService tagService;
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
@@ -54,7 +54,7 @@ public class QuestionResourceController {
                 new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(id), HttpStatus.OK);
     }
 
-    @GetMapping("{id}/comment")
+    @GetMapping("/{id}/comment")
     @ApiOperation(value = "Получение списка QuestionCommentDto по Question id",
             tags = {"список", "комментарий", "вопрос"})
     @ApiResponses(value = {
@@ -67,26 +67,50 @@ public class QuestionResourceController {
                 new ResponseEntity<>("Question with id " + id + " not found!", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("{questionId}/upVote")
+    @GetMapping("/noAnswer")
+    @ApiOperation(value = "Получение QuestionDto, на которые нет ответов", tags = {"Получение QuestionDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
+            @ApiResponse(code = 400, message = "Параметры заданы неверно")
+    })
+    public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int page,
+                                                    @RequestParam(defaultValue = "10") int items,
+                                                    @RequestParam(required = false, defaultValue = "0")
+                                                                List<Long> ignoredTags,
+                                                    @RequestParam(required = false) List<Long> trackedTags) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("class", "QuestionDtoNoAnswer");
+        map.put("currentPageNumber", page);
+        map.put("itemsOnPage", items);
+        map.put("ignoredTags", ignoredTags);
+        map.put("trackedTags", trackedTags);
+        PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, map);
+        return new ResponseEntity<>(pageDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/{questionId}/upVote")
     @ApiOperation(value = "Голосование за Question по Question id", tags = {"VoteQuestion up"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> upVote(@AuthenticationPrincipal(expression = "@userService.getUser(#this)") User user, @PathVariable Long questionId) {
+    public ResponseEntity<Integer> upVote(@AuthenticationPrincipal(expression = "@userService.getUser(#this)")
+                                                      User user,
+                                          @PathVariable Long questionId) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.UP_VOTE);
                 voteQuestionService.persist(voteQuestion);
-                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId), HttpStatus.OK);
+                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId),
+                        HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("{questionId}/downVote")
+    @PostMapping("/{questionId}/downVote")
     @ApiOperation(value = "Голосование за Question по Question id", tags = {"VoteQuestion down"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
@@ -99,7 +123,8 @@ public class QuestionResourceController {
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.DOWN_VOTE);
                 voteQuestionService.persist(voteQuestion);
-                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId), HttpStatus.OK);
+                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId),
+                        HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -132,8 +157,8 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Данный TagId не найден")
     })
     public ResponseEntity<?> getQuestionDtoByTagId(@PathVariable Long id,
-                                                                      @RequestParam int page,
-                                                                      @RequestParam(defaultValue="10") int items) {
+                                                   @RequestParam int page,
+                                                   @RequestParam(defaultValue="10") int items) {
         if (tagService.existsById(id)) {
             Map<String, Object> objectMap = new HashMap<>();
             objectMap.put("class", "AllQuestionDtoByTagId");
