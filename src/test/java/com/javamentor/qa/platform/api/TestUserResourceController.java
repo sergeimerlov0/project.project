@@ -17,38 +17,42 @@ public class TestUserResourceController extends AbstractApiTest {
     private String password;
 
     @Test
-    @DataSet(value = {"dataset/UserResourceController/users.yml",
-            "dataset/UserResourceController/answer.yml",
-            "dataset/UserResourceController/question.yml",
-            "dataset/UserResourceController/reputations.yml",
-            "dataset/UserResourceController/roles.yml"})
+    @DataSet(value = {
+            "datasets/UserResourceController/getById/roles.yml",
+            "datasets/UserResourceController/getById/users.yml",
+            "datasets/UserResourceController/getById/question.yml",
+            "datasets/UserResourceController/getById/answer.yml",
+            "datasets/UserResourceController/getById/reputations.yml"
+
+    }, cleanBefore = true, cleanAfter = true)
     void getUserById() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/user/101"))
+        email = "user@mail.ru";
+        password = "password";
+
+        //проверяем что вернется 1 user по ID 100
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/100")
+                        .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(101))
-                .andExpect(jsonPath("$.email").value("SomeEmail@mail.mail"))
-                .andExpect(jsonPath("$.fullName").value("Max"))
-                .andExpect(jsonPath("$.linkImage").value("link"))
-                .andExpect(jsonPath("$.city").value("Moscow"))
-                .andExpect(jsonPath("$.reputation").value(101));
-    }
+                .andExpect(jsonPath("$.id").value(100))
+                .andExpect(jsonPath("$.email").value("user@mail.ru"))
+                .andExpect(jsonPath("$.fullName").value("user1"))
+                .andExpect(jsonPath("$.linkImage").value("user1link"))
+                .andExpect(jsonPath("$.city").value("user1city"))
+                .andExpect(jsonPath("$.reputation").value(2));
 
-    @Test
-    @DataSet(value = {"dataset/UserResourceController/users.yml",
-            "dataset/UserResourceController/answer.yml",
-            "dataset/UserResourceController/question.yml",
-            "dataset/UserResourceController/reputations.yml",
-            "dataset/UserResourceController/roles.yml"})
-    void shouldNotGetUserById() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/user/105"))
+        //проверяем что такого юзера нет
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/106")
+                        .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.id").doesNotExist());
+
+
     }
 
     @Test
-    @DataSet(value = {"datasets/UserResourceController/getUserByReg/role.yml","datasets/UserResourceController/getUserByReg/users.yml"},
+    @DataSet(value = {"datasets/UserResourceController/getUserByReg/role.yml", "datasets/UserResourceController/getUserByReg/users.yml"},
             cleanBefore = true, cleanAfter = true)
     void getUserByReg() throws Exception {
         //email и пароль админа
@@ -57,21 +61,21 @@ public class TestUserResourceController extends AbstractApiTest {
 
         //пытаемся получить дто через админа
         mvc.perform(get("/api/user/new")
-                        .header("Authorization", getJwtToken(email,password))
-                        .param("page","1")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("page", "1")
                         .param("items", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
 
         //email и пароль корректного юзера
-         email = "test@mail.ru";
-         password = "password";
+        email = "test@mail.ru";
+        password = "password";
 
         //проверяем что вернется 1 user на первой странице по дате регистрации
         mvc.perform(get("/api/user/new")
-                        .header("Authorization", getJwtToken(email,password))
-                        .param("page","1")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("page", "1")
                         .param("items", "1")
                 )
                 .andDo(print())
@@ -81,8 +85,8 @@ public class TestUserResourceController extends AbstractApiTest {
 
         //проверяем что вернутся 5 юзера на первой странице по дате регистрации, т.к 1 удален
         mvc.perform(get("/api/user/new")
-                        .header("Authorization", getJwtToken(email,password))
-                        .param("page","1")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("page", "1")
                         .param("items", "5")
                 )
                 .andDo(print())
@@ -95,8 +99,8 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items[4].id").value(105));
         //проверяем что вернется 1 user на 2 странице(т.е второй по дате регистрации)
         mvc.perform(get("/api/user/new")
-                        .header("Authorization", getJwtToken(email,password))
-                        .param("page","2")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("page", "2")
                         .param("items", "1")
                 )
                 .andDo(print())
