@@ -1,11 +1,14 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.*;
+import org.aspectj.apache.bcel.generic.RET;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,17 +26,22 @@ public class TestDataInitService {
     private final AnswerService answerService;
     private final QuestionService questionService;
     private final TagService tagService;
+    private final TrackedTagService trackedTagService;
+    private final IgnoredTagService ignoredTagService;
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway,
                                AnswerService answerService, QuestionService questionService,
-                               TagService tagService) {
+                               TagService tagService, TrackedTagService trackedTagService,
+                               IgnoredTagService ignoredTagService) {
         this.roleService = roleService;
         this.userService = userService;
         this.flyway = flyway;
         this.answerService = answerService;
         this.questionService = questionService;
         this.tagService = tagService;
+        this.trackedTagService = trackedTagService;
+        this.ignoredTagService = ignoredTagService;
     }
 
     public void init() {
@@ -42,6 +50,7 @@ public class TestDataInitService {
         addTag();
         addQuestion();
         addAnswer();
+        addTrackedAndIgnoredTag();
     }
 
     private void addRole() {
@@ -129,7 +138,7 @@ public class TestDataInitService {
         StringBuilder nickname = new StringBuilder();
 
         User admin = new User();
-        admin.setRole(adminRole);
+        admin.setRole(userRole);
         admin.setEmail(email.append("vasya@mail.ru").toString());
         admin.setPassword(password.append("password").toString());
         admin.setFullName(fullName.append("Vasya").toString());
@@ -183,6 +192,36 @@ public class TestDataInitService {
             u.setNickname(nickname.toString());
 
             userService.persist(u);
+
+        }
+    }
+
+    private void addTrackedAndIgnoredTag() {
+        List<Tag> tags = new ArrayList<>();
+
+        for (int x = 2; x <= 50; x++) {
+            tags.clear();
+            int countTrackedTag = (int) (Math.random() * 4);
+            int countIgnoredTag = (int) (Math.random() * 4);
+            User user = userService.getById((long) x).get();
+
+            for (int y = 0; y <= 5; y++) {
+                TrackedTag trackedTag = new TrackedTag();
+                IgnoredTag ignoredTag = new IgnoredTag();
+                Tag tag = tagService.getById((long) (1 + (int) (Math.random() * 49))).get();
+                if (!tags.contains(tag) && trackedTagService.trackedTagsByUserId(user.getId()).size() < countTrackedTag) {
+                    tags.add(tag);
+                    trackedTag.setTrackedTag(tag);
+                    trackedTag.setUser(user);
+                    trackedTagService.persist(trackedTag);
+                } else if (!tags.contains(tag) && ignoredTagService.ignoredTagsByUserId(user.getId()).size() < countIgnoredTag) {
+                    tags.add(tag);
+                    ignoredTag.setIgnoredTag(tag);
+                    ignoredTag.setUser(user);
+                    ignoredTagService.persist(ignoredTag);
+                }
+            }
+
         }
     }
 }
