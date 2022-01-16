@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
@@ -20,12 +21,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -86,7 +82,7 @@ public class QuestionResourceController {
     public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int page,
                                                     @RequestParam(defaultValue = "10") int items,
                                                     @RequestParam(required = false, defaultValue = "0")
-                                                                List<Long> ignoredTags,
+                                                            List<Long> ignoredTags,
                                                     @RequestParam(required = false) List<Long> trackedTags) {
         Map<String, Object> map = new HashMap<>();
         map.put("class", "QuestionDtoNoAnswer");
@@ -98,7 +94,6 @@ public class QuestionResourceController {
         return new ResponseEntity<>(pageDto, HttpStatus.OK);
     }
 
-    @PostMapping("/{questionId}/upVote")
     @PostMapping()
     @ApiOperation(value = "Add a new question", tags = {"Question"})
     @ApiResponses(value = {
@@ -119,7 +114,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
     public ResponseEntity<Integer> upVote(@AuthenticationPrincipal(expression = "@userService.getUser(#this)")
-                                                      User user,
+                                                  User user,
                                           @PathVariable Long questionId) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
@@ -176,13 +171,13 @@ public class QuestionResourceController {
 
     @GetMapping("tag/{id}")
     @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto по tagId"})
-    @ApiResponses( value = {
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
             @ApiResponse(code = 400, message = "Данный TagId не найден")
     })
     public ResponseEntity<?> getQuestionDtoByTagId(@PathVariable Long id,
                                                    @RequestParam int page,
-                                                   @RequestParam(defaultValue="10") int items) {
+                                                   @RequestParam(defaultValue = "10") int items) {
         if (tagService.existsById(id)) {
             Map<String, Object> objectMap = new HashMap<>();
             objectMap.put("class", "AllQuestionDtoByTagId");
