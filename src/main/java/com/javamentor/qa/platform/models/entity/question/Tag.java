@@ -18,7 +18,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tag")
-@ToString
 public class Tag implements Serializable {
 
     private static final long serialVersionUID = 6264105282197120461L;
@@ -39,7 +38,6 @@ public class Tag implements Serializable {
     private LocalDateTime persistDateTime;
 
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
-    @ToString.Exclude
     private List<Question> questions;
 
     @PrePersist

@@ -1,44 +1,43 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
-import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/user/question/")
+@RequestMapping("api/user/question")
 @Api(value = "Работа с вопросами", tags = {"Вопросы"})
 public class QuestionResourceController {
 
     private final QuestionDtoService questionDtoService;
     private final QuestionService questionService;
-    private final TagService tagService;
     private final VoteQuestionService voteQuestionService;
 
     @GetMapping("{id}")
@@ -73,37 +72,9 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Validation error")
     })
     public ResponseEntity<?> createQuestion(@Validated @RequestBody QuestionCreateDto questionCreateDto) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        List<Tag> tags = questionCreateDto.getTags().stream()
-                .map(tagDto -> tagService
-                        .getByName(tagDto.getName())
-                        .orElseGet(() -> {
-                            Tag tag = new Tag();
-                            tag.setName(tagDto.getName());
-                            tagService.persist(tag);
-                            return tag;
-                        }))
-                .collect(Collectors.toList());
-
-        Question question = new Question();
-        question.setTitle(questionCreateDto.getTitle());
-        question.setDescription(questionCreateDto.getDescription());
-        question.setUser(user);
-        question.setTags(tags);
-
-        // временно устанавливаю ответ пока не исправили баг с getQuestionDtoByQuestionId,
-        // который находит только те вопросы, которые имеют хотя бы один ответ
-        Answer a = new Answer();
-        a.setUser(user);
-        a.setQuestion(question);
-        a.setHtmlBody("body");
-        a.setIsDeleted(false);
-        a.setIsHelpful(false);
-        a.setIsDeletedByModerator(false);
-        question.setAnswers(List.of(a));
-
+        Question question = Mappers.getMapper(QuestionConverter.class).questionCreateDtoToQuestion(questionCreateDto);
+        question.setUser((User) SecurityContextHolder.getContext().getAuthentication().getDetails());
         questionService.persist(question);
-
         return new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(question.getId()), HttpStatus.OK);
     }
 

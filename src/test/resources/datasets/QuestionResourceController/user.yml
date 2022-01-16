@@ -1,0 +1,33 @@
+user_entity:
+  - id: 100
+    email: "admin@gmail.com"
+    password: "123"
+    full_name: "admin_fullname"
+    persist_date: "[DAY,NOW]"
+    is_enabled: true
+    is_deleted: false
+    city: "Moscow"
+    link_site: "example.com"
+    link_github: "github@link"
+    link_vk: "vk@link"
+    about: "info"
+    image_link: "profile.png"
+    last_redaction_date: "[DAY,NOW]"
+    nickname: "admin_nickname"
+    role_id: 100
+  - id: 101
+    email: "user@gmail.com"
+    password: "123"
+    full_name: "user_fullname"
+    persist_date: "[DAY,NOW]"
+    is_enabled: true
+    is_deleted: false
+    city: "Moscow"
+    link_site: "example.com"
+    link_github: "github@link"
+    link_vk: "vk@link"
+    about: "info"
+    image_link: "profile.png"
+    last_redaction_date: "[DAY,NOW]"
+    nickname: "user_nickname"
+    role_id: 101
