@@ -431,9 +431,9 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/QuestionResourceController/role.yml",
-            "datasets/QuestionResourceController/user.yml",
-            "datasets/QuestionResourceController/tag.yml"
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
     })
     public void testCreateQuestionWithEmptyOrNullTitle() throws Exception {
         List<TagDto> tags = generateTags(3);
@@ -467,9 +467,9 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/QuestionResourceController/role.yml",
-            "datasets/QuestionResourceController/user.yml",
-            "datasets/QuestionResourceController/tag.yml"
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
     })
     public void testCreateQuestionWithEmptyOrNullDescription() throws Exception {
         List<TagDto> tags = generateTags(3);
@@ -503,9 +503,9 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/QuestionResourceController/role.yml",
-            "datasets/QuestionResourceController/user.yml",
-            "datasets/QuestionResourceController/tag.yml"
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
     })
     public void testCreateQuestionWithEmptyOrNullTags() throws Exception {
         QuestionCreateDto questionCreateDtoEmptyTags = new QuestionCreateDto(
@@ -537,9 +537,9 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/QuestionResourceController/role.yml",
-            "datasets/QuestionResourceController/user.yml",
-            "datasets/QuestionResourceController/tag.yml"
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
     })
     public void testCreateQuestionWithNewTags() throws Exception {
         List<TagDto> tags = generateTags(3);
@@ -562,9 +562,9 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/QuestionResourceController/role.yml",
-            "datasets/QuestionResourceController/user.yml",
-            "datasets/QuestionResourceController/tag.yml"
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
     })
     public void testCreateQuestionWithExistedTags() throws Exception {
         TagDto existedTag1 = new TagDto(null, "tag104", null);
@@ -590,9 +590,9 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/QuestionResourceController/role.yml",
-            "datasets/QuestionResourceController/user.yml",
-            "datasets/QuestionResourceController/tag.yml"
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
     })
     public void testCreateQuestionPresentInDb() throws Exception {
         List<TagDto> tags = generateTags(3);
@@ -615,9 +615,9 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/QuestionResourceController/role.yml",
-            "datasets/QuestionResourceController/user.yml",
-            "datasets/QuestionResourceController/tag.yml"
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
     })
     public void testCreateQuestionByAdmin() throws Exception {
         List<TagDto> tags = generateTags(3);
