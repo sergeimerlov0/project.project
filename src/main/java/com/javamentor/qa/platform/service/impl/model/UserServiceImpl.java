@@ -62,15 +62,10 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
     }
 
     public String generateRandomPassword() {
-
-        List rules = Arrays.asList(new CharacterRule(EnglishCharacterData.UpperCase, 1),
+        List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.UpperCase, 1),
                 new CharacterRule(EnglishCharacterData.LowerCase, 1),
                 new CharacterRule(EnglishCharacterData.Digit, 1));
-
         PasswordGenerator generator = new PasswordGenerator();
         return generator.generatePassword(15, rules);
-
     }
-
-
 }
