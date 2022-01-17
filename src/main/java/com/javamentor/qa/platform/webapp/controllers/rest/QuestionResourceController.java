@@ -22,7 +22,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -93,9 +93,8 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> upVote(@AuthenticationPrincipal(expression = "@userService.getUser(#this)")
-                                                  User user,
-                                          @PathVariable Long questionId) {
+    public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
@@ -115,7 +114,8 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> downVote(@AuthenticationPrincipal User user, @PathVariable Long questionId) {
+    public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
