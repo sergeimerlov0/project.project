@@ -15,9 +15,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class QuestionResourceControllerTest extends AbstractApiTest {
 
@@ -67,11 +65,11 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/questionDatasets/role.yml"})
     void postUpVoteQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/100/upVote"))
-               .andExpect(status().isOk())
+                .andExpect(status().isOk())
                 .andReturn();
-                Assertions.assertNotNull(entityManager.createQuery("FROM VoteQuestion a WHERE a.question.id =:questionId and a.user.id =: userId", VoteQuestion.class)
-                                .setParameter("questionId", 100L)
-                                .setParameter("userId", 100L));
+        Assertions.assertNotNull(entityManager.createQuery("FROM VoteQuestion a WHERE a.question.id =:questionId and a.user.id =: userId", VoteQuestion.class)
+                .setParameter("questionId", 100L)
+                .setParameter("userId", 100L));
     }
 
     @Test
@@ -118,7 +116,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
     })
     public void getAllQuestionCommentByQuestionId() throws Exception {
         this.mvc.perform(get("/api/user/question/100/comment")
-                .header("Authorization", getJwtToken("test@mail.ru", "password")))
+                        .header("Authorization", getJwtToken("test@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -146,7 +144,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
     })
     public void getEmptyListQuestionCommentByQuestionId() throws Exception {
         mvc.perform(get("/api/user/question/101/comment")
-                .header("Authorization", getJwtToken("test@mail.ru", "password")))
+                        .header("Authorization", getJwtToken("test@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
@@ -165,7 +163,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
     })
     public void shouldNotGetQuestionCommentByQuestionId() throws Exception {
         mvc.perform(get("/api/user/question/500/comment")
-                .header("Authorization", getJwtToken("test@mail.ru", "password")))
+                        .header("Authorization", getJwtToken("test@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Question with id 500 not found!"));
@@ -185,7 +183,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
         //проверяем возвращаемый Response. В датасетах 3 вопроса c id 100, 101, 102, имеющих связь с TagId 100,
         //но вопрос c id 102 имеет поле IsDeleted=true
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/tag/100?page=1")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -228,7 +226,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
         //В датасетах 4 вопроса c id 100, 102, 103 и 104 на которые нет ответа,
         // но вопрос c id 102 имеет поле IsDeleted=true
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -256,7 +254,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
         //Проверяем, что по trackedTags подходит только question с id 100
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1&trackedTags=100")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -268,7 +266,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
         //Проверяем, что по ignoredTags подходит только question с id 103 и 104
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1&ignoredTags=100")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -282,7 +280,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
         //Проверяем, что по trackedTags и по ignoredTags подходит только question с id 100 и 104
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question/noAnswer?page=1&trackedTags=100,103&ignoredTags=102")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -295,7 +293,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
 
         //Проверка запроса, на который items не обнаружены, в данном случае по trackedTags
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1&trackedTags=104")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -323,7 +321,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
         // Игнорим тег 101, который имеется у вопросов 100 и 103
         // Вопрос c id 102 имеет поле isDeleted = true
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103&ignoredTags=101")
-                        .header("Authorization", getJwtToken("test_user100@mail.ru","123")))
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -360,12 +358,12 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/getAllQuestionDtoDatasets/tag.yml",
             "datasets/QuestionResourceController/getAllQuestionDtoDatasets/user.yml",
             "datasets/QuestionResourceController/getAllQuestionDtoDatasets/voteQuestion.yml",})
-    // Тест для QuestionResourceController::getAllQuestionDto, только без tracked и ignored тегов с фронта и
-    // с дефолтным количеством результатов на странице (10)
+        // Тест для QuestionResourceController::getAllQuestionDto, только без tracked и ignored тегов с фронта и
+        // с дефолтным количеством результатов на странице (10)
     void getAllQuestionDtoWithDefaultValuesFromFront() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1")
-                        .header("Authorization", getJwtToken("test_user100@mail.ru","123")))
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -400,4 +398,107 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[3].listTagDto.[0].id").value(103))
                 .andExpect(jsonPath("$.items.[4].listTagDto.[0].id").value(103));
     }
+
+    @Test
+    @DataSet(value = {"datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/question.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/questionHasTag.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/role.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/tag.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/voteQuestion.yml",
+            "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/user.yml"})
+    public void getQuestionDtoSortedByDate() throws Exception {
+
+        //В датасетах 4 вопроса c id 100, 102, 103 и 104 на которые нет ответа,
+        // но вопрос c id 102 имеет поле IsDeleted=true
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/new?page=1")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(4))
+                .andExpect(jsonPath("$.itemsOnPage").value(10))
+                //Проверяем, что в pageDto подтянулась нужная QuestionDto
+                .andExpect(jsonPath("$.items.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[1].id").value(101))
+                .andExpect(jsonPath("$.items.[2].id").value(103))
+                .andExpect(jsonPath("$.items.[3].id").value(104))
+                //Проверяем, что значения полей QuestionDto, например, с id 100 заполнены
+                .andExpect(jsonPath("$.items.[0].title").value("title by question 100"))
+                .andExpect(jsonPath("$.items.[0].authorId").value(100))
+                .andExpect(jsonPath("$.items.[0].authorName").value("User with id 100"))
+                .andExpect(jsonPath("$.items.[0].authorImage").value("image100"))
+                .andExpect(jsonPath("$.items.[0].description")
+                        .value("description by question 100"))
+                .andExpect(jsonPath("$.items.[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items.[0].countAnswer").value(0))
+                .andExpect(jsonPath("$.items.[0].countValuable").value(1))
+                //Проверяем, что нужное QuestionDto также выгрузила список всех tags, связанных с ним
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(101));
+
+        //Проверяем, что проходят только вопросы, содержащие tags с id 100
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/new?page=1&trackedTags=100")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(2))
+                .andExpect(jsonPath("$.itemsOnPage").value(10))
+                //Проверяем, что в pageDto подтянулась нужная QuestionDto
+                .andExpect(jsonPath("$.items.[0].id").value(100));
+
+        //Проверяем, что по ignoredTags подходит только question с id 103 и 104
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/new?page=1&ignoredTags=100")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(2))
+                .andExpect(jsonPath("$.itemsOnPage").value(10))
+                //Проверяем, что в pageDto подтянулась нужная QuestionDto
+                .andExpect(jsonPath("$.items.[0].id").value(103))
+                .andExpect(jsonPath("$.items.[1].id").value(104));
+
+        //Проверяем, что по trackedTags и по ignoredTags подходит только question с id 100 и 104
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/question/new?page=1&trackedTags=100,103&ignoredTags=102")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(3))
+                .andExpect(jsonPath("$.itemsOnPage").value(10))
+                //Проверяем, что в pageDto подтянулась нужная QuestionDto
+                .andExpect(jsonPath("$.items.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[1].id").value(101))
+                .andExpect(jsonPath("$.items.[2].id").value(104));
+
+        //Проверка запроса, на который items не обнаружены, в данном случае по trackedTags
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/new?page=1&trackedTags=104")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(0))
+                .andExpect(jsonPath("$.totalResultCount").value(0))
+                .andExpect(jsonPath("$.itemsOnPage").value(10))
+                .andExpect(jsonPath("$.items", hasSize(0)));
+
+        /*Проверка запроса, когда tracked = 100,101, а ignored = 101, соответственно должны вывестись только вопросы
+                с tag 101, а именно question с id 101*/
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/new?page=1&trackedTags=100,101&ignoredTags=101")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(1))
+                .andExpect(jsonPath("$.itemsOnPage").value(10))
+                .andExpect(jsonPath("$.items.[0].id").value(101));
+    }
+
 }

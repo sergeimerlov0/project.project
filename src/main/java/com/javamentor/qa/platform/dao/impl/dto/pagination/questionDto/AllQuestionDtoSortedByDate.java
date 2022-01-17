@@ -51,19 +51,7 @@ public class AllQuestionDtoSortedByDate implements PaginationDtoAble<QuestionDto
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public int getTotalResultCount(Map<String, Object> param) {
-        List<Long> ignoredTags = (List<Long>) param.get("ignored");
-        List<Long> trackedTags = (List<Long>) param.get("tracked");
-        return Math.toIntExact((Long) entityManager.createQuery("SELECT COUNT(DISTINCT q.id) " +
-                        "FROM Question q JOIN q.tags tgs " +
-                        "WHERE q.id IN (SELECT q.id From Question q JOIN q.tags tgs " +
-                        "WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
-                        "AND q.id NOT IN (SELECT q.id From Question q JOIN q.tags tgs " +
-                        "WHERE tgs.id IN :ignored) " +
-                        "AND q.isDeleted = false")
-                .setParameter("tracked", trackedTags)
-                .setParameter("ignored", ignoredTags)
-                .getSingleResult());
+        return getItems(param).size();
     }
 }

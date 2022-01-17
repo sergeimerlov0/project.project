@@ -126,17 +126,18 @@ public class QuestionResourceController {
             tags = {"Получение QuestionDto отсортированных по дате"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
+            @ApiResponse(code = 400, message = "Неправильный запрос"),
             @ApiResponse(code = 500, message = "Внутренняя ошибка")
     })
     public ResponseEntity<?> getQuestionSortedByDate(@RequestParam int page, @RequestParam(defaultValue = "10") int items,
-                                                     @RequestParam List<Long> trackedTag,
-                                                     @RequestParam List<Long> ignoredTag) {
+                                                     @RequestParam(required = false) List<Long> trackedTags,
+                                                     @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags) {
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("class", "AllQuestionDtoSortedByDate");
         objectMap.put("currentPageNumber", page);
         objectMap.put("itemsOnPage", items);
-        objectMap.put("tracked", trackedTag);
-        objectMap.put("ignored", ignoredTag);
+        objectMap.put("tracked", trackedTags);
+        objectMap.put("ignored", ignoredTags);
         PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
         return new ResponseEntity<>(pageDto, HttpStatus.OK);
     }
