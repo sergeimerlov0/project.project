@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +16,13 @@ import java.util.stream.Collectors;
 public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> implements QuestionService {
 
     private final TagService tagService;
+    private final QuestionDao questionDao;
 
+    @Autowired
     public QuestionServiceImpl(QuestionDao questionDao, TagService tagService) {
         super(questionDao);
         this.tagService = tagService;
+        this.questionDao = questionDao;
     }
 
     @Override
@@ -31,5 +35,11 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
                 })).collect(Collectors.toList());
         question.setTags(managedTags);
         super.persist(question);
+    }
+
+    @Override
+    @Transactional
+    public Integer getCountQuestion() {
+        return questionDao.getCountQuestion();
     }
 }
