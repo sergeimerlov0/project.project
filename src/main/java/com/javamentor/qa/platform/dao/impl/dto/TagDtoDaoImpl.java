@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Tuple;
@@ -60,7 +61,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public List<RelatedTagsDto> getRelatedTagsDto() {
-        return entityManager.createQuery("SELECT  new  com.javamentor.qa.platform.models.dto.RelatedTagsDto" +
+        return entityManager.createQuery("SELECT new  com.javamentor.qa.platform.models.dto.RelatedTagsDto" +
                         "(t.id, t.name, t.questions.size) " +
                         "from Tag t inner join t.questions " +
                         "group by t.id order by t.questions.size desc ", RelatedTagsDto.class)
