@@ -16,6 +16,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
@@ -30,12 +35,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -197,5 +196,26 @@ public class QuestionResourceController {
     })
     public ResponseEntity<Integer> getCountQuestion() {
         return new ResponseEntity<>(questionService.getCountQuestion(), HttpStatus.OK);
+    }
+
+    @GetMapping("/new")
+    @ApiOperation(value = "Получение QuestionDto отсортированных по дате",
+            tags = {"Получение QuestionDto отсортированных по дате"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
+            @ApiResponse(code = 400, message = "Неправильный запрос"),
+            @ApiResponse(code = 500, message = "Внутренняя ошибка")
+    })
+    public ResponseEntity<?> getQuestionSortedByDate(@RequestParam int page, @RequestParam(defaultValue = "10") int items,
+                                                     @RequestParam(required = false) List<Long> trackedTags,
+                                                     @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags) {
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("class", "AllQuestionDtoSortedByDate");
+        objectMap.put("currentPageNumber", page);
+        objectMap.put("itemsOnPage", items);
+        objectMap.put("tracked", trackedTags);
+        objectMap.put("ignored", ignoredTags);
+        PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
+        return new ResponseEntity<>(pageDto, HttpStatus.OK);
     }
 }
