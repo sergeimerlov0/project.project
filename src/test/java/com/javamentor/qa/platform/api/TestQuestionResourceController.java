@@ -471,7 +471,14 @@ class TestQuestionResourceController extends AbstractApiTest {
     @DataSet(value = {
             "datasets/QuestionResourceController/getQuestionCount/question.yml",
             "datasets/QuestionResourceController/getQuestionCount/role.yml",
-            "datasets/QuestionResourceController/getQuestionCount/user.yml"})
+            "datasets/QuestionResourceController/getQuestionCount/user.yml",
+            "datasets/QuestionResourceController/answer.yml",
+            "datasets/QuestionResourceController/reputation.yml",
+            "datasets/QuestionResourceController/comment.yml",
+            "datasets/QuestionResourceController/commentQuestion.yml",
+            "datasets/QuestionResourceController/voteQuestion.yml",
+            "datasets/QuestionResourceController/questionHasTag.yml",
+            "datasets/QuestionResourceController/tag.yml"})
     void getQuestionCount() throws Exception {
         this.mvc.perform(get("/api/user/question/count")
                 .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
