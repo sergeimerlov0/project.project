@@ -2,14 +2,13 @@ package com.javamentor.qa.platform.dao.impl.dto.pagination.questionDto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import java.util.List;
+import java.util.Map;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,7 +50,15 @@ public class AllQuestionDtoSortedByDate implements PaginationDtoAble<QuestionDto
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int getTotalResultCount(Map<String, Object> param) {
-        return getItems(param).size();
+        List<Long> ignoredTags = (List<Long>) param.get("ignored");
+        List<Long> trackedTags = (List<Long>) param.get("tracked");
+        return Math.toIntExact((Long) entityManager.createQuery("SELECT COUNT(DISTINCT q.id) FROM Question q JOIN q.tags tgs" +
+                        " WHERE q.id IN (SELECT q.id From Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked)" +
+                        " AND q.id NOT IN (SELECT q.id From Question q JOIN q.tags tgs WHERE tgs.id IN :ignored)")
+                .setParameter("tracked", trackedTags)
+                .setParameter("ignored", ignoredTags)
+                .getSingleResult());
     }
 }
