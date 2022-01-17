@@ -156,14 +156,16 @@ class TestQuestionResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/questionDatasets/comment.yml",
-            "datasets/questionDatasets/commentQuestion.yml",
-            "datasets/questionDatasets/answer.yml",
-            "datasets/questionDatasets/tag.yml",
-            "datasets/questionCommentDatasets/user.yml",
-            "datasets/questionDatasets/question.yml",
-            "datasets/questionDatasets/questionHasTag.yml",
-            "datasets/questionDatasets/reputation.yml"
+            "datasets/QuestionResourceController/answer.yml",
+            "datasets/QuestionResourceController/comment.yml",
+            "datasets/QuestionResourceController/commentQuestion.yml",
+            "datasets/QuestionResourceController/question.yml",
+            "datasets/QuestionResourceController/questionHasTag.yml",
+            "datasets/QuestionResourceController/reputation.yml",
+            "datasets/QuestionResourceController/role.yml",
+            "datasets/QuestionResourceController/tag.yml",
+            "datasets/QuestionResourceController/user.yml",
+            "datasets/QuestionResourceController/voteQuestion.yml"
     })
     public void getAllQuestionCommentByQuestionId() throws Exception {
         this.mvc.perform(get("/api/user/question/100/comment")
@@ -192,7 +194,8 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/reputation.yml",
             "datasets/QuestionResourceController/role.yml",
             "datasets/QuestionResourceController/tag.yml",
-            "datasets/QuestionResourceController/user.yml"
+            "datasets/QuestionResourceController/user.yml",
+            "datasets/QuestionResourceController/voteQuestion.yml"
     })
     public void getEmptyListQuestionCommentByQuestionId() throws Exception {
         this.mvc.perform(get("/api/user/question/101/comment")
@@ -484,6 +487,8 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(4));
     }
+
+    @Test
     @DataSet(value = {"datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/question.yml",
             "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/questionHasTag.yml",
             "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/role.yml",
