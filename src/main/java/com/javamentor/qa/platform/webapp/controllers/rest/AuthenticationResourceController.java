@@ -11,16 +11,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.List;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Objects;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Api(value = "RestController", description = "Controller to authenticate user with JWT")
@@ -47,12 +49,12 @@ public class AuthenticationResourceController {
 
     @ApiOperation(value = "Check role USER for authorized user", response = HttpStatus.class, tags = "status")
     @GetMapping("/check/status")
-    public ResponseEntity<?> status() {
+    public HttpStatus status() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        if (!user.getAuthorities().contains(roleService.getById(2L).orElseThrow()))
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        else
-            return new ResponseEntity<>(null, HttpStatus.OK);
+        if (!user.getAuthorities().contains(roleService.getRoleByName("USER").orElseThrow())) {
+            return HttpStatus.FORBIDDEN;
+        }
+        return HttpStatus.OK;
     }
 
     @ApiOperation(value = "Get list of all users ", response = Iterable.class, tags = "users")
