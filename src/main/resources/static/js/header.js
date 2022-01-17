@@ -60,7 +60,7 @@ model.forEach(block => {
   $header__inner.insertAdjacentHTML('beforeend', html)
 })
 
-var h = document.getElementById("header");
+const h = document.getElementById("header");
 h.style.borderBottom = "1px solid #f5f5f5";
 h.className = "container-fluid fixed-top bg-light";
 
@@ -69,8 +69,8 @@ function logo(block) {
       <div class="col-lg-2">
         <a style="float: left;
                   width: 120px;"
-                  href="/" class="logo" id="logo">
-          <img src="${block.value}" height="40px"/>
+                  href="https://kata.academy/" class="logo" id="logo">
+          <img src="https://kata.academy/images/icons/logo2.svg" height="40px" alt=""/>
         </a>
       </div>
     `
@@ -117,7 +117,7 @@ function search(block) {
                       type="text" placeholder="Искать здесь...">
         <button style="position: absolute; 
                       top: 0;
-                      right: 0px;
+                      right: 0;
                       width: 42px;
                       height: 42px;
                       border: none;
