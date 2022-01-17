@@ -14,22 +14,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -76,7 +75,7 @@ public class QuestionResourceController {
     public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int page,
                                                     @RequestParam(defaultValue = "10") int items,
                                                     @RequestParam(required = false, defaultValue = "0")
-                                                                List<Long> ignoredTags,
+                                                            List<Long> ignoredTags,
                                                     @RequestParam(required = false) List<Long> trackedTags) {
         Map<String, Object> map = new HashMap<>();
         map.put("class", "QuestionDtoNoAnswer");
@@ -94,9 +93,8 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> upVote(@AuthenticationPrincipal(expression = "@userService.getUser(#this)")
-                                                      User user,
-                                          @PathVariable Long questionId) {
+    public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
@@ -116,7 +114,8 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> downVote(@AuthenticationPrincipal User user, @PathVariable Long questionId) {
+    public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
@@ -152,13 +151,13 @@ public class QuestionResourceController {
 
     @GetMapping("tag/{id}")
     @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto по tagId"})
-    @ApiResponses( value = {
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
             @ApiResponse(code = 400, message = "Данный TagId не найден")
     })
     public ResponseEntity<?> getQuestionDtoByTagId(@PathVariable Long id,
                                                    @RequestParam int page,
-                                                   @RequestParam(defaultValue="10") int items) {
+                                                   @RequestParam(defaultValue = "10") int items) {
         if (tagService.existsById(id)) {
             Map<String, Object> objectMap = new HashMap<>();
             objectMap.put("class", "AllQuestionDtoByTagId");
@@ -169,5 +168,35 @@ public class QuestionResourceController {
             return new ResponseEntity<>(pageDto, HttpStatus.OK);
         }
         return new ResponseEntity<>("TagId " + id + " not found", HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/count")
+    @ApiOperation(value = "Получение количества вопросов в Question", tags = {"QuestionCount"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Количество вопросов успешно получено")
+    })
+    public ResponseEntity<Integer> getCountQuestion() {
+        return new ResponseEntity<>(questionService.getCountQuestion(), HttpStatus.OK);
+    }
+
+    @GetMapping("/new")
+    @ApiOperation(value = "Получение QuestionDto отсортированных по дате",
+            tags = {"Получение QuestionDto отсортированных по дате"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
+            @ApiResponse(code = 400, message = "Неправильный запрос"),
+            @ApiResponse(code = 500, message = "Внутренняя ошибка")
+    })
+    public ResponseEntity<?> getQuestionSortedByDate(@RequestParam int page, @RequestParam(defaultValue = "10") int items,
+                                                     @RequestParam(required = false) List<Long> trackedTags,
+                                                     @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags) {
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("class", "AllQuestionDtoSortedByDate");
+        objectMap.put("currentPageNumber", page);
+        objectMap.put("itemsOnPage", items);
+        objectMap.put("tracked", trackedTags);
+        objectMap.put("ignored", ignoredTags);
+        PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
+        return new ResponseEntity<>(pageDto, HttpStatus.OK);
     }
 }

@@ -11,8 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> implements QuestionService {
 
+    private final QuestionDao questionDao;
+
     @Autowired
     public QuestionServiceImpl(QuestionDao questionDao) {
         super(questionDao);
+        this.questionDao = questionDao;
+    }
+
+    @Override
+    public Integer getCountQuestion() {
+        return questionDao.getCountQuestion();
     }
 }
