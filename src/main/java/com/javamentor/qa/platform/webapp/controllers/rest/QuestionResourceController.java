@@ -170,4 +170,13 @@ public class QuestionResourceController {
         }
         return new ResponseEntity<>("TagId " + id + " not found", HttpStatus.BAD_REQUEST);
     }
+
+    @GetMapping("/count")
+    @ApiOperation(value = "Получение количества вопросов в Question", tags = {"QuestionCount"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Количество вопросов успешно получено")
+    })
+    public ResponseEntity<Integer> getCountQuestion() {
+        return new ResponseEntity<>(questionService.getCountQuestion(), HttpStatus.OK);
+    }
 }

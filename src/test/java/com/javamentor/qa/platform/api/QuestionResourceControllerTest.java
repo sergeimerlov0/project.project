@@ -6,10 +6,8 @@ import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -399,5 +397,18 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[2].listTagDto.[0].id").value(101))
                 .andExpect(jsonPath("$.items.[3].listTagDto.[0].id").value(103))
                 .andExpect(jsonPath("$.items.[4].listTagDto.[0].id").value(103));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/getQuestionCount/question.yml",
+            "datasets/QuestionResourceController/getQuestionCount/role.yml",
+            "datasets/QuestionResourceController/getQuestionCount/user.yml"})
+    void getQuestionCount() throws Exception {
+        this.mvc.perform(get("/api/user/question/count")
+                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(4));
     }
 }
