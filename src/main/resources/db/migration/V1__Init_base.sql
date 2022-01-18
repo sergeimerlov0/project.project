@@ -215,7 +215,6 @@ CREATE TABLE user_entity
     full_name           VARCHAR(255),
     persist_date        TIMESTAMP WITHOUT TIME ZONE,
     is_enabled          BOOLEAN,
-    is_deleted          BOOLEAN,
     city                VARCHAR(255),
     link_site           VARCHAR(255),
     link_github         VARCHAR(255),

@@ -58,9 +58,6 @@ public class User implements UserDetails {
     @Column(name = "is_enabled")
     private Boolean isEnabled = true;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted = false;
-
     @Column
     private String city;
 

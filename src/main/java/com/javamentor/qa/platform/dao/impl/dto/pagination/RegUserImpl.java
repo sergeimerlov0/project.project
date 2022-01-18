@@ -21,9 +21,9 @@ public class RegUserImpl implements PaginationDtoAble<UserDto> {
         int items = Integer.parseInt(String.valueOf(param.get("items")));
         return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.UserDto" +
                         "(e.id, e.email, e.fullName, e.imageLink, e.city, " +
-                        "sum(r.count), e.persistDateTime, e.isEnabled) " +
+                        "sum(r.count), e.persistDateTime) " +
                         "FROM User e left outer JOIN Reputation r on (e.id=r.author.id) " +
-                        "where e.isDeleted=false " +
+                        "where e.isEnabled=true " +
                         "group by e.id " +
                         "ORDER BY e.persistDateTime", UserDto.class)
                 .setFirstResult((page - 1) * items)
@@ -34,6 +34,6 @@ public class RegUserImpl implements PaginationDtoAble<UserDto> {
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
         return ((Long) entityManager.createQuery("select count(u) from User u " +
-                "where u.isDeleted=false").getSingleResult()).intValue();
+                "where u.isEnabled=true").getSingleResult()).intValue();
     }
 }
