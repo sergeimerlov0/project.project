@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -26,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-@ToString
 @Entity
 @Getter
 @Setter
@@ -92,7 +90,6 @@ public class User implements UserDetails {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "role_id", nullable = false)
     @NonNull
-    @ToString.Exclude
     private Role role;
 
     public User(@NonNull String email, @NonNull String password, String fullName, @NonNull Role role) {
