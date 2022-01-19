@@ -26,7 +26,8 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
     @Override
     public List<User> getAll() {
-        return entityManager.createQuery("SELECT u FROM User u inner join fetch u.role", User.class)
+        return entityManager.createQuery("SELECT u FROM User u inner join fetch u.role " +
+                        "where u.isEnabled=true", User.class)
                 .getResultList();
     }
 }

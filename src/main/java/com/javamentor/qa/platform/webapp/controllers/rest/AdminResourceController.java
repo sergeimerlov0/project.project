@@ -28,7 +28,7 @@ public class AdminResourceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное выполнение"),
             @ApiResponse(code = 400, message = "Ошибка выполнения")})
-    @PostMapping("/{userId}/isEnabled")
+    @PostMapping("/isEnabled/{userId}")
     public ResponseEntity<?> setIsEnabled(@PathVariable("userId") Long userId) {
         Optional<User> optionalUser = userService.getById(userId);
         if (optionalUser.isPresent()) {
