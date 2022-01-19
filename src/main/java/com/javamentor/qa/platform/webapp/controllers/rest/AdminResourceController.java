@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +30,6 @@ public class AdminResourceController {
             @ApiResponse(code = 400, message = "Ошибка выполнения")})
     @PostMapping("/{userId}/isEnabled")
     public ResponseEntity<?> setIsEnabled(@PathVariable("userId") Long userId) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<User> optionalUser = userService.getById(userId);
         if (optionalUser.isPresent()) {
             User userById = optionalUser.get();
@@ -40,8 +38,9 @@ public class AdminResourceController {
             } else if (!userById.isEnabled()) {
                 userById.setIsEnabled(true);
             }
-            return new ResponseEntity<>(userById, HttpStatus.OK);
+            userService.update(userById);
+            return ResponseEntity.status(HttpStatus.OK).build();
         }
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }
