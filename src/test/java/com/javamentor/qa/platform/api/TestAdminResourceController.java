@@ -17,6 +17,11 @@ public class TestAdminResourceController extends AbstractApiTest {
     })
     void delete() throws Exception {
 
+        //Проверяем, что с ролью USER недоступно
+        this.mvc.perform(get("/api/user/101")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isForbidden());
+
         //В датасетах User c id 101 имеет поле IsEnabled=true
         this.mvc.perform(post("/api/admin/delete/1user@mail.ru")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
