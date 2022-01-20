@@ -32,9 +32,8 @@ public class AdminResourceController {
     public ResponseEntity<?> deleteUser(@PathVariable("email") String email) {
         Optional<User> optionalUser = userService.getByEmail(email);
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setIsEnabled(false);
-            userService.update(user);
+            optionalUser.get().setIsEnabled(false);
+            userService.update(optionalUser.get());
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
