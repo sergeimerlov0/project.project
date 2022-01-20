@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface UserService extends ReadWriteService<User, Long> {
     String generateRandomPassword();
     Optional<User> getByEmail(String email);
+    void deleteByEmail(String email);
 }
