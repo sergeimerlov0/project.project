@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/user")
+@RequestMapping("api/admin")
 @Api(value = "Security")
 public class AdminResourceController {
 
@@ -28,17 +28,13 @@ public class AdminResourceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное выполнение"),
             @ApiResponse(code = 400, message = "Ошибка выполнения")})
-    @PostMapping("/isEnabled/{userId}")
-    public ResponseEntity<?> setIsEnabled(@PathVariable("userId") Long userId) {
-        Optional<User> optionalUser = userService.getById(userId);
+    @PostMapping("/delete/{email}")
+    public ResponseEntity<?> deleteUser(@PathVariable("email") String email) {
+        Optional<User> optionalUser = userService.getByEmail(email);
         if (optionalUser.isPresent()) {
-            User userById = optionalUser.get();
-            if (userById.isEnabled()) {
-                userById.setIsEnabled(false);
-            } else if (!userById.isEnabled()) {
-                userById.setIsEnabled(true);
-            }
-            userService.update(userById);
+            User user = optionalUser.get();
+            user.setIsEnabled(false);
+            userService.update(user);
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
