@@ -4,10 +4,10 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.jayway.jsonpath.JsonPath;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void getQuestionDtoById() throws Exception {
         this.mvc.perform(get("/api/user/question/100")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(100L))
                 .andExpect(jsonPath("$.title").value("title by question 100"))
@@ -81,7 +81,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void getNonExistedQuestionDtoById() throws Exception {
         this.mvc.perform(get("/api/user/question/200")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -100,7 +100,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void postUpVoteQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/103/upVote")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
 
@@ -127,7 +127,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void postDownVoteQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/102/downVote")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
 
@@ -154,7 +154,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void postUpVoteQuestionByNullQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/200/upVote")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -173,7 +173,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void postDownVoteQuestionByNullQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/200/downVote")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -192,7 +192,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     public void getAllQuestionCommentByQuestionId() throws Exception {
         this.mvc.perform(get("/api/user/question/100/comment")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -222,7 +222,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     public void getEmptyListQuestionCommentByQuestionId() throws Exception {
         this.mvc.perform(get("/api/user/question/101/comment")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
@@ -243,7 +243,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     public void shouldNotGetQuestionCommentByQuestionId() throws Exception {
         this.mvc.perform(get("/api/user/question/500/comment")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Question with id 500 not found!"));
@@ -340,7 +340,7 @@ class TestQuestionResourceController extends AbstractApiTest {
 
         //Проверяем, что по trackedTags подходит только question с id 100
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1&trackedTags=100")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -352,7 +352,7 @@ class TestQuestionResourceController extends AbstractApiTest {
 
         //Проверяем, что по ignoredTags подходит только question с id 103 и 104
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1&ignoredTags=100")
-                .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -365,8 +365,8 @@ class TestQuestionResourceController extends AbstractApiTest {
 
         //Проверяем, что по trackedTags и по ignoredTags подходит только question с id 100 и 104
         this.mvc.perform(MockMvcRequestBuilders
-                .get("/api/user/question/noAnswer?page=1&trackedTags=100,103&ignoredTags=102")
-                .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .get("/api/user/question/noAnswer?page=1&trackedTags=100,103&ignoredTags=102")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -379,7 +379,7 @@ class TestQuestionResourceController extends AbstractApiTest {
 
         //Проверка запроса, на который items не обнаружены, в данном случае по trackedTags
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1&trackedTags=104")
-                .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -410,7 +410,7 @@ class TestQuestionResourceController extends AbstractApiTest {
         // Игнорим тег 101, который имеется у вопросов 100 и 103
         // Вопрос c id 102 имеет поле isDeleted = true
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103&ignoredTags=101")
-                .header("Authorization", getJwtToken("test_user100@mail.ru","123")))
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -455,7 +455,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     void getAllQuestionDtoWithDefaultValuesFromFront() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1")
-                .header("Authorization", getJwtToken("test_user100@mail.ru","123")))
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -505,7 +505,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/tag.yml"})
     void getQuestionCount() throws Exception {
         this.mvc.perform(get("/api/user/question/count")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(4));
