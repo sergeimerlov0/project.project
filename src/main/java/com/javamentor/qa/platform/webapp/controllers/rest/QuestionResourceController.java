@@ -16,13 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,6 +30,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/user/question")
@@ -46,6 +46,7 @@ public class QuestionResourceController {
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
     private final TagService tagService;
+    private final QuestionConverter questionConverter;
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -100,7 +101,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Validation error")
     })
     public ResponseEntity<?> createQuestion(@Validated @RequestBody QuestionCreateDto questionCreateDto) {
-        Question question = Mappers.getMapper(QuestionConverter.class).questionCreateDtoToQuestion(questionCreateDto);
+        Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         question.setUser((User) SecurityContextHolder.getContext().getAuthentication().getDetails());
         questionService.persist(question);
         return new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(question.getId()), HttpStatus.OK);

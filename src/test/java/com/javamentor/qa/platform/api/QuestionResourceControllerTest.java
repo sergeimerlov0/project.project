@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.api;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
-import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
@@ -16,9 +15,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -375,8 +373,8 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/getAllQuestionDtoDatasets/tag.yml",
             "datasets/QuestionResourceController/getAllQuestionDtoDatasets/user.yml",
             "datasets/QuestionResourceController/getAllQuestionDtoDatasets/voteQuestion.yml",})
-    // Тест для QuestionResourceController::getAllQuestionDto, только без tracked и ignored тегов с фронта и
-    // с дефолтным количеством результатов на странице (10)
+        // Тест для QuestionResourceController::getAllQuestionDto, только без tracked и ignored тегов с фронта и
+        // с дефолтным количеством результатов на странице (10)
     void getAllQuestionDtoWithDefaultValuesFromFront() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1")
@@ -522,20 +520,20 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/role.yml",
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
-    })
+    }, cleanBefore = true, cleanAfter = true)
     public void testCreateQuestionWithEmptyOrNullTitle() throws Exception {
-        List<TagDto> tags = generateTags(3);
+        List<String> tagNames = List.of("one", "two", "three");
 
         QuestionCreateDto questionCreateDtoEmptyTitle = new QuestionCreateDto(
                 "",
                 "description",
-                tags
+                tagNames
         );
 
         QuestionCreateDto questionCreateDtoNullTitle = new QuestionCreateDto(
                 null,
                 "description",
-                tags
+                tagNames
         );
 
         mvc.perform(post("/api/user/question")
@@ -543,14 +541,20 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("user@gmail.com", "123")))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException, "should be MethodArgumentNotValidException exception"));
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
 
         mvc.perform(post("/api/user/question")
                         .content(objectMapper.writeValueAsString(questionCreateDtoNullTitle))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("user@gmail.com", "123")))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException, "should be MethodArgumentNotValidException exception"));
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
     }
 
     @Test
@@ -558,20 +562,20 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/role.yml",
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
-    })
+    }, cleanBefore = true, cleanAfter = true)
     public void testCreateQuestionWithEmptyOrNullDescription() throws Exception {
-        List<TagDto> tags = generateTags(3);
+        List<String> tagNames = List.of("one", "two", "three");
 
         QuestionCreateDto questionCreateDtoEmptyDescription = new QuestionCreateDto(
                 "title",
                 "",
-                tags
+                tagNames
         );
 
         QuestionCreateDto questionCreateDtoNullDescription = new QuestionCreateDto(
                 "title",
                 null,
-                tags
+                tagNames
         );
 
         mvc.perform(post("/api/user/question")
@@ -579,14 +583,20 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("user@gmail.com", "123")))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException, "should be MethodArgumentNotValidException exception"));
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
 
         mvc.perform(post("/api/user/question")
                         .content(objectMapper.writeValueAsString(questionCreateDtoNullDescription))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("user@gmail.com", "123")))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException, "should be MethodArgumentNotValidException exception"));
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
     }
 
     @Test
@@ -594,7 +604,7 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/role.yml",
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
-    })
+    }, cleanBefore = true, cleanAfter = true)
     public void testCreateQuestionWithEmptyOrNullTags() throws Exception {
         QuestionCreateDto questionCreateDtoEmptyTags = new QuestionCreateDto(
                 "title",
@@ -613,14 +623,20 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("user@gmail.com", "123")))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException, "should be MethodArgumentNotValidException exception"));
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
 
         mvc.perform(post("/api/user/question")
                         .content(objectMapper.writeValueAsString(questionCreateDtoNullTags))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("user@gmail.com", "123")))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException, "should be MethodArgumentNotValidException exception"));
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
     }
 
     @Test
@@ -628,24 +644,34 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/role.yml",
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
-    })
+    }, cleanBefore = true, cleanAfter = true)
     public void testCreateQuestionWithNewTags() throws Exception {
-        List<TagDto> tags = generateTags(3);
+        List<String> tagNames = List.of("one", "two", "three");
         QuestionCreateDto questionCreateDto = new QuestionCreateDto(
                 "title",
                 "description",
-                tags
+                tagNames
         );
 
-        mvc.perform(post("/api/user/question")
+        MvcResult result = mvc.perform(post("/api/user/question")
                         .content(objectMapper.writeValueAsString(questionCreateDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("user@gmail.com", "123")))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
 
-        long expectedCount = 10L + tags.size();
-        assertEquals(expectedCount, (long) em.createQuery("select count(t) from Tag t").getSingleResult(), "tag table should have" + expectedCount + " rows");
-        tags.forEach(tag -> assertTrue(tagService.getByName(tag.getName()).isPresent(), "there is no " + tag.getName() + " in tag table"));
+        List<HashMap<String, Object>> tags = JsonPath.parse(result.getResponse().getContentAsString())
+                .read("$.listTagDto");
+
+        long expectedCount = 10L + tagNames.size();
+        assertEquals(
+                expectedCount,
+                (long) em.createQuery("select count(t) from Tag t").getSingleResult(),
+                "tag table should have" + expectedCount + " rows"
+        );
+        assertEquals(tagNames.size(), tags.size(), "return tags count dont match");
+        tags.forEach(tag -> assertTrue(tagService.getById(Long.valueOf((Integer) tag.get("id"))).isPresent(),
+                "there is no '" + tag.get("name") + "' in tag table"));
     }
 
     @Test
@@ -653,27 +679,35 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/role.yml",
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
-    })
-    public void testCreateQuestionWithExistedTags() throws Exception {
-        TagDto existedTag1 = new TagDto(null, "tag104", null);
-        TagDto existedTag2 = new TagDto(null, "tag105", null);
+    }, cleanBefore = true, cleanAfter = true)
+    public void testCreateQuestionWithExistingTags() throws Exception {
+        List<String> tagNames = List.of("tag104", "tag105");
 
         QuestionCreateDto questionCreateDto = new QuestionCreateDto(
                 "title",
                 "description",
-                List.of(existedTag1, existedTag2)
+                tagNames
         );
 
-        mvc.perform(post("/api/user/question")
+        MvcResult result = mvc.perform(post("/api/user/question")
                         .content(objectMapper.writeValueAsString(questionCreateDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("user@gmail.com", "123")))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<HashMap<String, Object>> tags = JsonPath.parse(result.getResponse().getContentAsString())
+                .read("$.listTagDto");
 
         long expectedCount = 10L;
-        assertEquals(expectedCount, (long) em.createQuery("select count(t) from Tag t").getSingleResult(), "tag table should have" + expectedCount + " rows");
-        assertTrue(tagService.getByName(existedTag1.getName()).isPresent(), "there is no " + existedTag1.getName() + " in tag table");
-        assertTrue(tagService.getByName(existedTag2.getName()).isPresent(), "there is no " + existedTag2.getName() + " in tag table");
+        assertEquals(
+                expectedCount,
+                (long) em.createQuery("select count(t) from Tag t").getSingleResult(),
+                "tag table should have" + expectedCount + " rows"
+        );
+        assertEquals(tagNames.size(), tags.size(), "return tags count dont match");
+        tags.forEach(tag -> assertTrue(tagService.getById(Long.valueOf((Integer) tag.get("id"))).isPresent(),
+                "there is no '" + tag.get("name") + "' in tag table"));
     }
 
     @Test
@@ -681,13 +715,13 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/role.yml",
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
-    })
+    }, cleanBefore = true, cleanAfter = true)
     public void testCreateQuestionPresentInDb() throws Exception {
-        List<TagDto> tags = generateTags(3);
+        List<String> tagNames = List.of("one", "two", "three");
         QuestionCreateDto questionCreateDto = new QuestionCreateDto(
                 "title",
                 "description",
-                tags
+                tagNames
         );
 
         MvcResult result = mvc.perform(post("/api/user/question")
@@ -706,13 +740,13 @@ class QuestionResourceControllerTest extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/role.yml",
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
-    })
+    }, cleanBefore = true, cleanAfter = true)
     public void testCreateQuestionByAdmin() throws Exception {
-        List<TagDto> tags = generateTags(3);
+        List<String> tagNames = List.of("one", "two", "three");
         QuestionCreateDto questionCreateDto = new QuestionCreateDto(
                 "title",
                 "description",
-                tags
+                tagNames
         );
 
         mvc.perform(post("/api/user/question")
@@ -720,12 +754,5 @@ class QuestionResourceControllerTest extends AbstractApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("admin@gmail.com", "123")))
                 .andExpect(status().isForbidden());
-    }
-
-
-    private List<TagDto> generateTags(int count) {
-        return IntStream.rangeClosed(1, count)
-                .mapToObj((n) -> new TagDto(null, "tag #" + n, null))
-                .collect(Collectors.toList());
     }
 }

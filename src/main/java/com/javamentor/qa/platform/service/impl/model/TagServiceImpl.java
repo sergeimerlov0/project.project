@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements TagService {
@@ -19,8 +19,9 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
         this.tagDao = tagDao;
     }
 
+    @Override
     @Transactional
-    public Optional<Tag> getByName(String name) {
-        return tagDao.getByName(name);
+    public List<Tag> findTagsByNames(List<String> tagNames) {
+        return tagDao.findTagsByNames(tagNames);
     }
 }

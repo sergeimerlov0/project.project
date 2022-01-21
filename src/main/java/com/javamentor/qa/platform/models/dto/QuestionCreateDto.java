@@ -22,5 +22,5 @@ public class QuestionCreateDto {
 
     @NotNull
     @NotEmpty
-    List<TagDto> tags;
+    List<String> tags;
 }

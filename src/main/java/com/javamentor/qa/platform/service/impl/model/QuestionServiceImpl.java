@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> implements QuestionService {
@@ -28,12 +30,24 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
     @Override
     @Transactional
     public void persist(Question question) {
-        List<Tag> managedTags = question.getTags().stream().map((tag) -> tagService
-                .getByName(tag.getName()).orElseGet(() -> {
-                    tagService.persist(tag);
-                    return tag;
-                })).collect(Collectors.toList());
-        question.setTags(managedTags);
+        List<Tag> tags = question.getTags();
+        List<String> tagNames = tags.stream().map(Tag::getName).collect(Collectors.toList());
+
+        List<Tag> existedTags = tagService.findTagsByNames(tagNames);
+        List<String> existedTagsNames = existedTags.stream()
+                .map(Tag::getName)
+                .collect(Collectors.toList());
+
+        List<Tag> newTags = tags.stream()
+                .filter(tag -> !existedTagsNames.contains(tag.getName()))
+                .collect(Collectors.toList());
+
+        if (!newTags.isEmpty()) {
+            tagService.persistAll(newTags);
+        }
+
+        question.setTags(Stream.of(existedTags, newTags)
+                .flatMap(Collection::stream).collect(Collectors.toList()));
         super.persist(question);
     }
 
