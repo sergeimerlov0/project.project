@@ -1,19 +1,30 @@
 package com.javamentor.qa.platform.models.entity.user;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-@ToString
 @Entity
 @Getter
 @Setter
@@ -46,9 +57,6 @@ public class User implements UserDetails {
 
     @Column(name = "is_enabled")
     private Boolean isEnabled = true;
-
-    @Column(name = "is_deleted")
-    private Boolean isDeleted = false;
 
     @Column
     private String city;
