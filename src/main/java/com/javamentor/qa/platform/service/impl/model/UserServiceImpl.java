@@ -61,16 +61,16 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         userDao.update(user);
     }
 
-    public String generateRandomPassword() {
-
-        List rules = Arrays.asList(new CharacterRule(EnglishCharacterData.UpperCase, 1),
-                new CharacterRule(EnglishCharacterData.LowerCase, 1),
-                new CharacterRule(EnglishCharacterData.Digit, 1));
-
-        PasswordGenerator generator = new PasswordGenerator();
-        return generator.generatePassword(15, rules);
-
+    @Override
+    public void deleteByEmail(String email) {
+        userDao.deleteByEmail(email);
     }
 
-
+    public String generateRandomPassword() {
+        List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.UpperCase, 1),
+                new CharacterRule(EnglishCharacterData.LowerCase, 1),
+                new CharacterRule(EnglishCharacterData.Digit, 1));
+        PasswordGenerator generator = new PasswordGenerator();
+        return generator.generatePassword(15, rules);
+    }
 }

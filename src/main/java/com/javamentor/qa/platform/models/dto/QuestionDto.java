@@ -24,6 +24,7 @@ public class QuestionDto {
     private LocalDateTime persistDateTime;
     private LocalDateTime lastUpdateDateTime;
     private List<TagDto> listTagDto;
+    private List<CommentDto> comments;
 
     public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName,
                        String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable,

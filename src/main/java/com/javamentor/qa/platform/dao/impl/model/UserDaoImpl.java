@@ -19,14 +19,22 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
     @Override
     public Optional<User> getByEmail(String email) {
-        String hql = "SELECT u FROM User u inner join fetch u.role where u.email = :email";
+        String hql = "SELECT u FROM User u inner join fetch u.role where u.email = :email and u.isEnabled=true";
         TypedQuery<User> query = entityManager.createQuery(hql, User.class).setParameter("email", email);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
 
     @Override
     public List<User> getAll() {
-        return entityManager.createQuery("SELECT u FROM User u inner join fetch u.role",
-                User.class).getResultList();
+        return entityManager.createQuery("SELECT u FROM User u inner join fetch u.role " +
+                        "where u.isEnabled=true", User.class)
+                .getResultList();
+    }
+
+    @Override
+    public void deleteByEmail(String email) {
+        entityManager.createQuery("UPDATE User SET isEnabled=false WHERE email = :email")
+                .setParameter("email", email)
+                .executeUpdate();
     }
 }

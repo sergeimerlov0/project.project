@@ -113,9 +113,8 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> upVote(@AuthenticationPrincipal(expression = "@userService.getUser(#this)")
-                                                  User user,
-                                          @PathVariable Long questionId) {
+    public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
@@ -135,7 +134,8 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> downVote(@AuthenticationPrincipal User user, @PathVariable Long questionId) {
+    public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();

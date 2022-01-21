@@ -1,20 +1,21 @@
 package com.javamentor.qa.platform.models.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class CommentDto {
     private Long id;
-    private String email;
+    private String comment;
+    private Long userId;
     private String fullName;
-    private String linkImage;
-    private String city;
     private Long reputation;
-    private LocalDateTime dateRegister;
+    private LocalDateTime dateAdded;
 }

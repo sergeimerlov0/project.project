@@ -1,7 +1,6 @@
 user_entity:
   - id: 100
     email: "3user@mail.ru"
-    full_name: "User with id 100"
     password: "3111"
     role_id: 100
     last_redaction_date: "[DAY,NOW]"
@@ -23,3 +22,4 @@ user_entity:
     last_redaction_date: "[DAY,NOW]"
     image_link: "image102"
     nickname: "user102"
+
