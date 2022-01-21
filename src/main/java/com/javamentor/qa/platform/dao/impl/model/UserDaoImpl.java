@@ -21,9 +21,9 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     private EntityManager entityManager;
 
     @Override
-    @Cacheable("users")
+    @Cacheable(value = "users", key = "#email")
     public Optional<User> getByEmail(String email) {
-        log.info("Запрос пользователя из БД в методе getByEmails");
+        log.info("Запрос пользователя из БД в методе getByEmail");
         String hql = "SELECT u FROM User u inner join fetch u.role where u.email = :email";
         TypedQuery<User> query = entityManager.createQuery(hql, User.class).setParameter("email", email);
         return SingleResultUtil.getSingleResultOrNull(query);
