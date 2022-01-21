@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -38,7 +39,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     }
 
     @Override
-    @CachePut(value = "users", key = "#email")
+    @CacheEvict(value = "users", key = "#email")
     public void deleteByEmail(String email) {
         entityManager.createQuery("UPDATE User SET isEnabled=false WHERE email = :email")
                 .setParameter("email", email)
