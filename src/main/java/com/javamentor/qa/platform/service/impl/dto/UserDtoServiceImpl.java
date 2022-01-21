@@ -13,12 +13,15 @@ import java.util.Optional;
 @Service
 public class UserDtoServiceImpl extends PaginationServiceDtoImpl<UserDto> implements UserDtoService {
 
+    private final UserDtoDao userDtoDao;
+
     @Autowired
-    private UserDtoDao userDtoDao;
+    public UserDtoServiceImpl(UserDtoDao userDtoDao) {
+        this.userDtoDao = userDtoDao;
+    }
 
     @Transactional
     public Optional<UserDto> getUserById(Long id) {
         return userDtoDao.getUserById(id);
     }
-
 }

@@ -12,7 +12,6 @@ import java.util.Map;
 @Repository("RegUser")
 public class RegUserImpl implements PaginationDtoAble<UserDto> {
 
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -20,23 +19,21 @@ public class RegUserImpl implements PaginationDtoAble<UserDto> {
     public List<UserDto> getItems(Map<String, Object> param) {
         int page = (int) param.get("page");
         int items = Integer.parseInt(String.valueOf(param.get("items")));
-        List<UserDto> dtoList = entityManager.createQuery("SELECT new  com.javamentor.qa.platform.models.dto.UserDto" +
-                                "(e.id,e.email,e.fullName,e.imageLink,e.city,sum(r.count),e.persistDateTime)" +
-                                "FROM User e left outer JOIN Reputation r on (e.id=r.author.id)" +
-                                "where e.isEnabled=true AND e.isDeleted=false " +
-                                "group by e.id " +
-                                "ORDER BY e.persistDateTime "
-                        , UserDto.class)
-                .setFirstResult((page-1)*items)
+        return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.UserDto" +
+                        "(e.id, e.email, e.fullName, e.imageLink, e.city, " +
+                        "sum(r.count), e.persistDateTime) " +
+                        "FROM User e left outer JOIN Reputation r on (e.id=r.author.id) " +
+                        "where e.isEnabled=true " +
+                        "group by e.id " +
+                        "ORDER BY e.persistDateTime", UserDto.class)
+                .setFirstResult((page - 1) * items)
                 .setMaxResults(items)
                 .getResultList();
-        return dtoList;
     }
 
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        return ((Long) entityManager.createQuery("select count(u) from  User u where  u.isEnabled = true AND u.isDeleted=false").getSingleResult()).intValue();
+        return ((Long) entityManager.createQuery("select count(u) from User u " +
+                "where u.isEnabled=true").getSingleResult()).intValue();
     }
-
-
 }
