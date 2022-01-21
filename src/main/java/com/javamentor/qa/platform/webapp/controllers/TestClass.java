@@ -18,9 +18,17 @@ import java.util.List;
 import java.util.Map;
 
 //http://localhost:8080/api/user/users?page=1&items=20
+
 @Controller
 @RequestMapping("/api")
 public class TestClass {
+    @GetMapping("/user/users1")
+    public String getUsers(){
+        return "index";
+    }
+
+}
+
 
 //    private final UserDtoService userDtoService;
 //
@@ -33,41 +41,36 @@ public class TestClass {
 //    public TestClass(UserService userService) {
 //        this.userService = userService;
 //    }
-    private final RegUserImpl regUser;
+//    private final RegUserImpl regUser;
+//
+//    public TestClass(RegUserImpl regUser) {
+//        this.regUser = regUser;
+//    }
+//
+//    @GetMapping("/user/users")
+//    public String getAllUsers(Model model, @RequestParam("page") int page, @RequestParam("items") int items){
+//        Map<String, Object> param = new HashMap<>();
+//        param.put("page", page);
+//        param.put("items", items);
+//
+//        List<UserDto> userList = regUser.getItems(param);
+//        int pages = regUser.getTotalResultCount(param)/items;
+//        if(regUser.getTotalResultCount(param)%items!=0){
+//            pages++;
+//        }
+//        model.addAttribute("users", userList);
+//        model.addAttribute("items", items);
+//        if (page + 1 <= pages){
+//            model.addAttribute("nPage", page + 1);
+//        } else {
+//            model.addAttribute("nPage", page );
+//        }
+//
+//        if (page - 1 > 0){
+//            model.addAttribute("pPage", page - 1);
+//        } else {
+//            model.addAttribute("pPage", page );
+//        }
+//        return "test2";
+//    }
 
-    public TestClass(RegUserImpl regUser) {
-        this.regUser = regUser;
-    }
-
-    @GetMapping("/user/users")
-    public String getAllUsers(Model model, @RequestParam("page") int page, @RequestParam("items") int items){
-        Map<String, Object> param = new HashMap<>();
-        param.put("page", page);
-        param.put("items", items);
-
-        List<UserDto> userList = regUser.getItems(param);
-        int pages = regUser.getTotalResultCount(param)/items;
-        if(regUser.getTotalResultCount(param)%items!=0){
-            pages++;
-        }
-        model.addAttribute("users", userList);
-        model.addAttribute("items", items);
-        if (page + 1 <= pages){
-            model.addAttribute("nPage", page + 1);
-        } else {
-            model.addAttribute("nPage", page );
-        }
-
-        if (page - 1 > 0){
-            model.addAttribute("pPage", page - 1);
-        } else {
-            model.addAttribute("pPage", page );
-        }
-        return "test2";
-    }
-    @GetMapping("/user/users1")
-    public String getUsers(){
-        return "user";
-    }
-
-}
