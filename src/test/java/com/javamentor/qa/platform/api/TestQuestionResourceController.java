@@ -40,7 +40,11 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.title").value("title by question 100"))
                 .andExpect(jsonPath("$.countAnswer").value(3L))
                 .andExpect(jsonPath("$.authorReputation").value(6L))
-                .andExpect(jsonPath("$.countValuable").value(2L));
+                .andExpect(jsonPath("$.countValuable").value(2L))
+                //Проверяем, что к вопросу с id=100 подгрузились комментарии (2 шт.)
+                .andExpect(jsonPath("$.comments.length()").value(2L))
+                .andExpect(jsonPath("$.comments.[0].id").value(100L))
+                .andExpect(jsonPath("$.comments.[1].id").value(101L));
     }
 
     @Test
