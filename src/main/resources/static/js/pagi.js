@@ -17,7 +17,6 @@ function nextPage() {
 
 }
 
-
 async function changePage(page) {
     var btn_next = document.getElementById("btn_next");
     var btn_prev = document.getElementById("btn_prev");
@@ -31,9 +30,23 @@ async function changePage(page) {
     if (page < 1) page = 1;
     if (numPages() != -1 && page > numPages()) page = numPages();
 
-    const url =
-        'http://localhost:8080/api/user/new?page=' + page + '&items=10';
+    const response1 = await fetch('/api/auth/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: "vasya@mail.ru",
+            password: "password",
+        }),
+    });
 
+    const token1 = await response1.text();
+    document.cookie = `token=${token1}; expires=;`;
+
+
+    const url =
+        'http://localhost:8080/api/user/new?page=' + page;
 
 // Определение асинхронной функции
     async function getapi(url) {
@@ -43,7 +56,8 @@ async function changePage(page) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6InZhc3lhQG1haWwucnUifQ.hO0REtuCGoVbnnlXSCkIAgTXSO9GGEMWqEdkrNMnkFk',
+                // 'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNzd29yZCIsImp0aSI6InZhc3lhQG1haWwucnUifQ.hO0REtuCGoVbnnlXSCkIAgTXSO9GGEMWqEdkrNMnkFk',
+                'Authorization': 'Bearer ' + token1,
             },
         });
 
