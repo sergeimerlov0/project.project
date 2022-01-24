@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,14 +49,14 @@ public class AuthenticationResourceController {
         this.roleService = roleService;
     }
 
-    @ApiOperation(value = "Check role USER for authorized user", response = HttpStatus.class, tags = "status")
-    @GetMapping("/check/status")
-    public HttpStatus status() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        if (!user.getAuthorities().contains(roleService.getRoleByName("USER").orElseThrow())) {
-            return HttpStatus.FORBIDDEN;
-        }
-        return HttpStatus.OK;
+    @ApiOperation(value = "Check role USER for authorized user", response = ResponseEntity.class, tags = "status")
+    @GetMapping("/check/user-status")
+    public ResponseEntity<String> userStatus() {
+        Authentication user = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(user);
+        return user.getAuthorities().contains(roleService.getRoleByName("USER").orElseThrow())
+                ? ResponseEntity.status(HttpStatus.OK).body("Authorization successful")
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).body("Authorization failed");
     }
 
     @ApiOperation(value = "Get list of all users ", response = Iterable.class, tags = "users")
