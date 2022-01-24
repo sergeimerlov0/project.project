@@ -2,7 +2,9 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -11,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -23,6 +27,14 @@ import java.util.Map;
 public class UserResourceController {
 
     private final UserDtoService userDtoService;
+
+    private UserService userservice;
+
+    @Autowired
+    public UserResourceController(UserDtoService userDtoService, UserService userservice) {
+        this.userDtoService = userDtoService;
+        this.userservice = userservice;
+    }
 
     @GetMapping("/{userId}")
     @ApiOperation("Получение пользователя по ID")
@@ -46,5 +58,22 @@ public class UserResourceController {
         objectMap.put("page", currentPageNumber);
         objectMap.put("items", itemsOnPage);
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
+    }
+
+    @GetMapping("/api/user/change/password")
+    @ApiOperation("Смена пароля")
+    public String updatePassword(User user) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String currentPass = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+
+        String pat = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%]).{6,}";
+        if (user.getPassword().matches(pat) && !user.getPassword().equals(currentPass)) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userservice.update(user);
+            return "users";
+        } else {
+            return null; // поменяю
+        }
+
     }
 }
