@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
+import com.javamentor.qa.platform.dao.abstracts.model.ReadOnlyDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 
 import javax.persistence.EntityManager;
@@ -11,13 +12,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class ReadOnlyDaoImpl<E, K> {
+public abstract class ReadOnlyDaoImpl<E, K> implements ReadOnlyDao<E, K> {
     @PersistenceContext
     private EntityManager entityManager;
 
     private final Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
             .getActualTypeArguments()[0];
-
 
     public List<E> getAll() {
         return entityManager.createQuery("from " + clazz.getName()).getResultList();
@@ -51,4 +51,5 @@ public abstract class ReadOnlyDaoImpl<E, K> {
         }
         return false;
     }
+
 }
