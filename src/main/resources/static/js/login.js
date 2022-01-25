@@ -1,6 +1,9 @@
 {
   const form = document.querySelector('.form-signin');
   const info = document.querySelector('.info');
+  const hasSameHostReferrer = () => (document.referrer &&
+      new URL(document.referrer).hostname ===
+      location.hostname);
 
   form.addEventListener('submit', async function(event) {
     event.preventDefault();
@@ -23,6 +26,7 @@
 
     const token = await response.text();
     document.cookie = `token=${token}; expires=;`;
-    location.href = 'main';
+
+    location.replace(hasSameHostReferrer() ? document.referrer : '/main');
   });
 }
