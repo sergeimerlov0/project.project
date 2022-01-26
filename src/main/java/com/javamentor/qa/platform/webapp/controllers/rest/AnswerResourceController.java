@@ -93,4 +93,6 @@ public class AnswerResourceController {
         }
         return new ResponseEntity<>(voteAnswerService.postVoteDown(user, answer), HttpStatus.OK);
     }
+
+
 }

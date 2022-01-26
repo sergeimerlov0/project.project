@@ -29,6 +29,13 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
+    public List<TagDto> getTagsWithString(String partTag) {
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto." +
+                "TagDto(tag.id, tag.name, tag.description) from Tag tag where LOCATE(tag.name, :partTag) > 0", TagDto.class)
+                .setParameter("partTag", partTag).getResultList();
+    }
+
+    @Override
     public Map<Long, List<TagDto>> getMapTagsByQuestionIds(List<Long> questionIds){
         List<Tuple> tags = entityManager.createQuery("SELECT t.id as tag_id, t.name as tag_name, " +
                         "t.description as tag_description, " +
