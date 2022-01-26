@@ -6,7 +6,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.JwtAuthenticationProvider;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
