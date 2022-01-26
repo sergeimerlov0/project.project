@@ -139,7 +139,7 @@ public class TagResourceController {
     })
     @GetMapping("latter")
     @Transactional
-    public ResponseEntity<List<TagDto>> getTagsWithString(String partTag) {
+    public ResponseEntity<List<TagDto>> getTagsWithString(@RequestParam("string") String partTag) {
         return new ResponseEntity<>(tagDtoService.getTagsWithString(partTag) ,HttpStatus.OK);
     }
 

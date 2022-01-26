@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,7 +23,7 @@ public class TestTagResourceController extends AbstractApiTest {
             "datasets/TagResourceController/tagRelatedDatasets/user.yml",
             "datasets/TagResourceController/tagRelatedDatasets/role.yml",
             "datasets/TagResourceController/tagRelatedDatasets/questionHasTag.yml"
-    })
+    }, cleanBefore = true, cleanAfter = true)
     public void getRelatedTagDto() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/related")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
@@ -50,7 +51,7 @@ public class TestTagResourceController extends AbstractApiTest {
             "datasets/TagResourceController/tagTrackedAndIgnoredDatasets/tag.yml",
             "datasets/TagResourceController/tagTrackedAndIgnoredDatasets/tagIgnored.yml",
             "datasets/TagResourceController/tagTrackedAndIgnoredDatasets/tagTracked.yml"
-    })
+    }, cleanBefore = true, cleanAfter = true)
     public void getTrackedAndIgnoredTagDto() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/ignored")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
@@ -97,5 +98,41 @@ public class TestTagResourceController extends AbstractApiTest {
                 .setParameter("id", 101L)
                 .getResultList()
                 .containsAll(Arrays.asList(103L, 104L, 105L)));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/TagResourceController/getTagsWithString/tag.yml",
+            "datasets/TagResourceController/getTagsWithString/question.yml",
+            "datasets/TagResourceController/getTagsWithString/user.yml",
+            "datasets/TagResourceController/getTagsWithString/role.yml",
+            "datasets/TagResourceController/getTagsWithString/questionHasTag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void getTagsWithString() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/latter?string=tag10")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                .andDo(print())
+//                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$[0].name", is("tag100")))
+                .andExpect(jsonPath("$[1].name", is("tag101")))
+                .andExpect(jsonPath("$[2].name", is("tag102")))
+                .andExpect(jsonPath("$[3].name", is("tag103")));
+
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/TagResourceController/getTagsSorted/tag.yml",
+            "datasets/TagResourceController/getTagsSorted/question.yml",
+            "datasets/TagResourceController/getTagsSorted/user.yml",
+            "datasets/TagResourceController/getTagsSorted/role.yml",
+            "datasets/TagResourceController/getTagsSorted/questionHasTag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void getTagsSorted() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?page=3")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect((status().isOk()))
+        ;
     }
 }
