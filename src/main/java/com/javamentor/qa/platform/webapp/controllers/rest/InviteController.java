@@ -24,14 +24,14 @@ public class InviteController {
     private final UserService userService;
     private final RoleService roleService;
 
-    @Value("${server_port}")
-    String serverPort;
+    @Value("http://${db_url_hosts}:${server_port}/login")
+    String loginEndPoint;
 
     @GetMapping()
     public void getInvite(@RequestParam String email) {
         String password = userService.generateRandomPassword();
-        String message = String.format("Hello, %s! Your password for logging system by address http://localhost:%s/login - '%s'. " +
-                "Don't forgot change your password after logging system", email, serverPort, password);
+        String message = String.format("Hello, %s! Your password for logging system by address %s - '%s'. " +
+                "Don't forgot change your password after logging system", email, loginEndPoint, password);
         User user = new User( email, password, email, roleService.getRoleByName("USER").get());
 
         userService.persist(user);
