@@ -33,8 +33,8 @@ public class AdminResourceController {
         Optional<User> optionalUser = userService.getByEmail(email);
         if (optionalUser.isPresent()) {
             userService.deleteByEmail(email);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.ok().build();
         }
-        return new ResponseEntity<>("User with email " + email + " not found", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("User with email " + email + " not found");
     }
 }
