@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -34,6 +35,14 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
         Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
         String hql = "DELETE " + clazz.getName() + " WHERE id = :id";
+        if(clazz.getName().equals("com.javamentor.qa.platform.models.entity.question.answer.Answer")){
+            entityManager.createQuery("delete from CommentAnswer where answer.id=:id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+            entityManager.createQuery("delete from VoteAnswer where answer.id=:id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+        }
         entityManager.createQuery(hql).setParameter("id", id).executeUpdate();
     }
 
