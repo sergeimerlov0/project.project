@@ -4,10 +4,9 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.model.MailService;
-import com.javamentor.qa.platform.service.impl.model.UserServiceImpl;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,16 +24,17 @@ public class InviteController {
     private final UserService userService;
     private final RoleService roleService;
 
+    @Value("${server_port}")
+    String serverPort;
+
     @GetMapping()
     public void getInvite(@RequestParam String email) {
         String password = userService.generateRandomPassword();
-        String message = String.format("Hello, %s! Your password for logging system by address http://localhost:8091/login - '%s'. " +
-                "Don't forgot change your password after logging system", email, password);
+        String message = String.format("Hello, %s! Your password for logging system by address http://localhost:%s/login - '%s'. " +
+                "Don't forgot change your password after logging system", email, serverPort, password);
         User user = new User( email, password, email, roleService.getRoleByName("USER").get());
 
         userService.persist(user);
         mailService.send(email, "registration in Kata StackOverFlow", message);
-
     }
-
 }
