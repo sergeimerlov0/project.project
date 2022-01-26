@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
@@ -10,25 +11,30 @@ import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +46,7 @@ public class QuestionResourceController {
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
     private final TagService tagService;
+    private final QuestionConverter questionConverter;
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -87,7 +94,20 @@ public class QuestionResourceController {
         return new ResponseEntity<>(pageDto, HttpStatus.OK);
     }
 
-    @PostMapping("/{questionId}/upVote")
+    @PostMapping()
+    @ApiOperation(value = "Add a new question", tags = {"Question"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful question creation"),
+            @ApiResponse(code = 400, message = "Validation error")
+    })
+    public ResponseEntity<?> createQuestion(@Validated @RequestBody QuestionCreateDto questionCreateDto) {
+        Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
+        question.setUser((User) SecurityContextHolder.getContext().getAuthentication().getDetails());
+        questionService.persist(question);
+        return new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(question.getId()), HttpStatus.OK);
+    }
+
+    @PostMapping("{questionId}/upVote")
     @ApiOperation(value = "Голосование за Question по Question id", tags = {"VoteQuestion up"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
