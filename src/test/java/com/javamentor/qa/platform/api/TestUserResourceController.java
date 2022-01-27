@@ -45,7 +45,7 @@ public class TestUserResourceController extends AbstractApiTest {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/106")
                         .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.id").doesNotExist());
 
 

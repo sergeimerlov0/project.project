@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,7 +43,7 @@ public class TagResourceController {
             @ApiResponse(code = 200, message = "Успешное получение")})
     @GetMapping("/related")
     public ResponseEntity<List<RelatedTagsDto>> getRelatedTagDto() {
-        return new ResponseEntity<>(tagDtoService.getRelatedTagsDto(), HttpStatus.OK);
+        return ResponseEntity.ok(tagDtoService.getRelatedTagsDto());
     }
 
     @ApiOperation(value = "Getting all TrackedTagDto", tags = {"TrackedTagDto"})
@@ -55,7 +54,7 @@ public class TagResourceController {
     public ResponseEntity<List<TagDto>> getAllTrackedTagDto(Authentication authentication) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
-        return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.OK);
+        return ResponseEntity.ok(tagDtoService.getTrackedTagById(userId));
     }
 
     @ApiOperation(value = "Getting all IgnoredTagDto", tags = {"IgnoredTagDto"})
@@ -66,7 +65,7 @@ public class TagResourceController {
     public ResponseEntity<List<TagDto>> getAllIgnoredTagDto(Authentication authentication) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
-        return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.OK);
+        return ResponseEntity.ok(tagDtoService.getIgnoreTagById(userId));
     }
 
     @ApiOperation(value = "Добавление тега в TrackedTag", tags = {"TrackedTag"})
@@ -82,20 +81,20 @@ public class TagResourceController {
 
         if (tag.isPresent()) {
             if (trackedTagService.tagIsPresentInTheListOfUser(userId, id)) {
-                return new ResponseEntity<>("Tag with id found in tracked", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Tag with id found in tracked");
             }
             if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
-                return new ResponseEntity<>("Tag with id found in ignored", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Tag with id found in ignored");
             }
 
             TrackedTag trackedTag = new TrackedTag();
             trackedTag.setTrackedTag(tag.get());
             trackedTag.setUser(user);
             trackedTagService.persist(trackedTag);
-            return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.OK);
+            return ResponseEntity.ok(tagDtoService.getTrackedTagById(userId));
         }
 
-        return new ResponseEntity<>("Tag with this ID was not found", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("Tag with this ID was not found");
     }
 
     @ApiOperation(value = "Добавление тега в IgnoredTag", tags = {"IgnoredTag"})
@@ -111,20 +110,20 @@ public class TagResourceController {
 
         if (tag.isPresent()) {
             if (trackedTagService.tagIsPresentInTheListOfUser(userId, id)) {
-                return new ResponseEntity<>("Tag with id found in tracked", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Tag with id found in tracked");
             }
             if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
-                return new ResponseEntity<>("Tag with id found in ignored", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Tag with id found in ignored");
             }
 
             IgnoredTag ignoredTag = new IgnoredTag();
             ignoredTag.setIgnoredTag(tag.get());
             ignoredTag.setUser(user);
             ignoredTagService.persist(ignoredTag);
-            return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.OK);
+            return ResponseEntity.ok(tagDtoService.getIgnoreTagById(userId));
 
         }
 
-        return new ResponseEntity<>("Tag with this ID was not found", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("Tag with this ID was not found");
     }
 }

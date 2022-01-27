@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;

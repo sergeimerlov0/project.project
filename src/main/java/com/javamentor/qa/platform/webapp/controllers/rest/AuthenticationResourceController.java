@@ -2,21 +2,18 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.JwtAuthenticationProvider;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "RestController", description = "Controller to authenticate user with JWT")
 @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Success|OK"),
+        @ApiResponse(code = 400, message = "Bad Request"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Not found"),
         @ApiResponse(code = 500, message = "Internal error")
@@ -38,14 +36,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class AuthenticationResourceController {
 
-    private final UserService userService;
     private final RoleService roleService;
     private final JwtAuthenticationProvider authenticationProvider;
 
-    public AuthenticationResourceController(UserService userService, JwtAuthenticationProvider provider,
+    public AuthenticationResourceController(JwtAuthenticationProvider provider,
                                             RoleService roleService) {
         this.authenticationProvider = provider;
-        this.userService = userService;
         this.roleService = roleService;
     }
 
@@ -59,26 +55,22 @@ public class AuthenticationResourceController {
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).body("Authorization failed");
     }
 
-    @ApiOperation(value = "Get list of all users ", response = Iterable.class, tags = "users")
-    @GetMapping("/getall")
-    public List<User> users() throws HttpMessageNotWritableException {
-        return userService.getAll();
-    }
-
     @ApiOperation(value = "Generate JWT token and authenticate user",
-            response = String.class, tags = "token")
+            response = ResponseEntity.class, tags = "token")
     @PostMapping("/auth/token")
-    public String token(@RequestBody AuthenticationRequest request) throws NullPointerException {
+    public ResponseEntity<String> token(@RequestBody AuthenticationRequest request) {
         String email = Objects.requireNonNull(request.getEmail());
         String password = Objects.requireNonNull(request.getPassword());
         log.info("Email is " + email);
+        try {
+            SecurityContextHolder.getContext().setAuthentication(authenticationProvider
+                    .authenticate(new UsernamePasswordAuthenticationToken(email, password)));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
-        SecurityContextHolder.getContext().setAuthentication(authenticationProvider
-                .authenticate(new UsernamePasswordAuthenticationToken(email, password)));
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-
-        return JWT.create().withJWTId(user.getEmail()).withSubject(password)
-                .sign(Algorithm.HMAC256("PrinceNanadaime".getBytes()));
+        return ResponseEntity.ok().body(
+                JWT.create().withJWTId(email).withSubject(password)
+                .sign(Algorithm.HMAC256("PrinceNanadaime".getBytes())));
     }
 }
