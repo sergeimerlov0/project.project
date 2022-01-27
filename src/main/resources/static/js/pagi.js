@@ -22,7 +22,7 @@ async function changePage(page) {
     var btn_next = document.getElementById("btn_next");
     var btn_prev = document.getElementById("btn_prev");
 
-//     // Проверить страницу
+     // Проверить страницу
     if (page < 1) page = 1;
     if (numPages() != -1 && page > numPages()) page = numPages();
 
@@ -39,7 +39,6 @@ async function changePage(page) {
     }
 
 }
-
 
 function numPages() {
     return totalPage
