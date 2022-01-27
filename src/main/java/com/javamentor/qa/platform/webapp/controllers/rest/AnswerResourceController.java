@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,8 +48,6 @@ public class AnswerResourceController {
         }
         Answer answer = optionalAnswer.get();
         answerService.delete(answer);
-        return ResponseEntity.status(HttpStatus.OK).body("Answer successfully deleted");
-        answerService.deleteById(answerId);
         return ResponseEntity.ok().body("Answer successfully deleted");
     }
 
