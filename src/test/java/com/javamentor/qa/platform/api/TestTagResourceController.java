@@ -112,8 +112,7 @@ public class TestTagResourceController extends AbstractApiTest {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/latter?string=tag10")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
-                .andDo(print())
-//                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$", hasSize(4)))
                 .andExpect(jsonPath("$[0].name", is("tag100")))
                 .andExpect(jsonPath("$[1].name", is("tag101")))
                 .andExpect(jsonPath("$[2].name", is("tag102")))
@@ -130,9 +129,14 @@ public class TestTagResourceController extends AbstractApiTest {
             "datasets/TagResourceController/getTagsSorted/questionHasTag.yml"
     }, cleanBefore = true, cleanAfter = true)
     public void getTagsSorted() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?page=3")
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?page=1")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect((status().isOk()))
-        ;
+                .andExpect(jsonPath("$.totalResultCount", is(11)))
+                .andExpect(jsonPath("$.items.length()", is(10)))
+                .andExpect(jsonPath("$.items[0].id", is(100)))
+                .andExpect(jsonPath("$.items[4].id", is(104)))
+                .andExpect(jsonPath("$.items[7].id", is(107)))
+                .andExpect(jsonPath("$.items[9].id", is(109)));
     }
 }
