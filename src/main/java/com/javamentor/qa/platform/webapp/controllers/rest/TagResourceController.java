@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
@@ -16,14 +17,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -44,7 +46,7 @@ public class TagResourceController {
             @ApiResponse(code = 200, message = "Успешное получение")})
     @GetMapping("/related")
     public ResponseEntity<List<RelatedTagsDto>> getRelatedTagDto() {
-        return new ResponseEntity<>(tagDtoService.getRelatedTagsDto(), HttpStatus.OK);
+        return ResponseEntity.ok(tagDtoService.getRelatedTagsDto());
     }
 
     @ApiOperation(value = "Getting all TrackedTagDto", tags = {"TrackedTagDto"})
@@ -55,7 +57,7 @@ public class TagResourceController {
     public ResponseEntity<List<TagDto>> getAllTrackedTagDto(Authentication authentication) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
-        return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.OK);
+        return ResponseEntity.ok(tagDtoService.getTrackedTagById(userId));
     }
 
     @ApiOperation(value = "Getting all IgnoredTagDto", tags = {"IgnoredTagDto"})
@@ -66,7 +68,7 @@ public class TagResourceController {
     public ResponseEntity<List<TagDto>> getAllIgnoredTagDto(Authentication authentication) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Long userId = user.getId();
-        return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.OK);
+        return ResponseEntity.ok(tagDtoService.getIgnoreTagById(userId));
     }
 
     @ApiOperation(value = "Добавление тега в TrackedTag", tags = {"TrackedTag"})
@@ -82,20 +84,20 @@ public class TagResourceController {
 
         if (tag.isPresent()) {
             if (trackedTagService.tagIsPresentInTheListOfUser(userId, id)) {
-                return new ResponseEntity<>("Tag with id found in tracked", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Tag with id found in tracked");
             }
             if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
-                return new ResponseEntity<>("Tag with id found in ignored", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Tag with id found in ignored");
             }
 
             TrackedTag trackedTag = new TrackedTag();
             trackedTag.setTrackedTag(tag.get());
             trackedTag.setUser(user);
             trackedTagService.persist(trackedTag);
-            return new ResponseEntity<>(tagDtoService.getTrackedTagById(userId), HttpStatus.OK);
+            return ResponseEntity.ok(tagDtoService.getTrackedTagById(userId));
         }
 
-        return new ResponseEntity<>("Tag with this ID was not found", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("Tag with this ID was not found");
     }
 
     @ApiOperation(value = "Добавление тега в IgnoredTag", tags = {"IgnoredTag"})
@@ -111,20 +113,43 @@ public class TagResourceController {
 
         if (tag.isPresent()) {
             if (trackedTagService.tagIsPresentInTheListOfUser(userId, id)) {
-                return new ResponseEntity<>("Tag with id found in tracked", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Tag with id found in tracked");
             }
             if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
-                return new ResponseEntity<>("Tag with id found in ignored", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Tag with id found in ignored");
             }
 
             IgnoredTag ignoredTag = new IgnoredTag();
             ignoredTag.setIgnoredTag(tag.get());
             ignoredTag.setUser(user);
             ignoredTagService.persist(ignoredTag);
-            return new ResponseEntity<>(tagDtoService.getIgnoreTagById(userId), HttpStatus.OK);
+            return ResponseEntity.ok(tagDtoService.getIgnoreTagById(userId));
 
         }
 
-        return new ResponseEntity<>("Tag with this ID was not found", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("Tag with this ID was not found");
+    }
+
+    @ApiOperation(value = "Get top 10 tags with a string", tags = {"TagsTop10WithString"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Not found")
+    })
+    @GetMapping("/latter")
+    public ResponseEntity<List<TagDto>> getTagsTop10WithString(@RequestParam("string") String partTag) {
+        return new ResponseEntity<>(tagDtoService.getTagsTop10WithString(partTag) ,HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Get tags sorted by name with pagination", tags = {"GetAllTagsDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "TagDto not exist")})
+    @GetMapping("/name")
+    public ResponseEntity<PageDto<TagDto>> getTagsSorted(@RequestParam("page") int currentPageNumber,
+                                                         @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage) {
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "TagsSortedByName");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+        return ResponseEntity.ok(tagDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 }

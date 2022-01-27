@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,7 +12,6 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,6 +48,8 @@ public class AnswerResourceController {
         Answer answer = optionalAnswer.get();
         answerService.delete(answer);
         return ResponseEntity.status(HttpStatus.OK).body("Answer successfully deleted");
+        answerService.deleteById(answerId);
+        return ResponseEntity.ok().body("Answer successfully deleted");
     }
 
     @ApiOperation(value = "Получение списка ответов на вопрос", tags = {"Получение списка ответов"})
@@ -57,7 +57,7 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное получение")})
     @GetMapping()
     public ResponseEntity<List<AnswerDto>> getAnswerByQuestionId(@PathVariable Long questionId) {
-        return new ResponseEntity<>(answerDtoService.getAnswerByQuestionId(questionId), HttpStatus.OK);
+        return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(questionId));
     }
 
     @ApiOperation(value = "Голосование за ответ", tags = {"Получение общего количества голосов"})
@@ -69,13 +69,13 @@ public class AnswerResourceController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
         if (optionalAnswer.isEmpty()) {
-            return new ResponseEntity<>("Answer with id " + answerId + " not found", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body("Answer with id " + answerId + " not found");
         }
         Answer answer = optionalAnswer.get();
         if (Objects.equals(answer.getUser().getId(), user.getId())) {
-            return new ResponseEntity<>("Voting for your answer with id " + answerId + " not allowed", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body("Voting for your answer with id " + answerId + " not allowed");
         }
-        return new ResponseEntity<>(voteAnswerService.postVoteUp(user, answer), HttpStatus.OK);
+        return ResponseEntity.ok().body(voteAnswerService.postVoteUp(user, answer));
     }
 
     @ApiOperation(value = "Голосование против ответа", tags = {"Получение общего количества голосов"})
@@ -87,12 +87,12 @@ public class AnswerResourceController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
         if (optionalAnswer.isEmpty()) {
-            return new ResponseEntity<>("Answer with id " + answerId + " not found", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body("Answer with id " + answerId + " not found");
         }
         Answer answer = optionalAnswer.get();
         if (Objects.equals(answer.getUser().getId(), user.getId())) {
-            return new ResponseEntity<>("Voting for your answer with id " + answerId + " not allowed", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body("Voting for your answer with id " + answerId + " not allowed");
         }
-        return new ResponseEntity<>(voteAnswerService.postVoteDown(user, answer), HttpStatus.OK);
+        return ResponseEntity.ok().body(voteAnswerService.postVoteDown(user, answer));
     }
 }

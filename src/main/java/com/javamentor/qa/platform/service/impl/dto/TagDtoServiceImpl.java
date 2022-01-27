@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TagDtoServiceImpl implements TagDtoService {
+public class TagDtoServiceImpl extends PaginationServiceDtoImpl<TagDto> implements TagDtoService {
 
     private final TagDtoDao tagDtoDao;
 
@@ -38,5 +38,10 @@ public class TagDtoServiceImpl implements TagDtoService {
     @Transactional
     public List<RelatedTagsDto> getRelatedTagsDto() {
         return tagDtoDao.getRelatedTagsDto();
+    }
+
+    @Override
+    public List<TagDto> getTagsTop10WithString(String partTag) {
+        return tagDtoDao.getTagsTop10WithString(partTag);
     }
 }
