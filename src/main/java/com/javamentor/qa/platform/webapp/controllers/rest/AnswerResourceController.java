@@ -91,4 +91,6 @@ public class AnswerResourceController {
         }
         return ResponseEntity.ok().body(voteAnswerService.postVoteDown(user, answer));
     }
+
+
 }

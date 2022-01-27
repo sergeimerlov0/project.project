@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
@@ -22,7 +23,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -125,5 +128,28 @@ public class TagResourceController {
         }
 
         return ResponseEntity.badRequest().body("Tag with this ID was not found");
+    }
+
+    @ApiOperation(value = "Get top 10 tags with a string", tags = {"TagsTop10WithString"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Not found")
+    })
+    @GetMapping("/latter")
+    public ResponseEntity<List<TagDto>> getTagsTop10WithString(@RequestParam("string") String partTag) {
+        return new ResponseEntity<>(tagDtoService.getTagsTop10WithString(partTag) ,HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Get tags sorted by name with pagination", tags = {"GetAllTagsDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "TagDto not exist")})
+    @GetMapping("/name")
+    public ResponseEntity<PageDto<TagDto>> getTagsSorted(@RequestParam("page") int currentPageNumber,
+                                                         @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage) {
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "TagsSortedByName");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+        return ResponseEntity.ok(tagDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 }
