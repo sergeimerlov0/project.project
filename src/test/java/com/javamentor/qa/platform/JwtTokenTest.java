@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.javamentor.qa.platform.webapp.controllers.dto.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
@@ -18,7 +18,7 @@ public class JwtTokenTest extends AbstractApiTest {
     public void checkCorrectWork() throws Exception {
         String email = "3user@mail.ru";
         String password = "3111";
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/check/status").header("Authorization", getJwtToken(email, password)))
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/check/user-status").header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

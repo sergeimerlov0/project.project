@@ -19,7 +19,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,8 +55,8 @@ public class QuestionResourceController {
     })
     public ResponseEntity<?> getQuestionDtoById(@PathVariable Long id) {
         return questionDtoService.getQuestionDtoByQuestionId(id).isEmpty() ?
-                new ResponseEntity<>("Question with id " + id + " not found!", HttpStatus.BAD_REQUEST) :
-                new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(id), HttpStatus.OK);
+                ResponseEntity.badRequest().body("Question with id " + id + " not found!") :
+                ResponseEntity.ok().body(questionDtoService.getQuestionDtoByQuestionId(id));
     }
 
     @GetMapping("/{id}/comment")
@@ -65,12 +64,12 @@ public class QuestionResourceController {
             tags = {"список", "комментарий", "вопрос"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Список QuestionCommentDto успешно получен"),
-            @ApiResponse(code = 404, message = "Вопрос с таким ID не найден")
+            @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
     public ResponseEntity<?> getQuestionCommentById(@PathVariable Long id) {
         return questionService.getById(id).isPresent() ?
-                new ResponseEntity<>(questionDtoService.getQuestionCommentByQuestionId(id), HttpStatus.OK) :
-                new ResponseEntity<>("Question with id " + id + " not found!", HttpStatus.NOT_FOUND);
+                ResponseEntity.ok().body(questionDtoService.getQuestionCommentByQuestionId(id)) :
+                ResponseEntity.badRequest().body("Question with id " + id + " not found!");
     }
 
     @GetMapping("/noAnswer")
@@ -91,7 +90,7 @@ public class QuestionResourceController {
         map.put("ignoredTags", ignoredTags);
         map.put("trackedTags", trackedTags);
         PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, map);
-        return new ResponseEntity<>(pageDto, HttpStatus.OK);
+        return ResponseEntity.ok().body(pageDto);
     }
 
     @PostMapping()
@@ -104,7 +103,7 @@ public class QuestionResourceController {
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         question.setUser((User) SecurityContextHolder.getContext().getAuthentication().getDetails());
         questionService.persist(question);
-        return new ResponseEntity<>(questionDtoService.getQuestionDtoByQuestionId(question.getId()), HttpStatus.OK);
+        return ResponseEntity.ok().body(questionDtoService.getQuestionDtoByQuestionId(question.getId()));
     }
 
     @PostMapping("{questionId}/upVote")
@@ -121,11 +120,10 @@ public class QuestionResourceController {
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.UP_VOTE);
                 voteQuestionService.persist(voteQuestion);
-                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId),
-                        HttpStatus.OK);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
             }
         }
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/{questionId}/downVote")
@@ -142,11 +140,10 @@ public class QuestionResourceController {
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, LocalDateTime.now(), VoteType.DOWN_VOTE);
                 voteQuestionService.persist(voteQuestion);
-                return new ResponseEntity<>(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId),
-                        HttpStatus.OK);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
             }
         }
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping
@@ -185,9 +182,9 @@ public class QuestionResourceController {
             objectMap.put("currentPageNumber", page);
             objectMap.put("itemsOnPage", items);
             PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
-            return new ResponseEntity<>(pageDto, HttpStatus.OK);
+            return ResponseEntity.ok().body(pageDto);
         }
-        return new ResponseEntity<>("TagId " + id + " not found", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("TagId " + id + " not found");
     }
 
     @GetMapping("/count")
@@ -196,7 +193,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Количество вопросов успешно получено")
     })
     public ResponseEntity<Integer> getCountQuestion() {
-        return new ResponseEntity<>(questionService.getCountQuestion(), HttpStatus.OK);
+        return ResponseEntity.ok().body(questionService.getCountQuestion());
     }
 
     @GetMapping("/new")
@@ -217,6 +214,6 @@ public class QuestionResourceController {
         objectMap.put("tracked", trackedTags);
         objectMap.put("ignored", ignoredTags);
         PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
-        return new ResponseEntity<>(pageDto, HttpStatus.OK);
+        return ResponseEntity.ok().body(pageDto);
     }
 }
