@@ -18,5 +18,5 @@ public interface TagDtoDao {
 
     Map<Long, List<TagDto>> getMapTagsByQuestionIds(List<Long> questionIds);
 
-    List<TagDto> getTagsWithString(String partTag);
+    List<TagDto> getTagsTop10WithString(String partTag);
 }

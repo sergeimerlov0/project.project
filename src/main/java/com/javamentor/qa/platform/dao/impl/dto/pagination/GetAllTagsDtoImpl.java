@@ -9,23 +9,16 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
-@Repository("AllTagsDto")
+@Repository("TagsSortedByName")
 public class GetAllTagsDtoImpl implements PaginationDtoAble<TagDto> {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public List<TagDto> getItems(Map<String, Object> param) {
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
-List<TagDto> list = entityManager.createQuery(
-                "select new com.javamentor.qa.platform.models.dto.TagDto" +
-                        "(t.id, t.name, t.description) FROM Tag t " +
-                        "ORDER BY t.name asc", TagDto.class)
-        .setFirstResult((currentPageNumber - 1) * itemsOnPage)
-        .setMaxResults(itemsOnPage)
-        .getResultList();
         return entityManager.createQuery(
                         "select new com.javamentor.qa.platform.models.dto.TagDto" +
                                 "(t.id, t.name, t.description) FROM Tag t " +

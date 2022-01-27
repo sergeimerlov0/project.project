@@ -122,6 +122,32 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
+            "datasets/TagResourceController/getTagsWithString/tag.yml",
+            "datasets/TagResourceController/getTagsWithString/question.yml",
+            "datasets/TagResourceController/getTagsWithString/user.yml",
+            "datasets/TagResourceController/getTagsWithString/role.yml",
+            "datasets/TagResourceController/getTagsWithString/questionHasTag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void getTagsWithString_ShouldReturn10Tags() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/latter?string=tag")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(10)))
+                //tag100: 10 questions (100 - 109)
+                .andExpect(jsonPath("$[0].name", is("tag100")))
+                //tag101: 9 questions (100 - 108)
+                .andExpect(jsonPath("$[1].name", is("tag101")))
+                //tag102: 8 questions (100 - 109)
+                .andExpect(jsonPath("$[2].name", is("tag102")))
+                //tag103: 7 questions (100 - 109)
+                .andExpect(jsonPath("$[3].name", is("tag103")))
+                //tag110: 6 questions (100 - 109)
+                .andExpect(jsonPath("$[4].name", is("tag110")));
+
+    }
+
+    @Test
+    @DataSet(value = {
             "datasets/TagResourceController/getTagsSorted/tag.yml",
             "datasets/TagResourceController/getTagsSorted/question.yml",
             "datasets/TagResourceController/getTagsSorted/user.yml",
@@ -134,9 +160,30 @@ public class TestTagResourceController extends AbstractApiTest {
                 .andExpect((status().isOk()))
                 .andExpect(jsonPath("$.totalResultCount", is(11)))
                 .andExpect(jsonPath("$.items.length()", is(10)))
-                .andExpect(jsonPath("$.items[0].id", is(100)))
-                .andExpect(jsonPath("$.items[4].id", is(104)))
-                .andExpect(jsonPath("$.items[7].id", is(107)))
-                .andExpect(jsonPath("$.items[9].id", is(109)));
+                .andExpect(jsonPath("$.items[0].name", is("tag100")))
+                .andExpect(jsonPath("$.items[4].name", is("tag104")))
+                .andExpect(jsonPath("$.items[7].name", is("tag107")))
+                .andExpect(jsonPath("$.items[9].name", is("tag109")));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/TagResourceController/getTagsSorted/tag.yml",
+            "datasets/TagResourceController/getTagsSorted/question.yml",
+            "datasets/TagResourceController/getTagsSorted/user.yml",
+            "datasets/TagResourceController/getTagsSorted/role.yml",
+            "datasets/TagResourceController/getTagsSorted/questionHasTag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void getTagsSorted_Items5Page1_ShouldReturn5Tags() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?page=1&items=5")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect((status().isOk()))
+                .andExpect(jsonPath("$.totalResultCount", is(11)))
+                .andExpect(jsonPath("$.items.length()", is(5)))
+                .andExpect(jsonPath("$.items[0].name", is("tag100")))
+                .andExpect(jsonPath("$.items[1].name", is("tag101")))
+                .andExpect(jsonPath("$.items[2].name", is("tag102")))
+                .andExpect(jsonPath("$.items[3].name", is("tag103")))
+                .andExpect(jsonPath("$.items[4].name", is("tag104")));
     }
 }

@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
-import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
@@ -132,15 +131,13 @@ public class TagResourceController {
         return new ResponseEntity<>("Tag with this ID was not found", HttpStatus.BAD_REQUEST);
     }
 
-    @ApiOperation(value = "Get all tags with a string", tags = {"TagsWithString"})
+    @ApiOperation(value = "Get top 10 tags with a string", tags = {"TagsTop10WithString"})
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success"),
             @ApiResponse(code = 400, message = "Not found")
     })
-    @GetMapping("latter")
-    @Transactional
-    public ResponseEntity<List<TagDto>> getTagsWithString(@RequestParam("string") String partTag) {
-        return new ResponseEntity<>(tagDtoService.getTagsWithString(partTag) ,HttpStatus.OK);
+    @GetMapping("/latter")
+    public ResponseEntity<List<TagDto>> getTagsTop10WithString(@RequestParam("string") String partTag) {
+        return new ResponseEntity<>(tagDtoService.getTagsTop10WithString(partTag) ,HttpStatus.OK);
     }
 
     @ApiOperation(value = "Get tags sorted by name with pagination", tags = {"GetAllTagsDto"})
@@ -151,7 +148,7 @@ public class TagResourceController {
     public ResponseEntity<PageDto<TagDto>> getTagsSorted(@RequestParam("page") int currentPageNumber,
                                                          @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage) {
         Map<String, Object> paginationMap = new HashMap<>();
-        paginationMap.put("class", "AllTagsDto");
+        paginationMap.put("class", "TagsSortedByName");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
         return ResponseEntity.ok(tagDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));

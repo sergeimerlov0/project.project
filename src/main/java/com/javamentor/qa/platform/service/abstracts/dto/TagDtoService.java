@@ -15,5 +15,5 @@ public interface TagDtoService extends PaginationServiceDto<TagDto> {
 
     List<RelatedTagsDto> getRelatedTagsDto();
 
-    List<TagDto> getTagsWithString(String partTag);
+    List<TagDto> getTagsTop10WithString(String partTag);
 }

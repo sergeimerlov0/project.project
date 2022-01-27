@@ -29,11 +29,14 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
-    public List<TagDto> getTagsWithString(String partTag) {
+    public List<TagDto> getTagsTop10WithString(String partTag) {
+        partTag = '%' + partTag + '%';
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto." +
-                "TagDto(tag.id, tag.name, tag.description) from Tag tag where LOCATE(:partTag, tag.name) > 0", TagDto.class)
-                .setParameter("partTag", partTag).getResultList();
-
+                "TagDto(tag.id, tag.name, tag.description) from Tag tag where tag.name LIKE :partTag " +
+                        "ORDER BY tag.questions.size desc", TagDto.class)
+                .setParameter("partTag", partTag)
+                .setMaxResults(10)
+                .getResultList();
     }
 
     @Override

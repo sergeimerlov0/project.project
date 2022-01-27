@@ -41,7 +41,7 @@ public class TagDtoServiceImpl extends PaginationServiceDtoImpl<TagDto> implemen
     }
 
     @Override
-    public List<TagDto> getTagsWithString(String partTag) {
-        return tagDtoDao.getTagsWithString(partTag);
+    public List<TagDto> getTagsTop10WithString(String partTag) {
+        return tagDtoDao.getTagsTop10WithString(partTag);
     }
 }
