@@ -66,6 +66,16 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         userDao.deleteByEmail(email);
     }
 
+    @Override
+    public User findByIdAndOldPassword(Long id, String oldPassword) {
+        return null;
+    }
+
+    @Override
+    public User save(User user) {
+        return null;
+    }
+
     public String generateRandomPassword() {
         List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.UpperCase, 1),
                 new CharacterRule(EnglishCharacterData.LowerCase, 1),

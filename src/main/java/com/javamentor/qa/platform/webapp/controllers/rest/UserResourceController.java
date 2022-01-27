@@ -5,16 +5,17 @@ import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.controllers.dto.UserRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -28,12 +29,12 @@ public class UserResourceController {
 
     private final UserDtoService userDtoService;
 
-    private UserService userservice;
+    private UserService userService;
 
     @Autowired
     public UserResourceController(UserDtoService userDtoService, UserService userservice) {
         this.userDtoService = userDtoService;
-        this.userservice = userservice;
+        this.userService = userservice;
     }
 
     @GetMapping("/{userId}")
@@ -60,20 +61,65 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
     }
 
-    @GetMapping("/api/user/change/password")
+    @PostMapping("/api/user/{userId}/changepassword")
     @ApiOperation("Смена пароля")
-    public String updatePassword(User user) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String currentPass = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+    public ResponseEntity<String> changePassword(@PathVariable int id, @RequestBody UserRequest userRequest) {
+        User user = userService.findByIdAndOldPassword(Long.valueOf(id), userRequest.getOldPassword());
 
-        String pat = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%]).{6,}";
-        if (user.getPassword().matches(pat) && !user.getPassword().equals(currentPass)) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userservice.update(user);
-            return "users";
-        } else {
-            return null; // поменяю
+        if (user != null) {
+
+            if (!(user.getPassword().equals(userRequest.getOldPassword()))) {
+                System.out.println("adaldkalk");
+                throw new ConstraintViolationException("System Password and provided Old Password doesn't match", null, null);
+            }
+
+            if (StringUtils.isBlank(userRequest.getOldPassword())) {
+                throw new ConstraintViolationException("It's mandatory to give old Password, to set a new Password", null, null);
+            }
+
+            if (StringUtils.isBlank(userRequest.getNewPassword())) {
+                throw new ConstraintViolationException("New Password can not be empty or null", null, null);
+            }
+
+            double percentageMatched = StringUtils.getJaroWinklerDistance(user.getPassword(), userRequest.getNewPassword()) * 100;
+            if (percentageMatched >= 80) {
+                throw new ConstraintViolationException("Percentage of old and new password is equal and more than 80%", null, null);
+            }
+            //Number of digit present in string
+            int validCriteriaForNoOfDigit = userRequest.getNewPassword().length() / 2;
+            int digitCounter = 0;
+            char[] charArray = userRequest.getNewPassword().toCharArray();
+            for (char c : charArray) {
+                if (Character.isDigit(c)) {
+                    digitCounter++;
+                }
+            }
+
+            if (digitCounter >= validCriteriaForNoOfDigit) {
+                throw new ConstraintViolationException("50% of password is number", null, null);
+            }
+
+            // special characters match
+            String newPassword = userRequest.getNewPassword();
+
+            String specialChars = "!@#$&*";
+            int charCounter = 0;
+            for (int i =0; i< newPassword.length(); i++) {
+                if (specialChars.contains(newPassword.charAt(i)+"")) {
+                    charCounter++;
+                }
+            }
+
+            if (charCounter > 4) {
+                throw new ConstraintViolationException("More than 4 special Characters", null, null);
+            }
+
+            user.setPassword(userRequest.getNewPassword()); //setOldPassword
+            user.setNewPassword(userRequest.getNewPassword()); // setNewPassword
+            userService.save(user);
+            return new ResponseEntity<String>("Password updated successfully", HttpStatus.OK);
         }
 
+        return new ResponseEntity<String>("Password not updated", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
