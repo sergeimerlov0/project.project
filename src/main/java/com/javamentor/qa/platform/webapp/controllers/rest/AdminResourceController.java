@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,8 +32,8 @@ public class AdminResourceController {
         Optional<User> optionalUser = userService.getByEmail(email);
         if (optionalUser.isPresent()) {
             userService.deleteByEmail(email);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.ok().build();
         }
-        return new ResponseEntity<>("User with email " + email + " not found", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("User with email " + email + " not found");
     }
 }

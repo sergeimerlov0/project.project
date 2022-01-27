@@ -245,7 +245,7 @@ class TestQuestionResourceController extends AbstractApiTest {
         this.mvc.perform(get("/api/user/question/500/comment")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().string("Question with id 500 not found!"));
     }
 

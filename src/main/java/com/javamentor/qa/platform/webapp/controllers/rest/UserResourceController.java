@@ -8,8 +8,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +26,8 @@ public class UserResourceController {
     @ApiOperation("Получение пользователя по ID")
     public ResponseEntity<?> getUserById(@PathVariable("userId") Long userId) {
         return userDtoService.getUserById(userId).isEmpty() ?
-                new ResponseEntity<>("User with id " + userId + " not found!", HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(userDtoService.getUserById(userId), HttpStatus.OK);
+                ResponseEntity.badRequest().body("User with id " + userId + " not found!") :
+                ResponseEntity.ok(userDtoService.getUserById(userId));
     }
 
     @ApiOperation(value = "Get users by Date Register")
