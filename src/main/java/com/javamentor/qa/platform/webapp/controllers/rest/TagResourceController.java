@@ -17,6 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -136,7 +137,7 @@ public class TagResourceController {
     })
     @GetMapping("/latter")
     public ResponseEntity<List<TagDto>> getTagsTop10WithString(@RequestParam("string") String partTag) {
-        return new ResponseEntity<>(tagDtoService.getTagsTop10WithString(partTag) ,HttpStatus.OK);
+        return new ResponseEntity<>(tagDtoService.getTagsTop10WithString(partTag), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Get tags sorted by name with pagination", tags = {"GetAllTagsDto"})

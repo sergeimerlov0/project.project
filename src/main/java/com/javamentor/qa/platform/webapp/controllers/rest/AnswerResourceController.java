@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,10 +42,12 @@ public class AnswerResourceController {
             @ApiResponse(code = 400, message = "Ответа с таким ID не существует")})
     @DeleteMapping("/{answerId}")
     public ResponseEntity<String> deleteAnswerById(@ApiParam("Id ответа") @PathVariable Long answerId) {
-        if (!answerService.existsById(answerId)) {
+        Optional<Answer> optionalAnswer = answerService.getById(answerId);
+        if (optionalAnswer.isEmpty()) {
             return ResponseEntity.badRequest().body("Answer with this ID was not found");
         }
-        answerService.deleteById(answerId);
+        Answer answer = optionalAnswer.get();
+        answerService.delete(answer);
         return ResponseEntity.ok().body("Answer successfully deleted");
     }
 
@@ -91,6 +94,4 @@ public class AnswerResourceController {
         }
         return ResponseEntity.ok().body(voteAnswerService.postVoteDown(user, answer));
     }
-
-
 }
