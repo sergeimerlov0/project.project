@@ -2,14 +2,27 @@ package com.javamentor.qa.platform.api;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
+import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import java.util.HashMap;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -18,6 +31,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class TestQuestionResourceController extends AbstractApiTest {
+
+    @Autowired
+    private TagService tagService;
+
+    @Autowired
+    private QuestionService questionService;
 
     @Test
     @DataSet(value = {
@@ -34,7 +53,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void getQuestionDtoById() throws Exception {
         this.mvc.perform(get("/api/user/question/100")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(100L))
                 .andExpect(jsonPath("$.title").value("title by question 100"))
@@ -62,7 +81,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void getNonExistedQuestionDtoById() throws Exception {
         this.mvc.perform(get("/api/user/question/200")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -81,7 +100,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void postUpVoteQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/103/upVote")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
 
@@ -108,7 +127,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void postDownVoteQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/102/downVote")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
 
@@ -135,7 +154,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void postUpVoteQuestionByNullQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/200/upVote")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -154,7 +173,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     void postDownVoteQuestionByNullQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/200/downVote")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -173,7 +192,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     public void getAllQuestionCommentByQuestionId() throws Exception {
         this.mvc.perform(get("/api/user/question/100/comment")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -203,7 +222,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     public void getEmptyListQuestionCommentByQuestionId() throws Exception {
         this.mvc.perform(get("/api/user/question/101/comment")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
@@ -224,9 +243,9 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
     public void shouldNotGetQuestionCommentByQuestionId() throws Exception {
         this.mvc.perform(get("/api/user/question/500/comment")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().string("Question with id 500 not found!"));
     }
 
@@ -321,7 +340,7 @@ class TestQuestionResourceController extends AbstractApiTest {
 
         //Проверяем, что по trackedTags подходит только question с id 100
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1&trackedTags=100")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -333,7 +352,7 @@ class TestQuestionResourceController extends AbstractApiTest {
 
         //Проверяем, что по ignoredTags подходит только question с id 103 и 104
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1&ignoredTags=100")
-                .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -346,8 +365,8 @@ class TestQuestionResourceController extends AbstractApiTest {
 
         //Проверяем, что по trackedTags и по ignoredTags подходит только question с id 100 и 104
         this.mvc.perform(MockMvcRequestBuilders
-                .get("/api/user/question/noAnswer?page=1&trackedTags=100,103&ignoredTags=102")
-                .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .get("/api/user/question/noAnswer?page=1&trackedTags=100,103&ignoredTags=102")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -360,7 +379,7 @@ class TestQuestionResourceController extends AbstractApiTest {
 
         //Проверка запроса, на который items не обнаружены, в данном случае по trackedTags
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer?page=1&trackedTags=104")
-                .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -391,7 +410,7 @@ class TestQuestionResourceController extends AbstractApiTest {
         // Игнорим тег 101, который имеется у вопросов 100 и 103
         // Вопрос c id 102 имеет поле isDeleted = true
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103&ignoredTags=101")
-                .header("Authorization", getJwtToken("test_user100@mail.ru","123")))
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -436,7 +455,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     void getAllQuestionDtoWithDefaultValuesFromFront() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1")
-                .header("Authorization", getJwtToken("test_user100@mail.ru","123")))
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -486,7 +505,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/tag.yml"})
     void getQuestionCount() throws Exception {
         this.mvc.perform(get("/api/user/question/count")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(4));
@@ -591,5 +610,246 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.totalResultCount").value(1))
                 .andExpect(jsonPath("$.itemsOnPage").value(10))
                 .andExpect(jsonPath("$.items.[0].id").value(101));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void testCreateQuestionWithEmptyOrNullTitle() throws Exception {
+        List<String> tagNames = List.of("one", "two", "three");
+
+        QuestionCreateDto questionCreateDtoEmptyTitle = new QuestionCreateDto(
+                "",
+                "description",
+                tagNames
+        );
+
+        QuestionCreateDto questionCreateDtoNullTitle = new QuestionCreateDto(
+                null,
+                "description",
+                tagNames
+        );
+
+        mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDtoEmptyTitle))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("user@gmail.com", "123")))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
+
+        mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDtoNullTitle))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("user@gmail.com", "123")))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void testCreateQuestionWithEmptyOrNullDescription() throws Exception {
+        List<String> tagNames = List.of("one", "two", "three");
+
+        QuestionCreateDto questionCreateDtoEmptyDescription = new QuestionCreateDto(
+                "title",
+                "",
+                tagNames
+        );
+
+        QuestionCreateDto questionCreateDtoNullDescription = new QuestionCreateDto(
+                "title",
+                null,
+                tagNames
+        );
+
+        mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDtoEmptyDescription))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("user@gmail.com", "123")))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
+
+        mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDtoNullDescription))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("user@gmail.com", "123")))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void testCreateQuestionWithEmptyOrNullTags() throws Exception {
+        QuestionCreateDto questionCreateDtoEmptyTags = new QuestionCreateDto(
+                "title",
+                "description",
+                List.of()
+        );
+
+        QuestionCreateDto questionCreateDtoNullTags = new QuestionCreateDto(
+                "title",
+                "description",
+                null
+        );
+
+        mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDtoEmptyTags))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("user@gmail.com", "123")))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
+
+        mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDtoNullTags))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("user@gmail.com", "123")))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof MethodArgumentNotValidException,
+                        "should be MethodArgumentNotValidException exception")
+                );
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void testCreateQuestionWithNewTags() throws Exception {
+        List<String> tagNames = List.of("one", "two", "three");
+        QuestionCreateDto questionCreateDto = new QuestionCreateDto(
+                "title",
+                "description",
+                tagNames
+        );
+
+        MvcResult result = mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("user@gmail.com", "123")))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<HashMap<String, Object>> tags = JsonPath.parse(result.getResponse().getContentAsString())
+                .read("$.listTagDto");
+
+        long expectedCount = 10L + tagNames.size();
+        assertEquals(
+                expectedCount,
+                (long) em.createQuery("select count(t) from Tag t").getSingleResult(),
+                "tag table should have" + expectedCount + " rows"
+        );
+        assertEquals(tagNames.size(), tags.size(), "return tags count dont match");
+        tags.forEach(tag -> assertTrue(tagService.getById(Long.valueOf((Integer) tag.get("id"))).isPresent(),
+                "there is no '" + tag.get("name") + "' in tag table"));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void testCreateQuestionWithExistingTags() throws Exception {
+        List<String> tagNames = List.of("tag104", "tag105");
+
+        QuestionCreateDto questionCreateDto = new QuestionCreateDto(
+                "title",
+                "description",
+                tagNames
+        );
+
+        MvcResult result = mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("user@gmail.com", "123")))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<HashMap<String, Object>> tags = JsonPath.parse(result.getResponse().getContentAsString())
+                .read("$.listTagDto");
+
+        long expectedCount = 10L;
+        assertEquals(
+                expectedCount,
+                (long) em.createQuery("select count(t) from Tag t").getSingleResult(),
+                "tag table should have" + expectedCount + " rows"
+        );
+        assertEquals(tagNames.size(), tags.size(), "return tags count dont match");
+        tags.forEach(tag -> assertTrue(tagService.getById(Long.valueOf((Integer) tag.get("id"))).isPresent(),
+                "there is no '" + tag.get("name") + "' in tag table"));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void testCreateQuestionPresentInDb() throws Exception {
+        List<String> tagNames = List.of("one", "two", "three");
+        QuestionCreateDto questionCreateDto = new QuestionCreateDto(
+                "title",
+                "description",
+                tagNames
+        );
+
+        MvcResult result = mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("user@gmail.com", "123")))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Long id = JsonPath.parse(result.getResponse().getContentAsString()).read("$.id", Long.class);
+        assertTrue(questionService.getById(id).isPresent(), "there's no question in db after creation");
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/createQuestion/role.yml",
+            "datasets/QuestionResourceController/createQuestion/user.yml",
+            "datasets/QuestionResourceController/createQuestion/tag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void testCreateQuestionByAdmin() throws Exception {
+        List<String> tagNames = List.of("one", "two", "three");
+        QuestionCreateDto questionCreateDto = new QuestionCreateDto(
+                "title",
+                "description",
+                tagNames
+        );
+
+        mvc.perform(post("/api/user/question")
+                        .content(objectMapper.writeValueAsString(questionCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("admin@gmail.com", "123")))
+                .andExpect(status().isForbidden());
     }
 }

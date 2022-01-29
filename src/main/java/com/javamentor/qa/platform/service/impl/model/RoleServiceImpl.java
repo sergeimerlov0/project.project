@@ -20,7 +20,6 @@ public class RoleServiceImpl extends ReadWriteServiceImpl<Role, Long> implements
     @Autowired
     private RoleDao roleDao;
 
-
     @Override
     @Transactional
     public Optional<Role> getRoleByName(String name) {

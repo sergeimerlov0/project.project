@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.webapp.controllers.dto;
+package com.javamentor.qa.platform.models.dto;
 
 import lombok.Data;
 

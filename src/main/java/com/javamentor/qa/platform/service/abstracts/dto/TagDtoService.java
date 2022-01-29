@@ -5,7 +5,7 @@ import com.javamentor.qa.platform.models.dto.TagDto;
 
 import java.util.List;
 
-public interface TagDtoService {
+public interface TagDtoService extends PaginationServiceDto<TagDto> {
 
     List<TagDto> getTagsByQuestionId(Long id);
 
@@ -14,4 +14,6 @@ public interface TagDtoService {
     List<TagDto> getIgnoreTagById(Long id);
 
     List<RelatedTagsDto> getRelatedTagsDto();
+
+    List<TagDto> getTagsTop10WithString(String partTag);
 }

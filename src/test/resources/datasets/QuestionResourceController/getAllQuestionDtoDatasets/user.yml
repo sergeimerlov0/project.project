@@ -7,6 +7,7 @@ user_entity:
     last_redaction_date: "[DAY,NOW]"
     image_link: "image100"
     nickname: "user100"
+    is_enabled: true
 
   - id: 101
     email: "test_user101@mail.ru"
@@ -16,6 +17,7 @@ user_entity:
     last_redaction_date: "[DAY,NOW]"
     image_link: "image101"
     nickname: "user101"
+    is_enabled: true
 
   - id: 102
     email: "test_user102@mail.ru"
@@ -25,3 +27,4 @@ user_entity:
     last_redaction_date: "[DAY,NOW]"
     image_link: "image102"
     nickname: "user102"
+    is_enabled: true
