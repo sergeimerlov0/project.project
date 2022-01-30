@@ -5,8 +5,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import java.util.Optional;
 
 public interface UserService extends ReadWriteService<User, Long> {
-    User findByIdAndOldPassword(Long id, String oldPassword);
-    User save(User user);
+    void updatePasswordByEmail(String email, String password);
     String generateRandomPassword();
     Optional<User> getByEmail(String email);
     void deleteByEmail(String email);
