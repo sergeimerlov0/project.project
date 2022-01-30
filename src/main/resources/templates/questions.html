@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>All questions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+<header id="header"></header>
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-md-2">
+            <sidebar id="sidebar"></sidebar>
+        </div>
+        <div id="mainbar" class="col-md-8 mt-4">
+            <br/>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <h3 id="title">Все вопросы</h3>
+                                </div>
+                                <div class="col-md-2">
+                                    <a href="question.html" class ="text-nowrap btn btn-primary">Задать вопрос</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-left: 47px">
+                <div class="d-flex align-items-lg-center mb12 sm:fd-column sm:ai-stretch">
+                    420 вопросов
+                </div>
+                <div class="align-items-end my-4 ml-auto">
+                    <div class="btn-group" role="group" style="max-height: 38px">
+                        <a class="btn btn-outline-primary"
+                           href="#">Новые</a>
+                        <a class="btn btn-outline-primary"
+                           href="#">Активные</a>
+                        <a class="btn btn-outline-primary"
+                           href="#">Конкурсные
+                            <span class="badge-primary badge-pill">100</span></a>
+                        <a class="btn btn-outline-primary"
+                           href="#">Без ответа</a>
+                        <a class="dropdown">
+                            <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button"
+                               id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ещё
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item active" href="#">Цитируемые</a>
+                                <a class="dropdown-item" href="#">Голоса</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Без ответа (мои теги)</a>
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header">НАСТРАИВАЕМЫЕ ФИЛЬТРЫ</h6>
+                                    <p style="padding-left: 10px; padding-right: 10px; font-size: small; position: center">
+                                        Настройте и сохраните сортировку </br>и фильтры для быстрого доступа.
+                                    </p>
+                            </div>
+                        </a>
+                        <p style="padding-left: 10px">
+                            <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
+                                    <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                                </svg>
+                                Фильтр
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+<!--            Cворачиваемое меню с фильтрами          -->
+            <div class="collapse" id="collapseFilter">
+                <div class="card card-body" style="background-color: lightgray">
+                    <div class="d-flex flex-wrap">
+                        <div class="flex--item">
+                            <fieldset class="flex-column">
+                                <legend class="flex--item col-form-label"><b>Фильтрация</b></legend>
+                                <div class="flex--item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="filterCheck1">
+                                            <label class="form-check-label" for="filterCheck1">
+                                                Без ответов
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex--item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="filterCheck2">
+                                            <label class="form-check-label" for="filterCheck2">
+                                                Без принятого ответа
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="flex--item">
+                                        <div class="d-flex align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="filterCheck3">
+                                                <label class="form-check-label" for="filterCheck3">
+                                                    Объявлен конкурс
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </fieldset>
+                        </div>
+                        <div class="flex--item" style="padding-left: 60px">
+                            <fieldset class="flex-column">
+                                <legend class="flex--item col-form-label"><b>Сортировка</b></legend>
+                                <div class="flex--item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="sortRadios" id="sortRadios1" value="option1" checked>
+                                            <label class="form-check-label" for="sortRadios1">
+                                                Новые
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex--item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="sortRadios" id="sortRadios2" value="option2">
+                                            <label class="form-check-label" for="sortRadios2">
+                                                Недавно обновленные
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex--item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="sortRadios" id="sortRadios3" value="option3">
+                                            <label class="form-check-label" for="sortRadios3">
+                                                Наиболее оцененные
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex--item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="sortRadios" id="sortRadios4" value="option4">
+                                            <label class="form-check-label" for="sortRadios4">
+                                                Наиболее частые
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex--item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="sortRadios" id="sortRadios5" value="option5">
+                                            <label class="form-check-label" for="sortRadios5">
+                                                Конкурс скоро заканчивается
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="flex--item" style="padding-left: 60px">
+                            <fieldset class="flex-column">
+                                <legend class="flex--item col-form-label"><b>Теги</b></legend>
+                                <div class="flex--item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="tagsRadios" id="tagsRadios1" value="option1">
+                                            <label class="form-check-label" for="tagsRadios1">
+                                                Отслеживаемые теги
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex--item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="tagsRadios" id="tagsRadios2" value="option2" checked>
+                                            <label class="form-check-label" for="tagsRadios2">
+                                                Указанные ниже теги
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <form>
+                                </br>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="inputTags" placeholder="Например, javascript или java" style="width: 250px">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="row">
+                        <div class="d-flex" style="padding-left: 10px">
+                            <button class="btn btn-primary" href="#" type="button" data-target="applyButton">Применить фильтр</button>
+                        </div>
+                        <div class="d-flex" style="padding-left: 10px">
+                            <button class="btn btn-outline-primary" href="#" type="button" data-target="saveButton">Сохранить фильтр</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+<!--            Список вопросов (вопросы из базы не подтягиваются, это пока статичные примеры)         -->
+            <div id="questions-wrapper">
+                <div id="questions">
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">0</h6>
+                                    <p class="card-text text-muted "><small>голосов</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">0</h6>
+                                    <p class="card-text text-muted"><small>ответов</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">12</h6>
+                                    <p class="card-text text-muted"><small>показов</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">Почему не собирает данные на след странице?</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">python</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">парсер</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">selenium</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>изменен 11 часов назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>Getteg</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>87</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">0</h6>
+                                    <p class="card-text text-muted"><small>голосов</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">0</h6>
+                                    <p class="card-text text-muted"><small>ответов</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">10</h6>
+                                    <p class="card-text text-muted"><small>показов</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">Выпадающий список не выпадает вниз</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">html</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">css</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>задан 11 часов назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>close_ebola</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>1</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">1</h6>
+                                    <p class="card-text text-muted"><small>голос</small></p>
+                                </div>
+                                <div class="card text-white bg-success text-center">
+                                    <h6 class="card-title m-0">4</h6>
+                                    <p class="card-text"><small>ответа</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">7</h6>
+                                    <p class="card-text text-muted"><small>показов</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">Кликабельная ссылка (forward) на конкретное сообщение телеграма</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">telegram-bot</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">telegram</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">aiogram</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>ответ дан 12 часов назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>html css</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>36</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">0</h6>
+                                    <p class="card-text text-muted "><small>голосов</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">0</h6>
+                                    <p class="card-text text-muted"><small>ответов</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted" >29</h6>
+                                    <p class="card-text text-muted"><small>показов</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">Как передать параметр из одного метода контроллера в другой</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">java</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">spring</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">hibernate</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">mvc</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">jsp</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>изменен 12 часов назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>linkforget</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>1</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">2</h6>
+                                    <p class="card-text text-muted"><small>голоса</small></p>
+                                </div>
+                                <div class="card text-white bg-success text-center">
+                                    <h6 class="card-title m-0">1</h6>
+                                    <p class="card-text"><small>ответ</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">33</h6>
+                                    <p class="card-text text-muted"><small>показа</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">Как реализовать качественный эффект свечения графическим примитивам средствами C# GDI+</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">c#</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">.net</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">winforms</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">gdi</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>изменен 13 часов назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>aepot</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>29.4k</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">15</h6>
+                                    <p class="card-text text-muted"><small>голосов</small></p>
+                                </div>
+                                <div class="card text-white bg-success text-center">
+                                    <h6 class="card-title m-0">44</h6>
+                                    <p class="card-text"><small>ответа</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">299</h6>
+                                    <p class="card-text text-muted"><small>показов</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">Как заставить работать выпадающее меню из кнопки без js</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">html</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">js</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">css</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>изменен 4 дня назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>popori</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>125</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">4</h6>
+                                    <p class="card-text text-muted"><small>голоса</small></p>
+                                </div>
+                                <div class="card border-success text-success text-center">
+                                    <h6 class="card-title m-0 text-muted">2</h6>
+                                    <p class="card-text text-muted"><small>ответа</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">37</h6>
+                                    <p class="card-text text-muted"><small>показов</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">Как получить jwt-токен из куки</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">java</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">spring</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">jwt</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">rest</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>изменен 19 часов назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>koozya</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>11</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">0</h6>
+                                    <p class="card-text text-muted"><small>голосов</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">0</h6>
+                                    <p class="card-text text-muted"><small>ответов</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">13</h6>
+                                    <p class="card-text text-muted"><small>показов</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">При использовании createNativeQuery я получаю поля из бд равные null</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">java</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">database</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">postgresql</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">hibernate</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>изменен 2 дня назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>oj_kush</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>1</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">2</h6>
+                                    <p class="card-text text-muted"><small>голоса</small></p>
+                                </div>
+                                <div class="card border-success text-success text-center">
+                                    <h6 class="card-title m-0 text-muted">1</h6>
+                                    <p class="card-text text-muted"><small>ответ</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">8</h6>
+                                    <p class="card-text text-muted"><small>показов</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">Сортировать слова которые начинаются с гласных по первой согласной букве (Java)</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">java</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">algorithm</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>задан 1 день назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>sillyBilly</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>1</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <div class="row d-flex">
+                            <div class="card-group col-md-2">
+                                <div class="card text-center">
+                                    <h6 class="card-title text-muted m-0">3</h6>
+                                    <p class="card-text text-muted"><small>голоса</small></p>
+                                </div>
+                                <div class="card text-white bg-success text-center">
+                                    <h6 class="card-title m-0">4</h6>
+                                    <p class="card-text"><small>ответа</small></p>
+                                </div>
+                                <div class="card text-center">
+                                    <h6 class="card-title m-0 text-muted">29</h6>
+                                    <p class="card-text text-muted"><small>показов</small></p>
+                                </div>
+                            </div>
+                            <div class="container-fluid col-md-9">
+                                <div class="d-block">
+                                    <a class="h5" href="#">Рендеринг ajax ответа в модальное окно bootstrap на jQuery</a>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex mt-2">
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">php</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">jquery</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">ajax</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">bootstrap4</a>
+                                        </div>
+                                        <div class="card mr-2">
+                                            <a class="card-link btn-light" href="#">render</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex ml-auto mt-0 align-items-center">
+                                        <a href="#" class="card-link text-muted" title="time">
+                                            <small>задан 2 дня назад</small>
+                                        </a>
+                                        <a href="#" class="card-link mx-1"><small>jcvd</small></a>
+                                        <span class="badge-light" title="уровень репутации"><small>77</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+<!--            Постраничная навигация           -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination float-left">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous" title="Предыдущая">
+                            <span aria-hidden="true" aria-disabled="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#" title="Перейти на страницу 1">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#" title="Перейти на страницу 2">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#" title="Перейти на страницу 3">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#" title="Перейти на страницу 4">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#" title="Перейти на страницу 5">5</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#" title="Перейти на страницу 42">42</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next" title="Следующая">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+<!--            Количество вопросов на странице             -->
+            <div class="pagination float-right">
+                <li class="page-item active"><a href="/questions?currentPageNumber=1" title="Показывать 10 вопросов на странице" class="page-link">10</a></li>
+                <li class="page-item"> <a href="/questions?currentPageNumber=1&amp;itemsOnPage=30" title="Показывать 30 вопросов на странице" class="page-link">30</a></li>
+                <li class="page-item"> <a href="/questions?currentPageNumber=1&amp;itemsOnPage=50" title="Показывать 50 вопросов на странице" class="page-link">50</a></li>
+                <li class="page-item disabled"><span class="page-link">вопросов на странице</span></li>
+            </div>
+        </div>
+    </div>
+</div>
+<footer id="footer"></footer>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script type="module" src="../static/js/authorization_check.js"></script>
+<script src="../static/js/header.js"></script>
+<script src="../static/js/sidebar.js"></script>
+<script src="../static/js/footer.js"></script>
+</body>
+</html>
