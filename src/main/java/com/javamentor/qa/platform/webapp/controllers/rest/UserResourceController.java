@@ -2,13 +2,24 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.controllers.dto.UserRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,12 +33,20 @@ public class UserResourceController {
 
     private final UserDtoService userDtoService;
 
+    private UserService userService;
+
+    @Autowired
+    public UserResourceController(UserDtoService userDtoService, UserService userservice) {
+        this.userDtoService = userDtoService;
+        this.userService = userservice;
+    }
+
     @GetMapping("/{userId}")
     @ApiOperation("Получение пользователя по ID")
     public ResponseEntity<?> getUserById(@PathVariable("userId") Long userId) {
         return userDtoService.getUserById(userId).isEmpty() ?
-                ResponseEntity.badRequest().body("User with id " + userId + " not found!") :
-                ResponseEntity.ok(userDtoService.getUserById(userId));
+                new ResponseEntity<>("User with id " + userId + " not found!", HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(userDtoService.getUserById(userId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Get users by Date Register")
@@ -44,5 +63,29 @@ public class UserResourceController {
         objectMap.put("page", currentPageNumber);
         objectMap.put("items", itemsOnPage);
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
+    }
+
+    @PutMapping("/api/{userId}/change/password")
+    @ApiOperation("Смена пароля с шифрованием")
+    public ResponseEntity<?> updatePasswordByEmail(@PathVariable("userId") long userId, @RequestBody String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (user.getId().equals(userId)) {
+            String currentPass = user.getPassword();
+
+            String pat = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%]).{6,}";
+            if (password.matches(pat) && !passwordEncoder.matches(password, currentPass)) {
+                userService.updatePasswordByEmail(user.getEmail(), passwordEncoder.encode(password));
+
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                SecurityContext sc = SecurityContextHolder.getContext();
+                sc.setAuthentication(authentication);
+
+                return new ResponseEntity<>("Пароль изменён", HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>("Пароль не соответствует требованиям", HttpStatus.BAD_REQUEST);
     }
 }

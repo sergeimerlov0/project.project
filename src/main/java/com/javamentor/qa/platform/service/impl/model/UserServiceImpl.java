@@ -66,11 +66,17 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         userDao.deleteByEmail(email);
     }
 
+
+
     public String generateRandomPassword() {
         List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.UpperCase, 1),
                 new CharacterRule(EnglishCharacterData.LowerCase, 1),
                 new CharacterRule(EnglishCharacterData.Digit, 1));
         PasswordGenerator generator = new PasswordGenerator();
         return generator.generatePassword(15, rules);
+    }
+    @Override
+    public void updatePasswordByEmail(String email, String password) {
+        userDao.updatePasswordByEmail(email, password);
     }
 }
