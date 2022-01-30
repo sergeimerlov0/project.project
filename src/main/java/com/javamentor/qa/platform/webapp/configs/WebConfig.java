@@ -15,6 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addViewController("/users").setViewName("user");
         registry.addViewController("/question/{id}").setViewName("questionById");
         registry.addViewController("/user/pagination").setViewName("index");
+        registry.addViewController("/questions").setViewName("questions");
     }
 
     @Override

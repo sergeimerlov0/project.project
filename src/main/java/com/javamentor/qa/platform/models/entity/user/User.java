@@ -39,6 +39,7 @@ public class User implements UserDetails {
     @GeneratedValue(generator = "User_seq")
     private Long id;
 
+
     @Column(name = "email")
     @NonNull
     private String email;

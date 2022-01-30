@@ -45,4 +45,11 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
                 .setParameter("email", email)
                 .executeUpdate();
     }
+
+    public void updatePasswordByEmail (String email, String password) {
+        String hql = "update User u set u.password = :password where u.email = :email";
+        entityManager.createQuery(hql)
+                .setParameter("password", password)
+                .setParameter("email", email).executeUpdate();
+    }
 }
