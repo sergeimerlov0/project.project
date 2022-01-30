@@ -14,7 +14,6 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class QuestionDtoDaoImpl implements QuestionDtoDao {
-
     @PersistenceContext
     EntityManager entityManager;
 
@@ -26,7 +25,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
         return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto." +
                 "QuestionDto(question.id, question.title, author.id, " +
                 "(SELECT sum (reputation.count) from Reputation reputation where reputation.author.id = :id), " +
-                "author.fullName, author.imageLink, " +
+                "author.fullname, author.imageLink, " +
                 "question.description, 0L, " +
                 "(SELECT count (*) from Answer answer where answer.question.id = :id), " +
                 "((SELECT count (*) from VoteQuestion voteOnQuestion " +

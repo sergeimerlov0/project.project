@@ -45,4 +45,20 @@ public class UserResourceController {
         objectMap.put("items", itemsOnPage);
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
     }
+
+    @GetMapping("/vote")
+    @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированные по голосам")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Все UserDTO получены"),
+            @ApiResponse(code = 400, message = "UserDTO не найдены")
+    })
+    public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortDTO(@RequestParam int currentPageNumber,
+                                                              @RequestParam(defaultValue = "10") int itemsOnPage){
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "AllUserDtoSortVote");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+
+        return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
 }
