@@ -16,7 +16,7 @@ import java.util.Map;
 public class GetAllUserSortVote implements PaginationDtoAble <UserDto> {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public List<UserDto> getItems(Map<String, Object> param) {
@@ -30,7 +30,10 @@ public class GetAllUserSortVote implements PaginationDtoAble <UserDto> {
                         "LEFT JOIN VoteAnswer va ON (e.id = va.user.id) " +
                         "LEFT JOIN VoteQuestion vq ON (e.id = vq.user.id)" +
                         "group by e.id " +
-                        "ORDER BY COUNT (vq.vote), COUNT (va.vote)", UserDto.class)
+                        "ORDER BY SUM (SELECT COUNT(*) FROM VoteQuestion vq WHERE vq.vote = 'UP_VOTE') -" +
+                        "(SELECT COUNT(*) FROM VoteQuestion vq WHERE vq.vote = 'DOWN_VOTE') +" +
+                        "(SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'UP_VOTE') -" +
+                        "(SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'DOWN_VOTE')", UserDto.class)
                                 .setFirstResult((currentPageNumber - 1) * itemsOnPage)
                                 .setMaxResults(itemsOnPage)
                                 .getResultList();
@@ -38,6 +41,6 @@ public class GetAllUserSortVote implements PaginationDtoAble <UserDto> {
 
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        return ((Long) entityManager.createQuery("SELECT COUNT (u) FROM  User u LEFT JOIN VoteQuestion vq ON u.id = vq.user.id LEFT JOIN VoteAnswer va ON u.id = va.user.id").getSingleResult()).intValue();
+        return ((Long) entityManager.createQuery("SELECT COUNT (u) FROM  User u").getSingleResult()).intValue();
     }
 }

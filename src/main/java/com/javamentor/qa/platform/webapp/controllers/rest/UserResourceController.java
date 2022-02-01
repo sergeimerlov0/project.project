@@ -68,7 +68,7 @@ public class UserResourceController {
     @GetMapping("/vote")
     @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированные по голосам")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Все UserDTO получены"),
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
             @ApiResponse(code = 400, message = "UserDTO не найдены")
     })
     public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortDTO(@RequestParam int currentPageNumber,
