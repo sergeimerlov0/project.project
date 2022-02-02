@@ -5,13 +5,16 @@
   document.addEventListener('DOMContentLoaded', async function() {
     const responseQuestion = await fetch(`/api/user/question/${id}`, {headers});
 
+    if (responseQuestion.status === 400) {
+      location.replace('/404');
+    }
+
     if (!responseQuestion.ok) {
       console.log('Загрузка вопроса завершилась неудачно');
       return;
     }
 
     const jsonQuestion = await responseQuestion.json();
-    const countAnswer = parseInt(jsonQuestion['countAnswer']);
 
     document.querySelector('.vote-block').innerHTML = voteSection(
         jsonQuestion['countValuable']);
@@ -34,12 +37,11 @@
         jsonQuestion['authorReputation'],
         jsonQuestion['persistDateTime'],
     );
-    document.getElementById(
-        'answers-count').textContent = `Ответов: ${countAnswer}`;
     document.querySelector('.post-comments').innerHTML = generateComments(
         jsonQuestion['comments']);
 
-    if (countAnswer === 0) {
+    if (parseInt(jsonQuestion['countAnswer']) === 0) {
+      document.getElementById('answers-count').textContent = 'Ответов: 0';
       return;
     }
 
@@ -53,6 +55,8 @@
 
     const jsonAnswer = await responseAnswer.json();
 
+    document.getElementById(
+        'answers-count').textContent = `Ответов: ${jsonAnswer.length}`;
     document.querySelector('.answers-list').innerHTML = jsonAnswer.map(
         answer => generateAnswer(answer)).join('');
   });
