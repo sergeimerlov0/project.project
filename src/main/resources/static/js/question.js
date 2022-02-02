@@ -6,7 +6,7 @@
     const responseQuestion = await fetch(`/api/user/question/${id}`, {headers});
 
     if (responseQuestion.status === 400) {
-      location.replace('/404');
+      show404();
     }
 
     if (!responseQuestion.ok) {
@@ -15,6 +15,7 @@
     }
 
     const jsonQuestion = await responseQuestion.json();
+    const countAnswer = parseInt(jsonQuestion['countAnswer']);
 
     document.querySelector('.vote-block').innerHTML = voteSection(
         jsonQuestion['countValuable']);
@@ -37,11 +38,12 @@
         jsonQuestion['authorReputation'],
         jsonQuestion['persistDateTime'],
     );
+    document.getElementById(
+        'answers-count').textContent = `Ответов: ${countAnswer}`;
     document.querySelector('.post-comments').innerHTML = generateComments(
         jsonQuestion['comments']);
 
-    if (parseInt(jsonQuestion['countAnswer']) === 0) {
-      document.getElementById('answers-count').textContent = 'Ответов: 0';
+    if (countAnswer === 0) {
       return;
     }
 
@@ -55,8 +57,6 @@
 
     const jsonAnswer = await responseAnswer.json();
 
-    document.getElementById(
-        'answers-count').textContent = `Ответов: ${jsonAnswer.length}`;
     document.querySelector('.answers-list').innerHTML = jsonAnswer.map(
         answer => generateAnswer(answer)).join('');
   });
@@ -175,4 +175,26 @@ function voteSection(reputation) {
                 </svg>
             </a>
         </p>`;
+}
+
+function show404() {
+  document.querySelector('html').className = 'h-100';
+  document.querySelector('body').className = 'h-100';
+  document.querySelector('footer').outerHTML = '';
+
+  const info = document.createElement('div');
+  info.style.height = '100%';
+  info.innerHTML = `<div class="container" style="height: 90%;">
+    <div class="row h-100">
+        <div class="col-sm-12 align-self-center">
+            <div class="mx-auto text-center">
+              <h4>404: Вопрос не найден</h4>
+              <p>Посмотрите <a href="/questions">недавние вопросы</a></p>
+          </div>
+        </div>
+    </div>
+  </div>`;
+
+  const div = document.querySelector('body > div');
+  div.replaceWith(info);
 }
