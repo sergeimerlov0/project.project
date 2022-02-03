@@ -80,4 +80,27 @@ public class UserResourceController {
 
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
+
+    @PutMapping("/api/{userId}/change/password")
+    @ApiOperation("Смена пароля с шифрованием")
+    public ResponseEntity<?> updatePasswordByEmail(@PathVariable("userId") long userId, @RequestBody String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (user.getId().equals(userId)) {
+            String currentPass = user.getPassword();
+
+            String pat = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%]).{6,}";
+            if (password.matches(pat) && !passwordEncoder.matches(password, currentPass)) {
+                userService.updatePasswordByEmail(user.getEmail(), passwordEncoder.encode(password));
+
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                SecurityContext sc = SecurityContextHolder.getContext();
+                sc.setAuthentication(authentication);
+
+                return new ResponseEntity<>("Пароль изменён", HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("Пароль не соответствует требованиям", HttpStatus.BAD_REQUEST);
+    }
 }

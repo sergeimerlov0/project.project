@@ -16,3 +16,12 @@ reputation:
     type: 2
     question_id: 100
     answer_id: 101
+
+  - id: 102
+    persist_date: "[DAY,NOW]"
+    author_id: 102
+    sender_id: 101
+    count: 50
+    type: 2
+    question_id: 102
+    answer_id: 102

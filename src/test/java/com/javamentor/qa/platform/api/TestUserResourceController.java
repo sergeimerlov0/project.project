@@ -6,6 +6,11 @@ import com.javamentor.qa.platform.AbstractApiTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -130,7 +135,13 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items[0].id").value(102))
                 .andExpect(jsonPath("$.items[1].id").value(103))
                 .andExpect(jsonPath("$.items[2].id").value(101))
-                .andExpect(jsonPath("$.items[3].id").value(100));
+                .andExpect(jsonPath("$.items[3].id").value(100))
+                //Проверка items
+                .andExpect(jsonPath("$.items[0].city").value("city102"))
+                .andExpect(jsonPath("$.items[0].email").value("test_user102@mail.ru"))
+                .andExpect(jsonPath("$.items[0].linkImage").value("image102"))
+                .andExpect(jsonPath("$.items[0].reputation").value(50))
+                .andExpect(jsonPath("$.items[0].fullName").value("User with id 102"));
     }
 
 }
