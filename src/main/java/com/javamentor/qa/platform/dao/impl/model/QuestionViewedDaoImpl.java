@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionViewedDao;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -22,14 +23,5 @@ public class QuestionViewedDaoImpl extends ReadWriteDaoImpl<QuestionViewed, Long
                 .getResultList();
         return !questionViewedList.isEmpty();
     }
-
-    @Override
-    public QuestionViewed getTotalQuestionViewByQuestionIAndUserId (Long questionId, Long userId) {
-        return entityManager.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.id =: userId", QuestionViewed.class)
-                .setParameter("questionId", questionId)
-                .setParameter("userId", userId)
-                .getSingleResult();
-    }
-
 
 }

@@ -56,7 +56,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
-    public ResponseEntity<?> getQuestionDtoById(@PathVariable Long id) {
+    public ResponseEntity<?> getQuestionDtoById (@PathVariable Long id) {
         return questionDtoService.getQuestionDtoByQuestionId(id).isEmpty() ?
                 ResponseEntity.badRequest().body("Question with id " + id + " not found!") :
                 ResponseEntity.ok().body(questionDtoService.getQuestionDtoByQuestionId(id));
@@ -69,7 +69,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Список QuestionCommentDto успешно получен"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
-    public ResponseEntity<?> getQuestionCommentById(@PathVariable Long id) {
+    public ResponseEntity<?> getQuestionCommentById (@PathVariable Long id) {
         return questionService.getById(id).isPresent() ?
                 ResponseEntity.ok().body(questionDtoService.getQuestionCommentByQuestionId(id)) :
                 ResponseEntity.badRequest().body("Question with id " + id + " not found!");
@@ -81,11 +81,11 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
             @ApiResponse(code = 400, message = "Параметры заданы неверно")
     })
-    public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int page,
-                                                    @RequestParam(defaultValue = "10") int items,
-                                                    @RequestParam(required = false, defaultValue = "0")
-                                                            List<Long> ignoredTags,
-                                                    @RequestParam(required = false) List<Long> trackedTags) {
+    public ResponseEntity<?> getQuestionDtoNoAnswer (@RequestParam int page,
+                                                     @RequestParam(defaultValue = "10") int items,
+                                                     @RequestParam(required = false, defaultValue = "0")
+                                                             List<Long> ignoredTags,
+                                                     @RequestParam(required = false) List<Long> trackedTags) {
         Map<String, Object> map = new HashMap<>();
         map.put("class", "QuestionDtoNoAnswer");
         map.put("currentPageNumber", page);
@@ -102,7 +102,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Successful question creation"),
             @ApiResponse(code = 400, message = "Validation error")
     })
-    public ResponseEntity<?> createQuestion(@Validated @RequestBody QuestionCreateDto questionCreateDto) {
+    public ResponseEntity<?> createQuestion (@Validated @RequestBody QuestionCreateDto questionCreateDto) {
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         question.setUser((User) SecurityContextHolder.getContext().getAuthentication().getDetails());
         questionService.persist(question);
@@ -115,7 +115,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
+    public ResponseEntity<Integer> upVote (@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
@@ -135,7 +135,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Голосование успешно произведено"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден или Вы уже голосовали за данный Question")
     })
-    public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
+    public ResponseEntity<Integer> downVote (@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
@@ -155,7 +155,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Просмотр успешно произведен"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
-    public ResponseEntity<QuestionViewed> viewQuestion(@PathVariable Long questionId) {
+    public ResponseEntity<Integer> viewQuestion (@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
@@ -165,8 +165,9 @@ public class QuestionResourceController {
                 questionViewed.setQuestion(question);
                 questionViewed.setUser(user);
                 questionViewedService.persist(questionViewed);
-                return ResponseEntity.ok().body(questionViewedService.getTotalQuestionViewByQuestionIAndUserId(questionId, user.getId()));
+                return ResponseEntity.ok().build();
             }
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }
@@ -177,10 +178,10 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Все QuestionDto получены"),
             @ApiResponse(code = 400, message = "QuestionDto не найдены")
     })
-    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionDto(@RequestParam int currentPageNumber,
-                                                                  @RequestParam(defaultValue = "10") int itemsOnPage,
-                                                                  @RequestParam(required = false) List<Long> trackedTags,
-                                                                  @RequestParam(required = false) List<Long> ignoredTags) {
+    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionDto (@RequestParam int currentPageNumber,
+                                                                   @RequestParam(defaultValue = "10") int itemsOnPage,
+                                                                   @RequestParam(required = false) List<Long> trackedTags,
+                                                                   @RequestParam(required = false) List<Long> ignoredTags) {
         Map<String, Object> paginationMap = new HashMap<>();
         paginationMap.put("class", "AllQuestionDto");
         paginationMap.put("currentPageNumber", currentPageNumber);
@@ -197,9 +198,9 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
             @ApiResponse(code = 400, message = "Данный TagId не найден")
     })
-    public ResponseEntity<?> getQuestionDtoByTagId(@PathVariable Long id,
-                                                   @RequestParam int page,
-                                                   @RequestParam(defaultValue = "10") int items) {
+    public ResponseEntity<?> getQuestionDtoByTagId (@PathVariable Long id,
+                                                    @RequestParam int page,
+                                                    @RequestParam(defaultValue = "10") int items) {
         if (tagService.existsById(id)) {
             Map<String, Object> objectMap = new HashMap<>();
             objectMap.put("class", "AllQuestionDtoByTagId");
@@ -217,7 +218,7 @@ public class QuestionResourceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Количество вопросов успешно получено")
     })
-    public ResponseEntity<Integer> getCountQuestion() {
+    public ResponseEntity<Integer> getCountQuestion () {
         return ResponseEntity.ok().body(questionService.getCountQuestion());
     }
 
@@ -229,9 +230,9 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Неправильный запрос"),
             @ApiResponse(code = 500, message = "Внутренняя ошибка")
     })
-    public ResponseEntity<?> getQuestionSortedByDate(@RequestParam int page, @RequestParam(defaultValue = "10") int items,
-                                                     @RequestParam(required = false) List<Long> trackedTags,
-                                                     @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags) {
+    public ResponseEntity<?> getQuestionSortedByDate (@RequestParam int page, @RequestParam(defaultValue = "10") int items,
+                                                      @RequestParam(required = false) List<Long> trackedTags,
+                                                      @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags) {
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("class", "AllQuestionDtoSortedByDate");
         objectMap.put("currentPageNumber", page);

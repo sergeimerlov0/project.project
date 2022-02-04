@@ -7,5 +7,4 @@ public interface QuestionViewedDao extends ReadWriteDao<QuestionViewed, Long> {
 
     boolean questionViewCheckByUserIdAndQuestionId (Long questionId, Long userId);
 
-    QuestionViewed getTotalQuestionViewByQuestionIAndUserId (Long questionId, Long userId);
 }

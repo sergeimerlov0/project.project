@@ -4,7 +4,6 @@ import com.javamentor.qa.platform.dao.abstracts.model.QuestionViewedDao;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +19,10 @@ public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionView
         this.questionViewedDao = questionViewedDao;
     }
 
-
     @Override
-    @Cacheable(cacheNames = "questionViewResult", key = "#userId")
+
     public boolean questionViewCheckByUserIdAndQuestionId (Long questionId, Long userId) {
         return questionViewedDao.questionViewCheckByUserIdAndQuestionId(questionId, userId);
-    }
-
-    @Override
-    public QuestionViewed getTotalQuestionViewByQuestionIAndUserId (Long questionId, Long userId) {
-        return questionViewedDao.getTotalQuestionViewByQuestionIAndUserId(questionId, userId);
     }
 
     @Override

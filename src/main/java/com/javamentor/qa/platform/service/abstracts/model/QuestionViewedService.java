@@ -7,8 +7,6 @@ public interface QuestionViewedService extends ReadWriteService<QuestionViewed, 
 
     boolean questionViewCheckByUserIdAndQuestionId (Long questionId, Long userId);
 
-    QuestionViewed getTotalQuestionViewByQuestionIAndUserId (Long questionId, Long userId);
-
     @Override
     void persist (QuestionViewed questionViewed);
 }

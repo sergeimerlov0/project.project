@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.api;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
+import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -51,7 +52,32 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
-    void getQuestionDtoById() throws Exception {
+    void postQuestionView () throws Exception {
+        this.mvc.perform(post("/api/user/question/102/view")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+
+        QuestionViewed questionViewed = em.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.id =: userId", QuestionViewed.class)
+                .setParameter("questionId", 102L)
+                .setParameter("userId", 100L)
+                .getSingleResult();
+        Assertions.assertNotNull(questionViewed);
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/answer.yml",
+            "datasets/QuestionResourceController/comment.yml",
+            "datasets/QuestionResourceController/commentQuestion.yml",
+            "datasets/QuestionResourceController/question.yml",
+            "datasets/QuestionResourceController/questionHasTag.yml",
+            "datasets/QuestionResourceController/reputation.yml",
+            "datasets/QuestionResourceController/role.yml",
+            "datasets/QuestionResourceController/tag.yml",
+            "datasets/QuestionResourceController/user.yml",
+            "datasets/QuestionResourceController/voteQuestion.yml"
+    })
+    void getQuestionDtoById () throws Exception {
         this.mvc.perform(get("/api/user/question/100")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
@@ -79,7 +105,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
-    void getNonExistedQuestionDtoById() throws Exception {
+    void getNonExistedQuestionDtoById () throws Exception {
         this.mvc.perform(get("/api/user/question/200")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
@@ -98,7 +124,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
-    void postUpVoteQuestion() throws Exception {
+    void postUpVoteQuestion () throws Exception {
         this.mvc.perform(post("/api/user/question/103/upVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
@@ -125,7 +151,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
-    void postDownVoteQuestion() throws Exception {
+    void postDownVoteQuestion () throws Exception {
         this.mvc.perform(post("/api/user/question/102/downVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
@@ -152,7 +178,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
-    void postUpVoteQuestionByNullQuestion() throws Exception {
+    void postUpVoteQuestionByNullQuestion () throws Exception {
         this.mvc.perform(post("/api/user/question/200/upVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
@@ -171,7 +197,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
-    void postDownVoteQuestionByNullQuestion() throws Exception {
+    void postDownVoteQuestionByNullQuestion () throws Exception {
         this.mvc.perform(post("/api/user/question/200/downVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
@@ -190,7 +216,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
-    public void getAllQuestionCommentByQuestionId() throws Exception {
+    public void getAllQuestionCommentByQuestionId () throws Exception {
         this.mvc.perform(get("/api/user/question/100/comment")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
@@ -220,7 +246,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
-    public void getEmptyListQuestionCommentByQuestionId() throws Exception {
+    public void getEmptyListQuestionCommentByQuestionId () throws Exception {
         this.mvc.perform(get("/api/user/question/101/comment")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
@@ -241,7 +267,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
-    public void shouldNotGetQuestionCommentByQuestionId() throws Exception {
+    public void shouldNotGetQuestionCommentByQuestionId () throws Exception {
         this.mvc.perform(get("/api/user/question/500/comment")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
@@ -261,7 +287,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/tag.yml",
             "datasets/QuestionResourceController/user.yml",
             "datasets/QuestionResourceController/voteQuestion.yml"})
-    void getQuestionDtoByTagId() throws Exception {
+    void getQuestionDtoByTagId () throws Exception {
 
         //проверяем возвращаемый Response. В датасетах 3 вопроса c id 100, 101, 102, имеющих связь с TagId 100,
         //но вопрос c id 102 имеет поле IsDeleted=true
@@ -307,7 +333,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/comment.yml",
             "datasets/QuestionResourceController/commentQuestion.yml"
     })
-    void getQuestionDtoNoAnswer() throws Exception {
+    void getQuestionDtoNoAnswer () throws Exception {
 
         //В датасетах 4 вопроса c id 100, 102, 103 и 104 на которые нет ответа,
         // но вопрос c id 102 имеет поле IsDeleted=true
@@ -401,7 +427,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/comment.yml",
             "datasets/QuestionResourceController/commentQuestion.yml"
     })
-    void getAllQuestionDto() throws Exception {
+    void getAllQuestionDto () throws Exception {
 
         // Проверяем возвращаемый Response.
         // В датасетах 5 вопросов c id 100-105,
@@ -452,7 +478,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     })
         // Тест для QuestionResourceController::getAllQuestionDto, только без tracked и ignored тегов с фронта и
         // с дефолтным количеством результатов на странице (10)
-    void getAllQuestionDtoWithDefaultValuesFromFront() throws Exception {
+    void getAllQuestionDtoWithDefaultValuesFromFront () throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1")
                         .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
@@ -503,7 +529,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/voteQuestion.yml",
             "datasets/QuestionResourceController/questionHasTag.yml",
             "datasets/QuestionResourceController/tag.yml"})
-    void getQuestionCount() throws Exception {
+    void getQuestionCount () throws Exception {
         this.mvc.perform(get("/api/user/question/count")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
@@ -518,7 +544,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/tag.yml",
             "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/voteQuestion.yml",
             "datasets/QuestionResourceController/getQuestionDtoNoAnswerDatasets/user.yml"})
-    public void getQuestionDtoSortedByDate() throws Exception {
+    public void getQuestionDtoSortedByDate () throws Exception {
 
         //Проверка без tags, чтобы вывелись все 4 вопроса
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/new?page=1")
@@ -618,7 +644,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
     }, cleanBefore = true, cleanAfter = true)
-    public void testCreateQuestionWithEmptyOrNullTitle() throws Exception {
+    public void testCreateQuestionWithEmptyOrNullTitle () throws Exception {
         List<String> tagNames = List.of("one", "two", "three");
 
         QuestionCreateDto questionCreateDtoEmptyTitle = new QuestionCreateDto(
@@ -660,7 +686,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
     }, cleanBefore = true, cleanAfter = true)
-    public void testCreateQuestionWithEmptyOrNullDescription() throws Exception {
+    public void testCreateQuestionWithEmptyOrNullDescription () throws Exception {
         List<String> tagNames = List.of("one", "two", "three");
 
         QuestionCreateDto questionCreateDtoEmptyDescription = new QuestionCreateDto(
@@ -702,7 +728,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
     }, cleanBefore = true, cleanAfter = true)
-    public void testCreateQuestionWithEmptyOrNullTags() throws Exception {
+    public void testCreateQuestionWithEmptyOrNullTags () throws Exception {
         QuestionCreateDto questionCreateDtoEmptyTags = new QuestionCreateDto(
                 "title",
                 "description",
@@ -742,7 +768,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
     }, cleanBefore = true, cleanAfter = true)
-    public void testCreateQuestionWithNewTags() throws Exception {
+    public void testCreateQuestionWithNewTags () throws Exception {
         List<String> tagNames = List.of("one", "two", "three");
         QuestionCreateDto questionCreateDto = new QuestionCreateDto(
                 "title",
@@ -777,7 +803,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
     }, cleanBefore = true, cleanAfter = true)
-    public void testCreateQuestionWithExistingTags() throws Exception {
+    public void testCreateQuestionWithExistingTags () throws Exception {
         List<String> tagNames = List.of("tag104", "tag105");
 
         QuestionCreateDto questionCreateDto = new QuestionCreateDto(
@@ -813,7 +839,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
     }, cleanBefore = true, cleanAfter = true)
-    public void testCreateQuestionPresentInDb() throws Exception {
+    public void testCreateQuestionPresentInDb () throws Exception {
         List<String> tagNames = List.of("one", "two", "three");
         QuestionCreateDto questionCreateDto = new QuestionCreateDto(
                 "title",
@@ -838,7 +864,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/createQuestion/user.yml",
             "datasets/QuestionResourceController/createQuestion/tag.yml"
     }, cleanBefore = true, cleanAfter = true)
-    public void testCreateQuestionByAdmin() throws Exception {
+    public void testCreateQuestionByAdmin () throws Exception {
         List<String> tagNames = List.of("one", "two", "three");
         QuestionCreateDto questionCreateDto = new QuestionCreateDto(
                 "title",
