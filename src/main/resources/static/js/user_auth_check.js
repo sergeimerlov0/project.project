@@ -1,5 +1,6 @@
+window.token = getCookie('token');
+
 (async () => {
-  const token = getCookie('token');
   if (!token) {
     location.replace('/login');
     return;
