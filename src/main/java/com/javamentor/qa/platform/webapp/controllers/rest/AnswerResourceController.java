@@ -1,10 +1,13 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.AnswerDto;
+import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,12 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,13 +34,14 @@ public class AnswerResourceController {
     private final AnswerService answerService;
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
+    private final QuestionService questionService;
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное удаление"),
             @ApiResponse(code = 400, message = "Ответа с таким ID не существует")})
     @DeleteMapping("/{answerId}")
-    public ResponseEntity<String> deleteAnswerById(@ApiParam("Id ответа") @PathVariable Long answerId) {
+    public ResponseEntity<String> deleteAnswerById (@ApiParam("Id ответа") @PathVariable Long answerId) {
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
         if (optionalAnswer.isEmpty()) {
             return ResponseEntity.badRequest().body("Answer with this ID was not found");
@@ -55,7 +55,7 @@ public class AnswerResourceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение")})
     @GetMapping()
-    public ResponseEntity<List<AnswerDto>> getAnswerByQuestionId(@PathVariable Long questionId) {
+    public ResponseEntity<List<AnswerDto>> getAnswerByQuestionId (@PathVariable Long questionId) {
         return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(questionId));
     }
 
@@ -64,7 +64,7 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное голосование"),
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/upVote")
-    public ResponseEntity<?> setUpVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
+    public ResponseEntity<?> setUpVoteAnswerByAnswerId (@PathVariable("id") Long answerId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
         if (optionalAnswer.isEmpty()) {
@@ -82,7 +82,7 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное голосование"),
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/downVote")
-    public ResponseEntity<?> setDownVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
+    public ResponseEntity<?> setDownVoteAnswerByAnswerId (@PathVariable("id") Long answerId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
         if (optionalAnswer.isEmpty()) {
@@ -93,5 +93,22 @@ public class AnswerResourceController {
             return ResponseEntity.badRequest().body("Voting for your answer with id " + answerId + " not allowed");
         }
         return ResponseEntity.ok().body(voteAnswerService.postVoteDown(user, answer));
+    }
+
+    @ApiOperation(value = "Добавление ответа на вопрос", tags = {"Добавление ответа"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное добавление ответа"),
+            @ApiResponse(code = 400, message = "Ошибка добавления ответа")})
+    @PostMapping("/add")
+    public ResponseEntity<?> addNewAnswer (@PathVariable Long questionId, @RequestBody String answer) {
+        Optional<Question> optionalQuestion = questionService.getById(questionId);
+        if (optionalQuestion.isPresent()) {
+            Question question = optionalQuestion.get();
+            User user = ((User) SecurityContextHolder.getContext().getAuthentication().getDetails());
+            Answer newAnswer = new Answer(question, user, answer);
+            answerService.persist(newAnswer);
+            return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(newAnswer.getId()));
+        }
+        return ResponseEntity.badRequest().body("Question with id " + questionId + " not found");
     }
 }
