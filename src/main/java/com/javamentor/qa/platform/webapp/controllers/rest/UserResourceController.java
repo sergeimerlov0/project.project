@@ -62,6 +62,22 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
     }
 
+    @GetMapping("/vote")
+    @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированные по голосам")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "UserDTO не найдены")
+    })
+    public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortDTO(@RequestParam int currentPageNumber,
+                                                              @RequestParam(defaultValue = "10") int itemsOnPage){
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "AllUserDtoSortVote");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+
+        return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
+
     @PutMapping("/api/{userId}/change/password")
     @ApiOperation("Смена пароля с шифрованием")
     public ResponseEntity<?> updatePasswordByEmail(@PathVariable("userId") long userId, @RequestBody String password) {
@@ -82,7 +98,6 @@ public class UserResourceController {
                 return new ResponseEntity<>("Пароль изменён", HttpStatus.OK);
             }
         }
-
         return new ResponseEntity<>("Пароль не соответствует требованиям", HttpStatus.BAD_REQUEST);
     }
 }

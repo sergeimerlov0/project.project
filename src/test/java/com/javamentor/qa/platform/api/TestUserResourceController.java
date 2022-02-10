@@ -6,6 +6,11 @@ import com.javamentor.qa.platform.AbstractApiTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -108,4 +113,43 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(jsonPath("$.items[0].id").value(103));
     }
+
+    @Test
+    @DataSet(value = {"datasets/UserResourceController/getAllUserDtoSortVote/answer.yml",
+                      "datasets/UserResourceController/getAllUserDtoSortVote/question.yml",
+                      "datasets/UserResourceController/getAllUserDtoSortVote/reputation.yml",
+                      "datasets/UserResourceController/getAllUserDtoSortVote/role.yml",
+                      "datasets/UserResourceController/getAllUserDtoSortVote/user.yml",
+                      "datasets/UserResourceController/getAllUserDtoSortVote/voteAnswer.yml",
+                      "datasets/UserResourceController/getAllUserDtoSortVote/voteQuestion.yml"}, cleanBefore = true, cleanAfter = true)
+    void getAllUserSortVote() throws Exception{
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/vote/?currentPageNumber=1")
+                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                //Проверяем страницу
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(4))
+                .andExpect(jsonPath("$.itemsOnPage").value(10))
+                //Проверка на сортировку юзеров по голосам
+                .andExpect(jsonPath("$.items[0].id").value(102))
+                .andExpect(jsonPath("$.items[1].id").value(103))
+                .andExpect(jsonPath("$.items[2].id").value(101))
+                .andExpect(jsonPath("$.items[3].id").value(100))
+                //Проверка полей items
+                .andExpect(jsonPath("$.items[0].city").value("city102"))
+                .andExpect(jsonPath("$.items[0].email").value("test_user102@mail.ru"))
+                .andExpect(jsonPath("$.items[0].linkImage").value("image102"))
+                .andExpect(jsonPath("$.items[0].reputation").value(50))
+                .andExpect(jsonPath("$.items[0].fullName").value("User with id 102"));
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/vote/?currentPageNumber=2&itemsOnPage=2")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(2))
+                .andExpect(jsonPath("$.itemsOnPage").value(2))
+                .andExpect(jsonPath("$.totalPageCount").value(2))
+                .andExpect(jsonPath("$.totalResultCount").value(4));
+    }
+
 }
