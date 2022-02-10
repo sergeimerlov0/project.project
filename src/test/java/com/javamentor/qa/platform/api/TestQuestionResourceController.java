@@ -53,15 +53,29 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/voteQuestion.yml"
     })
     void postQuestionView () throws Exception {
-        this.mvc.perform(post("/api/user/question/102/view")
+        //проверка на несуществующий вопрос
+        this.mvc.perform(post("/api/user/question/1/view")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+        // проверка на добавление просмотра
+        this.mvc.perform(post("/api/user/question/100/view")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
 
         QuestionViewed questionViewed = em.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.id =: userId", QuestionViewed.class)
-                .setParameter("questionId", 102L)
+                .setParameter("questionId", 100L)
                 .setParameter("userId", 100L)
                 .getSingleResult();
         Assertions.assertNotNull(questionViewed);
+        // проверка уникальности просмотра
+        this.mvc.perform(post("/api/user/question/100/view")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+        List<QuestionViewed> questionViewed2 = em.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.id =: userId", QuestionViewed.class)
+                .setParameter("questionId", 100L)
+                .setParameter("userId", 100L)
+                .getResultList();
+        assertEquals(1, questionViewed2.size());
     }
 
     @Test

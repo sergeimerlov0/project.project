@@ -2,26 +2,25 @@ package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionViewedDao;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
-import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Repository
 public class QuestionViewedDaoImpl extends ReadWriteDaoImpl<QuestionViewed, Long> implements QuestionViewedDao {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
+   //@Cacheable("questionViewCheckByUserIdAndQuestionId")
     public boolean questionViewCheckByUserIdAndQuestionId (Long questionId, Long userId) {
-        List<QuestionViewed> questionViewedList = entityManager.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.id =: userId", QuestionViewed.class)
-                .setParameter("questionId", questionId)
-                .setParameter("userId", userId)
-                .getResultList();
-        return !questionViewedList.isEmpty();
+        return entityManager.createQuery("SELECT COUNT(a)>0 FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.id =: userId", Boolean.class)
+                         .setParameter("questionId", questionId)
+                         .setParameter("userId", userId)
+                         .getSingleResult();
     }
 
 }

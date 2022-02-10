@@ -150,12 +150,12 @@ public class QuestionResourceController {
     }
 
     @PostMapping("/{questionId}/view")
-    @ApiOperation(value = "Просмотр Question авторизированным пользователем", tags = {"QuestionViewed check"})
+    @ApiOperation(value = "Просмотр Question авторизированным пользователем", tags = {"QuestionViewed check or add"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Просмотр успешно произведен"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
-    public ResponseEntity<Integer> viewQuestion (@PathVariable Long questionId) {
+    public ResponseEntity<?> viewQuestion (@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
@@ -165,11 +165,11 @@ public class QuestionResourceController {
                 questionViewed.setQuestion(question);
                 questionViewed.setUser(user);
                 questionViewedService.persist(questionViewed);
-                return ResponseEntity.ok().build();
+                return ResponseEntity.ok().body("Просмотр вопроса с id:  " + questionId + " успешно произведен");
             }
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body("Просмотр вопроса с id:  " + questionId + " уже существует");
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.badRequest().body("Вопрос с id:  " + questionId + " не найден");
     }
 
     @GetMapping
