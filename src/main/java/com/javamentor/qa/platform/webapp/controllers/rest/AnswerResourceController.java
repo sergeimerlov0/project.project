@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
-import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -15,10 +15,8 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -100,15 +98,19 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное добавление ответа"),
             @ApiResponse(code = 400, message = "Ошибка добавления ответа")})
     @PostMapping("/add")
-    public ResponseEntity<?> addNewAnswer (@PathVariable Long questionId, @RequestBody String answer) {
+    public ResponseEntity<?> addNewAnswer (@PathVariable Long questionId, @RequestBody AnswerBodyDto answerBodyDto) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
-            Question question = optionalQuestion.get();
-            User user = ((User) SecurityContextHolder.getContext().getAuthentication().getDetails());
-            Answer newAnswer = new Answer(question, user, answer);
-            answerService.persist(newAnswer);
-            return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(newAnswer.getId()));
+            if (answerBodyDto.getHtmlBody() != null) {
+                Question question = optionalQuestion.get();
+                User user = ((User) SecurityContextHolder.getContext().getAuthentication().getDetails());
+                Answer newAnswer = new Answer(question, user, answerBodyDto.getHtmlBody());
+                answerService.persist(newAnswer);
+                return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(
+                        answerService.getAnswerByQuestionIdAndUserIdAndAnswerBody(
+                                questionId, user.getId(), answerBodyDto.getHtmlBody()).getId()));
+            }return ResponseEntity.badRequest().body("Тело ответа не может быть пустым");
         }
-        return ResponseEntity.badRequest().body("Question with id " + questionId + " not found");
+        return ResponseEntity.badRequest().body("Вопроса с  id " + questionId + " не существует");
     }
 }
