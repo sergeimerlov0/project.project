@@ -20,8 +20,9 @@ public class QuestionViewedDaoImpl extends ReadWriteDaoImpl<QuestionViewed, Long
     private EntityManager entityManager;
 
     @Override
-    @Cacheable(value = "checkMetod", key = "#email")
+    @Cacheable(value = "checkMetod")
     public boolean questionViewCheckByUserIdAndQuestionId (Long questionId, String email) {
+        String cacheKey = email + questionId;
         return entityManager.createQuery("SELECT COUNT(a)>0 FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.email =: useremail", Boolean.class)
                 .setParameter("questionId", questionId)
                 .setParameter("useremail", email)
