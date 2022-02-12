@@ -62,18 +62,18 @@ class TestQuestionResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
 
-        QuestionViewed questionViewed = em.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.id =: userId", QuestionViewed.class)
+        QuestionViewed questionViewed = em.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.email =: useremail", QuestionViewed.class)
                 .setParameter("questionId", 100L)
-                .setParameter("userId", 100L)
+                .setParameter("useremail", "3user@mail.ru")
                 .getSingleResult();
         Assertions.assertNotNull(questionViewed);
         // проверка уникальности просмотра
         this.mvc.perform(post("/api/user/question/100/view")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
-        List<QuestionViewed> questionViewed2 = em.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.id =: userId", QuestionViewed.class)
+        List<QuestionViewed> questionViewed2 = em.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.email =: useremail", QuestionViewed.class)
                 .setParameter("questionId", 100L)
-                .setParameter("userId", 100L)
+                .setParameter("useremail", "3user@mail.ru")
                 .getResultList();
         assertEquals(1, questionViewed2.size());
     }

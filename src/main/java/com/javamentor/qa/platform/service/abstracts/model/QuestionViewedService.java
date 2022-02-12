@@ -4,6 +4,5 @@ import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 
 public interface QuestionViewedService extends ReadWriteService<QuestionViewed, Long> {
 
-    boolean questionViewCheckByUserIdAndQuestionId (Long questionId, Long userId);
-
+    boolean questionViewCheckByUserIdAndQuestionId (Long questionId, String email);
 }

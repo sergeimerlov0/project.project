@@ -160,7 +160,7 @@ public class QuestionResourceController {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
-            if (!questionViewedService.questionViewCheckByUserIdAndQuestionId(questionId, user.getId())) {
+            if (!questionViewedService.questionViewCheckByUserIdAndQuestionId(questionId, user.getEmail())) {
                 QuestionViewed questionViewed = new QuestionViewed();
                 questionViewed.setQuestion(question);
                 questionViewed.setUser(user);
