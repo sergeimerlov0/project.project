@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +31,6 @@ import java.util.Map;
 public class UserResourceController {
 
     private final UserDtoService userDtoService;
-
     private UserService userService;
 
     @Autowired
@@ -62,42 +63,42 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
     }
 
-    @GetMapping("/vote")
-    @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированные по голосам")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
-            @ApiResponse(code = 400, message = "UserDTO не найдены")
-    })
-    public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortDTO(@RequestParam int currentPageNumber,
-                                                              @RequestParam(defaultValue = "10") int itemsOnPage){
-        Map<String, Object> paginationMap = new HashMap<>();
-        paginationMap.put("class", "AllUserDtoSortVote");
-        paginationMap.put("currentPageNumber", currentPageNumber);
-        paginationMap.put("itemsOnPage", itemsOnPage);
-
-        return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
-    }
-
-    @PutMapping("/api/{userId}/change/password")
+    @PutMapping(value = "/{userId}/change/password")
     @ApiOperation("Смена пароля с шифрованием")
     public ResponseEntity<?> updatePasswordByEmail(@PathVariable("userId") long userId, @RequestBody String password) {
+
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> optionalUser = userService.getByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        User user = optionalUser.get();
 
         if (user.getId().equals(userId)) {
-            String currentPass = user.getPassword();
+            Map<Pattern, String> conditions = Map.of(
+                    Pattern.compile(".*[a-z].*"), "строчные буквы",
+                    Pattern.compile(".*[A-Z].*"), "прописные буквы",
+                    Pattern.compile(".*\\d.*"), "цыфры",
+                    Pattern.compile(".*[!@#$%].*"), "спецсимволы",
+                    Pattern.compile(".{6,}"), "не менее 6 символов");
 
-            String pat = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%]).{6,}";
-            if (password.matches(pat) && !passwordEncoder.matches(password, currentPass)) {
-                userService.updatePasswordByEmail(user.getEmail(), passwordEncoder.encode(password));
+            Optional<String> stringOptional = conditions.entrySet().stream()
+                    .filter(e -> !password.matches(e.getKey().toString()))
+                    .map(Map.Entry::getValue).reduce((x, y) -> x + ", " + y);
 
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                SecurityContext sc = SecurityContextHolder.getContext();
-                sc.setAuthentication(authentication);
-
-                return new ResponseEntity<>("Пароль изменён", HttpStatus.OK);
+            if (stringOptional.isPresent()) {
+                return new ResponseEntity<>("Пароль должен содержать " + stringOptional.get(), HttpStatus.BAD_REQUEST);
             }
+        } else {
+            return new ResponseEntity<>("Неверный ID пользователя: " + userId, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Пароль не соответствует требованиям", HttpStatus.BAD_REQUEST);
+
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return new ResponseEntity<>("Новый пароль совпадает с текущим", HttpStatus.BAD_REQUEST);
+        }
+
+        userService.updatePasswordByEmail(user.getEmail(), passwordEncoder.encode(password));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityContext sc = SecurityContextHolder.getContext();
+        sc.setAuthentication(authentication);
+
+        return new ResponseEntity<>("Пароль изменён ", HttpStatus.OK);
     }
 }

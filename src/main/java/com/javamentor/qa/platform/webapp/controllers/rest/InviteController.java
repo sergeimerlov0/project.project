@@ -24,7 +24,8 @@ public class InviteController {
     private final UserService userService;
     private final RoleService roleService;
 
-    @Value("http://${db_url_hosts}:${server_port}/login")
+//    @Value("http://${db_url_hosts}:${server_port}/login")
+    @Value("http://localhost:8091/login")
     String loginEndPoint;
 
     @GetMapping()

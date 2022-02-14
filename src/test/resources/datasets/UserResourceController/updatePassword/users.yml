@@ -1,0 +1,17 @@
+user_entity:
+  - id: 100
+    about: "user1"
+    city: "user1city"
+    email: "user@mail.ru"
+    full_name: "user1"
+    image_link: "user1link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github1@link"
+    link_site: "site1@link"
+    link_vk: "vk1@link"
+    nickname: "user1"
+    password: "$2a$10$jEIIl6EDnJspLm0LGNCaXOiqvJQNdqPNDydyR2tR5gzhmMx2hQ/Lq"
+    persist_date: 2021-12-16 00:00:00
+    role_id: 101
