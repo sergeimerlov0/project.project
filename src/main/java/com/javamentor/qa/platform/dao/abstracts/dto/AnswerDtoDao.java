@@ -7,4 +7,6 @@ import java.util.List;
 public interface AnswerDtoDao {
 
     public List<AnswerDto> getAnswerByQuestionId(Long id);
+
+    List<AnswerDto> getAnswerByQuestionId2(Long id);
 }

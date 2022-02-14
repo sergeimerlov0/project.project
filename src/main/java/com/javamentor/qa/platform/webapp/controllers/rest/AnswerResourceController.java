@@ -5,9 +5,12 @@ import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,13 +36,14 @@ public class AnswerResourceController {
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
     private final QuestionService questionService;
+    private final ReputationService reputationService;
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное удаление"),
             @ApiResponse(code = 400, message = "Ответа с таким ID не существует")})
     @DeleteMapping("/{answerId}")
-    public ResponseEntity<String> deleteAnswerById (@ApiParam("Id ответа") @PathVariable Long answerId) {
+    public ResponseEntity<String> deleteAnswerById(@ApiParam("Id ответа") @PathVariable Long answerId) {
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
         if (optionalAnswer.isEmpty()) {
             return ResponseEntity.badRequest().body("Answer with this ID was not found");
@@ -53,7 +57,7 @@ public class AnswerResourceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение")})
     @GetMapping()
-    public ResponseEntity<List<AnswerDto>> getAnswerByQuestionId (@PathVariable Long questionId) {
+    public ResponseEntity<List<AnswerDto>> getAnswerByQuestionId(@PathVariable Long questionId) {
         return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(questionId));
     }
 
@@ -62,7 +66,7 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное голосование"),
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/upVote")
-    public ResponseEntity<?> setUpVoteAnswerByAnswerId (@PathVariable("id") Long answerId) {
+    public ResponseEntity<?> setUpVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
         if (optionalAnswer.isEmpty()) {
@@ -80,7 +84,7 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное голосование"),
             @ApiResponse(code = 400, message = "Ошибка голосования")})
     @PostMapping("/{id}/downVote")
-    public ResponseEntity<?> setDownVoteAnswerByAnswerId (@PathVariable("id") Long answerId) {
+    public ResponseEntity<?> setDownVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
         if (optionalAnswer.isEmpty()) {
@@ -98,18 +102,29 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное добавление ответа"),
             @ApiResponse(code = 400, message = "Ошибка добавления ответа")})
     @PostMapping("/add")
-    public ResponseEntity<?> addNewAnswer (@PathVariable Long questionId, @RequestBody AnswerBodyDto answerBodyDto) {
+    public ResponseEntity<?> addNewAnswer(@PathVariable Long questionId,
+                                          @RequestBody AnswerBodyDto answerBodyDto) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             if (answerBodyDto.getHtmlBody() != null) {
                 Question question = optionalQuestion.get();
-                User user = ((User) SecurityContextHolder.getContext().getAuthentication().getDetails());
+
+                User user = ((User) SecurityContextHolder.getContext()
+                        .getAuthentication().getDetails());
+
                 Answer newAnswer = new Answer(question, user, answerBodyDto.getHtmlBody());
+
                 answerService.persist(newAnswer);
-                return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(
-                        answerService.getAnswerByQuestionIdAndUserIdAndAnswerBody(
-                                questionId, user.getId(), answerBodyDto.getHtmlBody()).getId()));
-            }return ResponseEntity.badRequest().body("Тело ответа не может быть пустым");
+
+                Answer answer = answerService.getAnswerByQuestionIdAndUserIdAndAnswerBody(
+                        questionId, user.getId(), answerBodyDto.getHtmlBody());
+
+                reputationService.persist(new Reputation(
+                        user, null, null, ReputationType.Answer, answer));
+
+                return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionIdAndUserIdAndAnswerBody(questionId, user.getId(), answerBodyDto.getHtmlBody()));
+            }
+            return ResponseEntity.badRequest().body("Тело ответа не может быть пустым");
         }
         return ResponseEntity.badRequest().body("Вопроса с  id " + questionId + " не существует");
     }

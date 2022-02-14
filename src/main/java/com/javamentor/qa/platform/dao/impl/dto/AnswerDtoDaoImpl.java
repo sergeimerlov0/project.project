@@ -37,7 +37,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                                 "sum(r.count), " +
                                 "u.imageLink, u.nickname, " +
                                 "a.question.id, " +
-                                "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
+                                "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime ," +
                                 "((select count(*) from VoteAnswer v where v.vote = 'UP_VOTE' and v.answer.id = a.id) - (select count(*) from VoteAnswer v where v.vote = 'DOWN_VOTE' and v.answer.id = a.id)) " +
                                 "from Answer a left outer join Reputation r on (a.user.id = r.author.id) " +
                                 "left outer join User u on (a.user.id = u.id)" +
@@ -73,7 +73,11 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         }
                 ).getResultList();
     }
-
+    public List<AnswerDto> getAnswerByQuestionId2(Long id) {
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDto(answer.id,answer.user.id," +
+                "0L" +
+                ", answer.user.imageLink, answer.user.nickname,answer.question.id, answer.htmlBody,answer.persistDateTime, answer.isHelpful, answer.dateAcceptTime,0l) from Answer answer join Reputation reputation left  join User user left  join Question question where answer.question.id =:id",AnswerDto.class).setParameter("id",id).getResultList();
+    }
 }
 
 
