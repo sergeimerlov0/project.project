@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.dao.impl.dto.pagination;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,20 +14,20 @@ import java.util.stream.Collectors;
 
 @Repository("AllQuestionDto")
 @RequiredArgsConstructor
-public class GetAllQuestionDtoImpl implements PaginationDtoAble<QuestionDto> {
+public class GetAllQuestionDtoImpl implements PaginationDtoAble<QuestionViewDto> {
 
     @PersistenceContext
     EntityManager entityManager;
 
     @Override
-    public List<QuestionDto> getItems(Map<String, Object> param) {
+    public List<QuestionViewDto> getItems(Map<String, Object> param) {
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
         List<Long> trackedTags = (List<Long>) param.get("trackedTags");
         List<Long> ignoredTags = (List<Long>) param.get("ignoredTags");
 
         return entityManager.createQuery(
-                "SELECT DISTINCT new com.javamentor.qa.platform.models.dto.QuestionDto" +
+                "SELECT DISTINCT new com.javamentor.qa.platform.models.dto.QuestionViewDto" +
                         "(question.id, question.title, author.id, " +
                         "(SELECT SUM (reputation.count) " +
                         "FROM Reputation reputation " +
@@ -51,7 +52,7 @@ public class GetAllQuestionDtoImpl implements PaginationDtoAble<QuestionDto> {
                         "AND question.id " +
                         "NOT IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE tags.id IN :ignoredTags) " +
                         "AND question.isDeleted = false"
-                        , QuestionDto.class)
+                        , QuestionViewDto.class)
                 .setParameter("trackedTags", trackedTags)
                 .setParameter("ignoredTags", ignoredTags)
                 .getResultStream()

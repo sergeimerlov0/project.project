@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -13,19 +15,19 @@ import org.springframework.stereotype.Repository;
 @Slf4j
 @RequiredArgsConstructor
 @Repository("AllQuestionDtoSortedByDate")
-public class AllQuestionDtoSortedByDate implements PaginationDtoAble<QuestionDto> {
+public class AllQuestionDtoSortedByDate implements PaginationDtoAble<QuestionViewDto> {
 
     @PersistenceContext
     EntityManager entityManager;
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<QuestionDto> getItems(Map<String, Object> param) {
+    public List<QuestionViewDto> getItems(Map<String, Object> param) {
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
         List<Long> trackedTags = ((List<Long>) param.get("tracked"));
         List<Long> ignoredTags = ((List<Long>) param.get("ignored"));
-        return entityManager.createQuery("SELECT DISTINCT NEW com.javamentor.qa.platform.models.dto.QuestionDto" +
+        return entityManager.createQuery("SELECT DISTINCT NEW com.javamentor.qa.platform.models.dto.QuestionViewDto" +
                         "(q.id, q.title, q.user.id, " +
                         "(SELECT SUM (r.count) FROM Reputation r WHERE q.user.id = r.author.id), " +
                         "q.user.fullName, q.user.imageLink, q.description, " +
@@ -41,7 +43,7 @@ public class AllQuestionDtoSortedByDate implements PaginationDtoAble<QuestionDto
                         "WHERE q.id IN (SELECT q.id From Question q JOIN q.tags tgs " +
                         "WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
                         "AND q.id NOT IN (SELECT q.id From Question q JOIN q.tags tgs " +
-                        "WHERE tgs.id IN :ignored) ORDER BY q.persistDateTime asc", QuestionDto.class)
+                        "WHERE tgs.id IN :ignored) ORDER BY q.persistDateTime asc", QuestionViewDto.class)
                 .setParameter("tracked", trackedTags)
                 .setParameter("ignored", ignoredTags)
                 .setFirstResult((currentPageNumber - 1) * itemsOnPage)

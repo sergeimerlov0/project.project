@@ -22,7 +22,7 @@ public class RegUserImpl implements PaginationDtoAble<UserDto> {
         return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.UserDto" +
                         "(e.id, e.email, e.fullName, e.imageLink, e.city, " +
                         "sum(r.count), e.persistDateTime) " +
-                        "FROM User e left outer JOIN Reputation r on (e.id=r.author.id) " +
+                        "FROM User e left outer JOIN Reputation r on (e.id=r.author.id)" +
                         "where e.isEnabled=true " +
                         "group by e.id " +
                         "ORDER BY e.persistDateTime", UserDto.class)
