@@ -2,7 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
-import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
@@ -17,7 +17,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -89,7 +88,7 @@ public class QuestionResourceController {
         map.put("itemsOnPage", items);
         map.put("ignoredTags", ignoredTags);
         map.put("trackedTags", trackedTags);
-        PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, map);
+        PageDto<QuestionViewDto> pageDto = questionDtoService.getPageDto(page, items, map);
         return ResponseEntity.ok().body(pageDto);
     }
 
@@ -152,7 +151,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Все QuestionDto получены"),
             @ApiResponse(code = 400, message = "QuestionDto не найдены")
     })
-    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionDto(@RequestParam int currentPageNumber,
+    public ResponseEntity<PageDto<QuestionViewDto>> getAllQuestionDto(@RequestParam int currentPageNumber,
                                                                   @RequestParam(defaultValue = "10") int itemsOnPage,
                                                                   @RequestParam(required = false) List<Long> trackedTags,
                                                                   @RequestParam(required = false) List<Long> ignoredTags) {
@@ -181,7 +180,7 @@ public class QuestionResourceController {
             objectMap.put("tagId", id);
             objectMap.put("currentPageNumber", page);
             objectMap.put("itemsOnPage", items);
-            PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
+            PageDto<QuestionViewDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
             return ResponseEntity.ok().body(pageDto);
         }
         return ResponseEntity.badRequest().body("TagId " + id + " not found");
@@ -213,7 +212,7 @@ public class QuestionResourceController {
         objectMap.put("itemsOnPage", items);
         objectMap.put("tracked", trackedTags);
         objectMap.put("ignored", ignoredTags);
-        PageDto<QuestionDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
+        PageDto<QuestionViewDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
         return ResponseEntity.ok().body(pageDto);
     }
 }
