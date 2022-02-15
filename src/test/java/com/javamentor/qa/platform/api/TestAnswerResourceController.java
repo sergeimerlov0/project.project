@@ -2,17 +2,17 @@ package com.javamentor.qa.platform.api;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
+import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class TestAnswerResourceController extends AbstractApiTest {
 
@@ -29,7 +29,7 @@ class TestAnswerResourceController extends AbstractApiTest {
     })
     void deleteAnswerById() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.delete("/api/user/question/100/answer/100")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
 
         //Проверяем, что ответа с id=100 в базе не существует
@@ -51,7 +51,7 @@ class TestAnswerResourceController extends AbstractApiTest {
     })
     void tryToDeleteNonExistedId() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.delete("/api/user/question/100/answer/104")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -69,7 +69,7 @@ class TestAnswerResourceController extends AbstractApiTest {
     public void getAnswerByQuestionId() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/100/answer")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -95,7 +95,7 @@ class TestAnswerResourceController extends AbstractApiTest {
     public void getEmptyListAnswerByQuestionId() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/2000/answer")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
@@ -116,7 +116,7 @@ class TestAnswerResourceController extends AbstractApiTest {
 
         //Проверяем возвращаемое значение. В датасетах в базе данных уже было 2 голоса ЗА ответ с id 100
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("3"));
 
@@ -137,18 +137,18 @@ class TestAnswerResourceController extends AbstractApiTest {
 
         //Проверяем, что невозможно проголосовать за свой ответ. Ответ с id 100 принадлежит пользователю с id 101("test2@test.ru","123")
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
-                        .header("Authorization", getJwtToken("test2@test.ru","123")))
+                        .header("Authorization", getJwtToken("test2@test.ru", "123")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("Voting for your answer with id " + 100 + " not allowed"));
 
         //проверяем невозможность проголосовать дважды за один ответ, как за, так и против
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
 
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
     }
@@ -168,7 +168,7 @@ class TestAnswerResourceController extends AbstractApiTest {
 
         //Проверяем возвращаемое значение. В датасетах в базе данных уже было 2 голоса ЗА ответ с id 100
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
 
@@ -189,52 +189,95 @@ class TestAnswerResourceController extends AbstractApiTest {
 
         //Проверяем, что невозможно проголосовать за свой ответ. Ответ с id 100 принадлежит пользователю с id 101("test2@test.ru","123")
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
-                        .header("Authorization", getJwtToken("test2@test.ru","123")))
+                        .header("Authorization", getJwtToken("test2@test.ru", "123")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("Voting for your answer with id " + 100 + " not allowed"));
 
         //проверяем невозможность проголосовать дважды за один ответ, как за, так и против
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
 
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
     }
 
     @Test
     @DataSet(value = {
-            "datasets/AnswerResourceController/votingApiDatasets/answer.yml",
-            
-            "datasets/AnswerResourceController/votingApiDatasets/question.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/questionHasTag.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/tag.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/reputation.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/role.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/user.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/voteAnswer.yml"
+            "datasets/AnswerResourceController/addAnswerDatasets/answer.yml",
+            "datasets/AnswerResourceController/addAnswerDatasets/question.yml",
+            "datasets/AnswerResourceController/addAnswerDatasets/questionHasTag.yml",
+            "datasets/AnswerResourceController/addAnswerDatasets/tag.yml",
+            "datasets/AnswerResourceController/addAnswerDatasets/reputation.yml",
+            "datasets/AnswerResourceController/addAnswerDatasets/role.yml",
+            "datasets/AnswerResourceController/addAnswerDatasets/user.yml",
+            "datasets/AnswerResourceController/addAnswerDatasets/voteAnswer.yml"
     })
     public void addNewAnswer() throws Exception {
 
+        AnswerBodyDto answerBodyDto = new AnswerBodyDto("test");
+        AnswerBodyDto answerBodyDtoNull = null;
+
         //Проверяем возвращаемое значение.
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/add")
-                        .header("Authorization", getJwtToken("3user@mail.ru","3111")))
+                        .content(objectMapper.writeValueAsString(answerBodyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(102L))
-                .andExpect(jsonPath("$.userId").value(3L))
-                .andExpect(jsonPath("$.image").value("3user.ru/myphoto/1"))
-                .andExpect(jsonPath("$.nickName").value("3user"))
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.userId").value(100L))
+                .andExpect(jsonPath("$.image").value("image100"))
+                .andExpect(jsonPath("$.nickName").value("user100"))
                 .andExpect(jsonPath("$.questionId").value(100L))
+                .andExpect(jsonPath("$.userReputation").value(0))
+                .andExpect(jsonPath("$.isHelpful").value(false))
+                .andExpect(jsonPath("$.countValuable").value(0))
                 .andExpect(jsonPath("$.body").value("test"));
 
-        //Проверяем, что в БД появилась запись о новом ответе с id 100
-        Assertions.assertTrue(em.createQuery("select v from VoteAnswer v where v.user.id=:user and v.answer.id=:answer")
+        //Проверяем, что в БД появилась запись о новом ответе с id 1
+        Assertions.assertTrue(em.createQuery("select a from Answer a where a.user.id=:user and a.id=:answer")
                 .setParameter("user", 100L)
-                .setParameter("answer", 102L)
-                .getResultList().size()>0);
+                .setParameter("answer", 1L)
+                .getResultList().size() > 0);
+
+        //Проверяем, что при повторном добавлении ответа с тем же самым телом возвращается правильный AnswerDto
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/add")
+                        .content(objectMapper.writeValueAsString(answerBodyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(2L))
+                .andExpect(jsonPath("$.userId").value(100L))
+                .andExpect(jsonPath("$.image").value("image100"))
+                .andExpect(jsonPath("$.nickName").value("user100"))
+                .andExpect(jsonPath("$.questionId").value(100L))
+                .andExpect(jsonPath("$.userReputation").value(0))
+                .andExpect(jsonPath("$.isHelpful").value(false))
+                .andExpect(jsonPath("$.countValuable").value(0))
+                .andExpect(jsonPath("$.body").value("test"));
+
+        //Проверяем, что в БД появилась запись о новом ответе с id 2
+        Assertions.assertTrue(em.createQuery("select a from Answer a where a.user.id=:user and a.id=:answer")
+                .setParameter("user", 100L)
+                .setParameter("answer", 2L)
+                .getResultList().size() > 0);
+
+        //проверяем на несуществующий вопрос
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/99/answer/add")
+                        .content(objectMapper.writeValueAsString(answerBodyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+        //проверяем на null
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/add")
+                        .content(objectMapper.writeValueAsString(answerBodyDtoNull))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
 
     }
 }
