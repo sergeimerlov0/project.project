@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.dao.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import groovy.transform.stc.FromAbstractTypeMethods;
 import org.hibernate.transform.ResultTransformer;
@@ -72,11 +73,6 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                             }
                         }
                 ).getResultList();
-    }
-    public List<AnswerDto> getAnswerByQuestionId2(Long id) {
-        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDto(answer.id,answer.user.id," +
-                "0L" +
-                ", answer.user.imageLink, answer.user.nickname,answer.question.id, answer.htmlBody,answer.persistDateTime, answer.isHelpful, answer.dateAcceptTime,0l) from Answer answer join Reputation reputation left  join User user left  join Question question where answer.question.id =:id",AnswerDto.class).setParameter("id",id).getResultList();
     }
 }
 

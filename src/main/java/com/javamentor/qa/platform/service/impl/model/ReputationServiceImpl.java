@@ -10,9 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long> implements ReputationService {
+    private final ReputationDao reputationDao;
 
     @Autowired
     public ReputationServiceImpl(ReputationDao reputationDao) {
         super(reputationDao);
+        this.reputationDao = reputationDao;
+    }
+
+    @Override
+    public Reputation getReputationByAnswerId(Long answerId) {
+        return reputationDao.getReputationByAnswerId(answerId);
     }
 }

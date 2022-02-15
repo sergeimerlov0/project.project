@@ -8,15 +8,8 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.javamentor.qa.platform.service.abstracts.model.*;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +30,7 @@ public class AnswerResourceController {
     private final VoteAnswerService voteAnswerService;
     private final QuestionService questionService;
     private final ReputationService reputationService;
+    private final UserService userService;
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {
@@ -102,27 +96,27 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное добавление ответа"),
             @ApiResponse(code = 400, message = "Ошибка добавления ответа")})
     @PostMapping("/add")
+    //позволяет добавлять ответы с одинаковым телом, при этом, возвращает AnswerDto последнего добавленного ответа
     public ResponseEntity<?> addNewAnswer(@PathVariable Long questionId,
                                           @RequestBody AnswerBodyDto answerBodyDto) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             if (answerBodyDto.getHtmlBody() != null) {
                 Question question = optionalQuestion.get();
+                Optional<User> optionalUser = userService.getByEmail(((User) SecurityContextHolder.getContext()
+                        .getAuthentication().getDetails()).getEmail());
+                if (optionalUser.isPresent()) {
 
-                User user = ((User) SecurityContextHolder.getContext()
-                        .getAuthentication().getDetails());
-
-                Answer newAnswer = new Answer(question, user, answerBodyDto.getHtmlBody());
-
-                answerService.persist(newAnswer);
-
-                Answer answer = answerService.getAnswerByQuestionIdAndUserIdAndAnswerBody(
-                        questionId, user.getId(), answerBodyDto.getHtmlBody());
-
-                reputationService.persist(new Reputation(
-                        user, null, null, ReputationType.Answer, answer));
-
-                return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionIdAndUserIdAndAnswerBody(questionId, user.getId(), answerBodyDto.getHtmlBody()));
+                    User user = optionalUser.get();
+                    Answer newAnswer = new Answer(question, user, answerBodyDto.getHtmlBody());
+                    answerService.persist(newAnswer);
+                    Answer answer = answerService.getAnswerByQuestionIdAndUserIdAndAnswerBody(
+                            questionId, user.getId(), answerBodyDto.getHtmlBody());
+                    reputationService.persist(new Reputation(
+                            user, null, 0, ReputationType.Answer, answer));
+                    Reputation reputation = reputationService.getReputationByAnswerId(answer.getId());
+                    return ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerAndReputation(answer, reputation));
+                }
             }
             return ResponseEntity.badRequest().body("Тело ответа не может быть пустым");
         }

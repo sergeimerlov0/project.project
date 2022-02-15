@@ -208,6 +208,7 @@ class TestAnswerResourceController extends AbstractApiTest {
     @Test
     @DataSet(value = {
             "datasets/AnswerResourceController/votingApiDatasets/answer.yml",
+            
             "datasets/AnswerResourceController/votingApiDatasets/question.yml",
             "datasets/AnswerResourceController/votingApiDatasets/questionHasTag.yml",
             "datasets/AnswerResourceController/votingApiDatasets/tag.yml",
@@ -221,15 +222,13 @@ class TestAnswerResourceController extends AbstractApiTest {
         //Проверяем возвращаемое значение.
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/add")
                         .header("Authorization", getJwtToken("3user@mail.ru","3111")))
-                .andExpect(status().isOk());
-//                .andExpect(jsonPath("$.id").value(102L))
-//                .andExpect(jsonPath("$.userId").value(3L))
-//                .andExpect(jsonPath("$.image").value("3user.ru/myphoto/1"))
-//                .andExpect(jsonPath("$.nickName").value("3user"))
-//                .andExpect(jsonPath("$.questionId").value(100L))
-//                .andExpect(jsonPath("$.body").value("test"))
-//                //.andExpect(jsonPath("$.persistDate").value())
-//                .andExpect(jsonPath("$.comments.[1].id").value(101L));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(102L))
+                .andExpect(jsonPath("$.userId").value(3L))
+                .andExpect(jsonPath("$.image").value("3user.ru/myphoto/1"))
+                .andExpect(jsonPath("$.nickName").value("3user"))
+                .andExpect(jsonPath("$.questionId").value(100L))
+                .andExpect(jsonPath("$.body").value("test"));
 
         //Проверяем, что в БД появилась запись о новом ответе с id 100
         Assertions.assertTrue(em.createQuery("select v from VoteAnswer v where v.user.id=:user and v.answer.id=:answer")

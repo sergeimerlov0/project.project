@@ -24,4 +24,16 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
     public Answer getAnswerByQuestionIdAndUserIdAndAnswerBody(Long questionId, Long userId, String htmlBody) {
         return answerDao.getAnswerByQuestionIdAndUserIdAndAnswerBody(questionId, userId, htmlBody);
     }
+
+    @Override
+    @Transactional
+    public Long getUpVoteCountByAnswer(Answer answer) {
+        return answerDao.getUpVoteCountByAnswer(answer);
+    }
+
+    @Override
+    @Transactional
+    public Long getDownVoteCountByAnswer(Answer answer) {
+        return answerDao.getDownVoteCountByAnswer(answer);
+    }
 }
