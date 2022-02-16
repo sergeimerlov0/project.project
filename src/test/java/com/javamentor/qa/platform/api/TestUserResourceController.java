@@ -51,7 +51,7 @@ public class TestUserResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken(email, password))
                         .content("123qweASD$"))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TestUserResourceController extends AbstractApiTest {
 
     }, cleanBefore = true, cleanAfter = true)
     void getUserById() throws Exception {
-        email = "user@mail.ru";
+        email = "user1@mail.ru";
         password = "password";
 
         //проверяем что вернется 1 user по ID 100
@@ -73,7 +73,7 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(100))
-                .andExpect(jsonPath("$.email").value("user@mail.ru"))
+                .andExpect(jsonPath("$.email").value("user1@mail.ru"))
                 .andExpect(jsonPath("$.fullName").value("user1"))
                 .andExpect(jsonPath("$.linkImage").value("user1link"))
                 .andExpect(jsonPath("$.city").value("user1city"))
@@ -83,12 +83,14 @@ public class TestUserResourceController extends AbstractApiTest {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/106")
                         .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.id").doesNotExist());
     }
 
     @Test
-    @DataSet(value = {"datasets/UserResourceController/getUserByReg/role.yml", "datasets/UserResourceController/getUserByReg/users.yml"},
+    @DataSet(value = {
+            "datasets/UserResourceController/getUserByReg/role.yml",
+            "datasets/UserResourceController/getUserByReg/users.yml"},
             cleanBefore = true, cleanAfter = true)
     void getUserByReg() throws Exception {
         //email и пароль админа
@@ -131,8 +133,8 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items[0].id").value(104))
                 .andExpect(jsonPath("$.items[1].id").value(103))
                 .andExpect(jsonPath("$.items[2].id").value(102))
-                .andExpect(jsonPath("$.items[3].id").value(100))
-                .andExpect(jsonPath("$.items[4].id").value(105));
+                .andExpect(jsonPath("$.items[3].id").value(101))
+                .andExpect(jsonPath("$.items[4].id").value(100));
         //проверяем что вернется 1 user на 2 странице(т.е второй по дате регистрации)
         mvc.perform(get("/api/user/new")
                         .header("Authorization", getJwtToken(email, password))

@@ -5,10 +5,7 @@ import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +24,6 @@ import java.util.regex.Pattern;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-@Api("Rest Controller to get a User by ID")
 public class UserResourceController {
 
     private final UserDtoService userDtoService;
@@ -47,7 +43,7 @@ public class UserResourceController {
                 new ResponseEntity<>(userDtoService.getUserById(userId), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get users by Date Register")
+    @ApiOperation(value = "Получение пользователей по дате регистрации")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = PageDto.class),
             @ApiResponse(code = 400, message = "UserDto not exist")})
@@ -64,7 +60,12 @@ public class UserResourceController {
     }
 
     @PutMapping(value = "/{userId}/change/password")
-    @ApiOperation("Смена пароля с шифрованием")
+    @ApiOperation("Смена пароля пользователя с шифрованием")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Пароль изменён"),
+            @ApiResponse(code = 400, message = "Пароль не соответствует требованиям безопасности с расшифровкой"),
+            @ApiResponse(code = 404, message = "Неверный ID пользователя"),
+    })
     public ResponseEntity<?> updatePasswordByEmail(@PathVariable("userId") long userId, @RequestBody String password) {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -75,7 +76,7 @@ public class UserResourceController {
             Map<Pattern, String> conditions = Map.of(
                     Pattern.compile(".*[a-z].*"), "строчные буквы",
                     Pattern.compile(".*[A-Z].*"), "прописные буквы",
-                    Pattern.compile(".*\\d.*"), "цыфры",
+                    Pattern.compile(".*\\d.*"), "цифры",
                     Pattern.compile(".*[!@#$%].*"), "спецсимволы",
                     Pattern.compile(".{6,}"), "не менее 6 символов");
 
@@ -87,7 +88,7 @@ public class UserResourceController {
                 return new ResponseEntity<>("Пароль должен содержать " + stringOptional.get(), HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new ResponseEntity<>("Неверный ID пользователя: " + userId, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Неверный ID пользователя", HttpStatus.NOT_FOUND);
         }
 
         if (passwordEncoder.matches(password, user.getPassword())) {
@@ -99,6 +100,6 @@ public class UserResourceController {
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(authentication);
 
-        return new ResponseEntity<>("Пароль изменён ", HttpStatus.OK);
+        return new ResponseEntity<>("Пароль пользователя изменён", HttpStatus.OK);
     }
 }

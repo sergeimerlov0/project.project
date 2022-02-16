@@ -2,7 +2,7 @@ user_entity:
   - id: 100
     about: "user1"
     city: "user1city"
-    email: "user@mail.ru"
+    email: "user1@mail.ru"
     full_name: "user1"
     image_link: "user1link"
     is_deleted: false
