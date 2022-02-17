@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.api;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
+import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -37,6 +38,45 @@ class TestQuestionResourceController extends AbstractApiTest {
 
     @Autowired
     private QuestionService questionService;
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/answer.yml",
+            "datasets/QuestionResourceController/comment.yml",
+            "datasets/QuestionResourceController/commentQuestion.yml",
+            "datasets/QuestionResourceController/question.yml",
+            "datasets/QuestionResourceController/questionHasTag.yml",
+            "datasets/QuestionResourceController/reputation.yml",
+            "datasets/QuestionResourceController/role.yml",
+            "datasets/QuestionResourceController/tag.yml",
+            "datasets/QuestionResourceController/user.yml",
+            "datasets/QuestionResourceController/voteQuestion.yml"
+    })
+    void postQuestionView () throws Exception {
+        //проверка на несуществующий вопрос
+        this.mvc.perform(post("/api/user/question/1/view")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+        // проверка на добавление просмотра
+        this.mvc.perform(post("/api/user/question/100/view")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+
+        QuestionViewed questionViewed = em.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.email =: useremail", QuestionViewed.class)
+                .setParameter("questionId", 100L)
+                .setParameter("useremail", "3user@mail.ru")
+                .getSingleResult();
+        Assertions.assertNotNull(questionViewed);
+        // проверка уникальности просмотра
+        this.mvc.perform(post("/api/user/question/100/view")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+        List<QuestionViewed> questionViewed2 = em.createQuery("FROM QuestionViewed a WHERE a.question.id =:questionId and a.user.email =: useremail", QuestionViewed.class)
+                .setParameter("questionId", 100L)
+                .setParameter("useremail", "3user@mail.ru")
+                .getResultList();
+        assertEquals(1, questionViewed2.size());
+    }
 
     @Test
     @DataSet(value = {
