@@ -31,20 +31,9 @@ public class AnswerDtoServiceImpl implements AnswerDtoService {
     }
 
     @Override
-    public AnswerDto getAnswerDtoByAnswerAndReputation(Answer answer, Reputation reputation) {
-        AnswerDto answerDto = new AnswerDto();
-        answerDto.setId(answer.getId());
-        answerDto.setUserId(answer.getUser().getId());
-        answerDto.setUserReputation(Long.valueOf(reputation.getCount()));
-        answerDto.setBody(answer.getHtmlBody());
-        answerDto.setImage(answer.getUser().getImageLink());
-        answerDto.setCountValuable((answerService.getUpVoteCountByAnswer(answer) - answerService.getDownVoteCountByAnswer(answer)));
-        answerDto.setPersistDate(answer.getPersistDateTime());
-        answerDto.setDateAccept(answer.getDateAcceptTime());
-        answerDto.setIsHelpful(answer.getIsHelpful());
-        answerDto.setNickName(answer.getUser().getNickname());
-        answerDto.setQuestionId(answer.getQuestion().getId());
-
-        return answerDto;
+    public AnswerDto getAnswerDtoByAnswerId(Long answerId){
+        return answerDtoDao.getAnswerDtoById(answerId);
     }
+
+
 }

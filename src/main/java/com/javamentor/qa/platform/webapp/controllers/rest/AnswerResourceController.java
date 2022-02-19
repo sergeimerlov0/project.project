@@ -5,16 +5,29 @@ import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
-import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.*;
-import io.swagger.annotations.*;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -96,27 +109,20 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное добавление ответа"),
             @ApiResponse(code = 400, message = "Ошибка добавления ответа")})
     @PostMapping("/add")
-    //позволяет добавлять ответы с одинаковым телом, при этом, возвращает AnswerDto последнего добавленного ответа
+    //позволяет добавлять только один ответ
     public ResponseEntity<?> addNewAnswer(@PathVariable Long questionId,
-                                          @RequestBody AnswerBodyDto answerBodyDto) {
+                                          @Valid @RequestBody AnswerBodyDto answerBodyDto) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
             if (answerBodyDto.getHtmlBody() != null) {
                 Question question = optionalQuestion.get();
-                Optional<User> optionalUser = userService.getByEmail(((User) SecurityContextHolder.getContext()
-                        .getAuthentication().getDetails()).getEmail());
-                if (optionalUser.isPresent()) {
-
-                    User user = optionalUser.get();
-                    Answer newAnswer = new Answer(question, user, answerBodyDto.getHtmlBody());
-                    answerService.persist(newAnswer);
-                    Answer answer = answerService.getAnswerByQuestionIdAndUserIdAndAnswerBody(
-                            questionId, user.getId(), answerBodyDto.getHtmlBody());
-                    reputationService.persist(new Reputation(
-                            user, null, 0, ReputationType.Answer, answer));
-                    Reputation reputation = reputationService.getReputationByAnswerId(answer.getId());
-                    return ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerAndReputation(answer, reputation));
+                User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+                if (!answerService.checkAnswerByQuestionIdAndUserId(questionId, user.getId())) {
+                    Answer answer = new Answer(question, user, answerBodyDto.getHtmlBody());
+                    answerService.persist(answer);
+                    return ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerId(answer.getId()));
                 }
+                return ResponseEntity.badRequest().body("Ответ уже был добавлен");
             }
             return ResponseEntity.badRequest().body("Тело ответа не может быть пустым");
         }

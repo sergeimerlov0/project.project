@@ -13,27 +13,17 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
     private final AnswerDao answerDao;
 
     @Autowired
-    public AnswerServiceImpl(AnswerDao answerDao, AnswerDao answerDao1) {
+    public AnswerServiceImpl(AnswerDao answerDao) {
         super(answerDao);
 
-        this.answerDao = answerDao1;
+        this.answerDao = answerDao;
     }
 
     @Override
     @Transactional
-    public Answer getAnswerByQuestionIdAndUserIdAndAnswerBody(Long questionId, Long userId, String htmlBody) {
-        return answerDao.getAnswerByQuestionIdAndUserIdAndAnswerBody(questionId, userId, htmlBody);
+    public Boolean checkAnswerByQuestionIdAndUserId(Long questionId, Long userId) {
+        return answerDao.getListAnswerByQuestionIdAndUserId(questionId, userId).size()>0;
     }
 
-    @Override
-    @Transactional
-    public Long getUpVoteCountByAnswer(Answer answer) {
-        return answerDao.getUpVoteCountByAnswer(answer);
-    }
 
-    @Override
-    @Transactional
-    public Long getDownVoteCountByAnswer(Answer answer) {
-        return answerDao.getDownVoteCountByAnswer(answer);
-    }
 }

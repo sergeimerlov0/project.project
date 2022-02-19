@@ -1,13 +1,13 @@
 reputation:
   - id: 100
     author_id: 100
-    count: 11
+    count: 10
     answer_id: 100
     type: 1
 
   - id: 101
     author_id: 100
-    count: 12
+    count: 10
     answer_id: 100
     type: 1
 

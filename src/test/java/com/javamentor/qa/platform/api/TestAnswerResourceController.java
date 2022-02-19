@@ -232,7 +232,7 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.image").value("image100"))
                 .andExpect(jsonPath("$.nickName").value("user100"))
                 .andExpect(jsonPath("$.questionId").value(100L))
-                .andExpect(jsonPath("$.userReputation").value(0))
+                .andExpect(jsonPath("$.userReputation").value(20))
                 .andExpect(jsonPath("$.isHelpful").value(false))
                 .andExpect(jsonPath("$.countValuable").value(0))
                 .andExpect(jsonPath("$.body").value("test"));
@@ -243,27 +243,18 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .setParameter("answer", 1L)
                 .getResultList().size() > 0);
 
-        //Проверяем, что при повторном добавлении ответа с тем же самым телом возвращается правильный AnswerDto
+        //Проверяем, что при повторном добавлении ответа ничего не добавляется в базу
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/add")
                         .content(objectMapper.writeValueAsString(answerBodyDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(2L))
-                .andExpect(jsonPath("$.userId").value(100L))
-                .andExpect(jsonPath("$.image").value("image100"))
-                .andExpect(jsonPath("$.nickName").value("user100"))
-                .andExpect(jsonPath("$.questionId").value(100L))
-                .andExpect(jsonPath("$.userReputation").value(0))
-                .andExpect(jsonPath("$.isHelpful").value(false))
-                .andExpect(jsonPath("$.countValuable").value(0))
-                .andExpect(jsonPath("$.body").value("test"));
+                .andExpect(status().isBadRequest());
 
-        //Проверяем, что в БД появилась запись о новом ответе с id 2
-        Assertions.assertTrue(em.createQuery("select a from Answer a where a.user.id=:user and a.id=:answer")
+        //Проверяем, что в БД не появилась запись о новом ответе с id 2
+        Assertions.assertEquals(0, em.createQuery("select a from Answer a where a.user.id=:user and a.id=:answer")
                 .setParameter("user", 100L)
                 .setParameter("answer", 2L)
-                .getResultList().size() > 0);
+                .getResultList().size());
 
         //проверяем на несуществующий вопрос
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/99/answer/add")
