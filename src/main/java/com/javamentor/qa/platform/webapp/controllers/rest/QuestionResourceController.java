@@ -4,11 +4,13 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
@@ -45,6 +47,7 @@ public class QuestionResourceController {
     private final VoteQuestionService voteQuestionService;
     private final TagService tagService;
     private final QuestionConverter questionConverter;
+    private final QuestionViewedService questionViewedService;
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -123,6 +126,29 @@ public class QuestionResourceController {
             }
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/{questionId}/view")
+    @ApiOperation(value = "Просмотр Question авторизированным пользователем", tags = {"QuestionViewed check or add"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Просмотр успешно произведен"),
+            @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
+    })
+    public ResponseEntity<?> viewQuestion (@PathVariable Long questionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Optional<Question> optionalQuestion = questionService.getById(questionId);
+        if (optionalQuestion.isPresent()) {
+            Question question = optionalQuestion.get();
+            if (!questionViewedService.questionViewCheckByUserIdAndQuestionId(questionId, user.getEmail())) {
+                QuestionViewed questionViewed = new QuestionViewed();
+                questionViewed.setQuestion(question);
+                questionViewed.setUser(user);
+                questionViewedService.persist(questionViewed);
+                return ResponseEntity.ok().body("Просмотр вопроса с id:  " + questionId + " успешно произведен");
+            }
+            return ResponseEntity.ok().body("Просмотр вопроса с id:  " + questionId + " уже существует");
+        }
+        return ResponseEntity.badRequest().body("Вопрос с id:  " + questionId + " не найден");
     }
 
     @PostMapping("/{questionId}/downVote")
