@@ -56,9 +56,11 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
     public ResponseEntity<?> getQuestionDtoById(@PathVariable Long id) {
-        return questionDtoService.getQuestionDtoByQuestionId(id).isEmpty() ?
-                ResponseEntity.badRequest().body("Question with id " + id + " not found!") :
-                ResponseEntity.ok().body(questionDtoService.getQuestionDtoByQuestionId(id));
+        Optional<Question> optionalQuestion = questionService.getById(id);
+        if (optionalQuestion.isPresent()) {
+            return ResponseEntity.ok().body(questionDtoService.getQuestionDtoByQuestionId(id));
+        }
+        return ResponseEntity.badRequest().body("Question with id " + id + " not found!");
     }
 
     @GetMapping("/{id}/comment")
@@ -134,7 +136,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Просмотр успешно произведен"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
-    public ResponseEntity<?> viewQuestion (@PathVariable Long questionId) {
+    public ResponseEntity<?> viewQuestion(@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
@@ -178,9 +180,9 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "QuestionDto не найдены")
     })
     public ResponseEntity<PageDto<QuestionViewDto>> getAllQuestionDto(@RequestParam int currentPageNumber,
-                                                                  @RequestParam(defaultValue = "10") int itemsOnPage,
-                                                                  @RequestParam(required = false) List<Long> trackedTags,
-                                                                  @RequestParam(required = false) List<Long> ignoredTags) {
+                                                                      @RequestParam(defaultValue = "10") int itemsOnPage,
+                                                                      @RequestParam(required = false) List<Long> trackedTags,
+                                                                      @RequestParam(required = false) List<Long> ignoredTags) {
         Map<String, Object> paginationMap = new HashMap<>();
         paginationMap.put("class", "AllQuestionDto");
         paginationMap.put("currentPageNumber", currentPageNumber);
