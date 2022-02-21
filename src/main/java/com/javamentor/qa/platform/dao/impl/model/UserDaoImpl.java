@@ -32,6 +32,29 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     }
 
     @Override
+    @Cacheable(value = "users", key = "#email")
+    public Boolean isPresentByEmail(String email) {
+        log.info("Запрос пользователя из БД в методе isPresentByEmail");
+
+        String hql = "SELECT u.id FROM User u WHERE u.email = :email AND u.isEnabled = true";
+        List<User> query = entityManager.createQuery(hql, User.class).setParameter("email", email).getResultList();
+
+        return query.isEmpty();
+
+        /*
+            @Override
+    public boolean userVoteCheck(Long questionId, Long userId) {
+        List<VoteQuestion> voteQuestionList = entityManager.createQuery("FROM VoteQuestion a WHERE a.question.id =:questionId and a.user.id =: userId", VoteQuestion.class)
+                .setParameter("questionId", questionId)
+                .setParameter("userId", userId)
+                .getResultList();
+        return voteQuestionList.isEmpty();
+    }
+         */
+
+    }
+
+    @Override
     public List<User> getAll() {
         return entityManager.createQuery("SELECT u FROM User u inner join fetch u.role " +
                         "where u.isEnabled=true", User.class)
