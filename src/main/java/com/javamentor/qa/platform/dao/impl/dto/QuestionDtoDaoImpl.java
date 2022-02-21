@@ -37,7 +37,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "from Question question " +
                 "left join User user   on question.user.id = user.id " +
                 "left join Answer answer on answer.question.id = :id " +
-                "where question.id = :id", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
+                "where question.id = :id and question.isDeleted = false", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
     }
 
     @Override
