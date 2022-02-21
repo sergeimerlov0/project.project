@@ -120,7 +120,9 @@ public class AnswerResourceController {
                 if (!answerService.checkAnswerByQuestionIdAndUserId(questionId, user.getId())) {
                     Answer answer = new Answer(question, user, answerBodyDto.getHtmlBody());
                     answerService.persist(answer);
-                    return ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerId(answer.getId()));
+                    return answerDtoService.getAnswerDtoByAnswerId(answer.getId()).isPresent() ?
+                            ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerId(answer.getId())) :
+                            ResponseEntity.badRequest().body("Ошибка создания Dto");
                 }
                 return ResponseEntity.badRequest().body("Ответ уже был добавлен");
             }

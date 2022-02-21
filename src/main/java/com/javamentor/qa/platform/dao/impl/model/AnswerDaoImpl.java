@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 
 @Repository
 public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements AnswerDao {
@@ -19,12 +18,12 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
     }
 
     @Override
-    public List<Answer> getListAnswerByQuestionIdAndUserId(Long questionId, Long userId) {
-        return entityManager.createQuery("SELECT a FROM Answer a  join fetch a.user  " +
-                        "WHERE a.question.id =:questionId and a.user.id =: userId ", Answer.class)
+    public Boolean checkAnswerByQuestionIdAndUserId(Long questionId, Long userId) {
+        return entityManager.createQuery("SELECT COUNT(a)>0 FROM Answer a  left join User u on a.id = u.id " +
+                        "WHERE a.question.id =:questionId and a.user.id =: userId ", Boolean.class)
                 .setParameter("questionId", questionId)
                 .setParameter("userId", userId)
-                .getResultList();
+                .getSingleResult();
     }
 
 }

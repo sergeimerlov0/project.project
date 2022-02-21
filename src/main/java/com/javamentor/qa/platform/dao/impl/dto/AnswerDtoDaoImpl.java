@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * \* Created with IntelliJ IDEA.
@@ -66,7 +67,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     }
 
     @Override
-    public AnswerDto getAnswerDtoById(Long answerId) {
+    public Optional<AnswerDto> getAnswerDtoById(Long answerId) {
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDto(" +
                         "a.id, u.id,sum(r.count),u.imageLink, u.nickname ,a.question.id, a.htmlBody, a.persistDateTime, " +
                         "a.isHelpful, a.dateAcceptTime," +
@@ -76,7 +77,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         "left outer join Reputation r on (a.user.id = r.author.id) " +
                         "where a.id =:id group by a.id, u.id, u.imageLink, u.nickname", AnswerDto.class)
                 .setParameter("id", answerId)
-                .getSingleResult();
+                .getResultStream().findAny();
     }
 }
 

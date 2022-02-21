@@ -22,7 +22,7 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
     @Override
     @Transactional
     public Boolean checkAnswerByQuestionIdAndUserId(Long questionId, Long userId) {
-        return answerDao.getListAnswerByQuestionIdAndUserId(questionId, userId).size()>0;
+        return answerDao.checkAnswerByQuestionIdAndUserId(questionId, userId);
     }
 
 
