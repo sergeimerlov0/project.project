@@ -27,7 +27,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "(SELECT sum (reputation.count) from Reputation reputation where reputation.author.id = user.id), " +
                 "user.fullName, user.imageLink, " +
                 "question.description, 0L, " +
-                "(SELECT count (*) from Answer answer where answer.question.id = :id), " +
+                "(SELECT count (*) from Answer answer where answer.question.id = :id and answer.isDeleted = false ), " +
                 "((SELECT count (*) from VoteQuestion voteOnQuestion " +
                 "where voteOnQuestion.vote = 'UP_VOTE' and voteOnQuestion.question.id = :id) + " +
                 "(SELECT count (*) from VoteQuestion voteOnQuestion " +
