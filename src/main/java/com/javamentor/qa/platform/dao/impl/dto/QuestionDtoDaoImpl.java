@@ -23,19 +23,20 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
         //@Todo в дальнейшем реализовать подсчёт просмотров (пока стоит 0)
 
         return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto." +
-                "QuestionDto(question.id, question.title, author.id, " +
-                "(SELECT sum (reputation.count) from Reputation reputation where reputation.author.id = :id), " +
-                "author.fullname, author.imageLink, " +
+                "QuestionDto(question.id, question.title, user.id, " +
+                "(SELECT sum (reputation.count) from Reputation reputation where reputation.author.id = user.id), " +
+                "user.fullName, user.imageLink, " +
                 "question.description, 0L, " +
                 "(SELECT count (*) from Answer answer where answer.question.id = :id), " +
                 "((SELECT count (*) from VoteQuestion voteOnQuestion " +
-                "where voteOnQuestion.vote = 'UP_VOTE' and voteOnQuestion.question.id = :id) - " +
+                "where voteOnQuestion.vote = 'UP_VOTE' and voteOnQuestion.question.id = :id) + " +
                 "(SELECT count (*) from VoteQuestion voteOnQuestion " +
                 "where voteOnQuestion.vote = 'DOWN_VOTE' and voteOnQuestion.question.id = :id)), " +
-                "question.persistDateTime, question.lastUpdateDateTime) " +
+                "question.persistDateTime, question.lastUpdateDateTime," +
+                "(select v.vote from VoteQuestion v where v.user.id = user.id)) " +
                 "from Question question " +
-                "join question.user as author " +
-                "left outer join question.answers as answer " +
+                "left join User user   on question.user.id = user.id " +
+                "left join Answer answer on answer.question.id = :id " +
                 "where question.id = :id", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
     }
 
