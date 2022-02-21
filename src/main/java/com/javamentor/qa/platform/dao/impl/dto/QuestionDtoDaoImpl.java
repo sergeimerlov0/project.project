@@ -35,7 +35,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "question.persistDateTime, question.lastUpdateDateTime," +
                 "(select v.vote from VoteQuestion v where v.user.id = user.id)) " +
                 "from Question question " +
-                "inner join User user   on question.user.id = user.id" +
+                "left join User user   on question.user.id = user.id " +
                 "inner join Answer answer on answer.question.id = :id " +
                 "where question.id = :id", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
     }
