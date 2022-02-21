@@ -56,11 +56,10 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
     public ResponseEntity<?> getQuestionDtoById(@PathVariable Long id) {
-        Optional<Question> optionalQuestion = questionService.getById(id);
-        if (optionalQuestion.isPresent()) {
-            return ResponseEntity.ok().body(questionDtoService.getQuestionDtoByQuestionId(id));
-        }
-        return ResponseEntity.badRequest().body("Question with id " + id + " not found!");
+        return questionDtoService.getQuestionDtoByQuestionId(id).isEmpty() ?
+                ResponseEntity.badRequest().body("Question with id " + id + " not found!") :
+                ResponseEntity.ok().body(questionDtoService.getQuestionDtoByQuestionId(id));
+
     }
 
     @GetMapping("/{id}/comment")
