@@ -114,7 +114,6 @@ public class AnswerResourceController {
                                           @Valid @RequestBody AnswerBodyDto answerBodyDto) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         if (optionalQuestion.isPresent()) {
-            if (answerBodyDto.getHtmlBody() != null) {
                 Question question = optionalQuestion.get();
                 User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
                 if (!answerService.checkAnswerByQuestionIdAndUserId(questionId, user.getId())) {
@@ -125,8 +124,6 @@ public class AnswerResourceController {
                             ResponseEntity.badRequest().body("Ошибка создания Dto");
                 }
                 return ResponseEntity.badRequest().body("Ответ уже был добавлен");
-            }
-            return ResponseEntity.badRequest().body("Тело ответа не может быть пустым");
         }
         return ResponseEntity.badRequest().body("Вопроса с  id " + questionId + " не существует");
     }
