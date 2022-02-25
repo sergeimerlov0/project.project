@@ -113,18 +113,17 @@ public class AnswerResourceController {
     public ResponseEntity<?> addNewAnswer(@PathVariable Long questionId,
                                           @Valid @RequestBody AnswerBodyDto answerBodyDto) {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
-        if (optionalQuestion.isPresent()) {
-                Question question = optionalQuestion.get();
-                User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-                if (!answerService.checkAnswerByQuestionIdAndUserId(questionId, user.getId())) {
-                    Answer answer = new Answer(question, user, answerBodyDto.getHtmlBody());
-                    answerService.persist(answer);
-                    return answerDtoService.getAnswerDtoByAnswerId(answer.getId()).isPresent() ?
-                            ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerId(answer.getId())) :
-                            ResponseEntity.badRequest().body("Ошибка создания Dto");
-                }
-                return ResponseEntity.badRequest().body("Ответ уже был добавлен");
+        if (optionalQuestion.isEmpty()){
+            return ResponseEntity.badRequest().body("Вопроса с  id " + questionId + " не существует");
         }
-        return ResponseEntity.badRequest().body("Вопроса с  id " + questionId + " не существует");
+        Question question = optionalQuestion.get();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        if (answerService.checkAnswerByQuestionIdAndUserId(questionId, user.getId())){
+            return ResponseEntity.badRequest().body("Ответ уже был добавлен");
+        }Answer answer = new Answer(question, user, answerBodyDto.getHtmlBody());
+                answerService.persist(answer);
+                return answerDtoService.getAnswerDtoByAnswerId(answer.getId()).isPresent() ?
+                        ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerId(answer.getId())) :
+                        ResponseEntity.badRequest().body("Ошибка создания Dto");
     }
 }
