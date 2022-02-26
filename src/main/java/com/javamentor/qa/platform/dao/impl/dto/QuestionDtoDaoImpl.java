@@ -27,7 +27,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "(SELECT sum (reputation.count) from Reputation reputation where reputation.author.id = user.id), " +
                 "user.fullName, user.imageLink, " +
                 "question.description, 0L, " +
-                "(SELECT count (*) from Answer answer where answer.question.id = :id), " +
+                "(SELECT count (*) from Answer answer where answer.question.id = :id and answer.isDeleted = false ), " +
                 "((SELECT count (*) from VoteQuestion voteOnQuestion " +
                 "where voteOnQuestion.vote = 'UP_VOTE' and voteOnQuestion.question.id = :id) + " +
                 "(SELECT count (*) from VoteQuestion voteOnQuestion " +
@@ -37,7 +37,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "from Question question " +
                 "left join User user   on question.user.id = user.id " +
                 "left join Answer answer on answer.question.id = :id " +
-                "where question.id = :id", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
+                "where question.id = :id and question.isDeleted = false", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
     }
 
     @Override
