@@ -24,7 +24,7 @@ public class InviteController {
     private final UserService userService;
     private final RoleService roleService;
 
-    @Value("http://${jdbc.url:aDefaultUrl}/login")
+    @Value("${connection.url}/login")
     String loginEndPoint;
 
     @GetMapping()
