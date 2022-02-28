@@ -50,7 +50,7 @@ public class TestUserResourceController extends AbstractApiTest {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/106")
                         .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.id").doesNotExist());
 
 
@@ -100,8 +100,8 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items[0].id").value(104))
                 .andExpect(jsonPath("$.items[1].id").value(103))
                 .andExpect(jsonPath("$.items[2].id").value(102))
-                .andExpect(jsonPath("$.items[3].id").value(100))
-                .andExpect(jsonPath("$.items[4].id").value(105));
+                .andExpect(jsonPath("$.items[3].id").value(101))
+                .andExpect(jsonPath("$.items[4].id").value(100));
         //проверяем что вернется 1 user на 2 странице(т.е второй по дате регистрации)
         mvc.perform(get("/api/user/new")
                         .header("Authorization", getJwtToken(email, password))

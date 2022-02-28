@@ -35,6 +35,6 @@ public class TestAdminResourceController extends AbstractApiTest {
         //Проверяем, что User c id 101 отключен
         this.mvc.perform(get("/api/user/101")
                         .header("Authorization", getJwtToken("2user@mail.ru", "123")))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
     }
 }
