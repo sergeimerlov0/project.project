@@ -2,20 +2,14 @@ package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
-import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import org.hibernate.transform.ResultTransformer;
-import org.hibernate.transform.Transformers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * \* Created with IntelliJ IDEA.
@@ -31,11 +25,11 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     @Override
     public List<AnswerDto> getAnswerByQuestionId(Long id) {
         return (List<AnswerDto>) entityManager.createQuery(
-                        "select a.id, a.user.id, "+
+                        "select a.id, a.user.id, " +
                                 "sum(r.count), " +
                                 "u.imageLink, u.nickname, " +
                                 "a.question.id, " +
-                                "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
+                                "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime ," +
                                 "((select count(*) from VoteAnswer v where v.vote = 'UP_VOTE' and v.answer.id = a.id) - (select count(*) from VoteAnswer v where v.vote = 'DOWN_VOTE' and v.answer.id = a.id)) " +
                                 "from Answer a left outer join Reputation r on (a.user.id = r.author.id) " +
                                 "left outer join User u on (a.user.id = u.id)" +
@@ -72,6 +66,19 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 ).getResultList();
     }
 
+    @Override
+    public Optional<AnswerDto> getAnswerDtoById(Long answerId) {
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDto(" +
+                        "a.id, u.id,sum(r.count),u.imageLink, u.nickname ,a.question.id, a.htmlBody, a.persistDateTime, " +
+                        "a.isHelpful, a.dateAcceptTime," +
+                        "((select count(*) from VoteAnswer v where v.vote = 'UP_VOTE' and v.answer.id = a.id)" +
+                        " + (select count(*) from VoteAnswer v where v.vote = 'DOWN_VOTE' and v.answer.id = a.id )))" +
+                        " from Answer a inner join User u on (a.user.id = u.id) " +
+                        "left outer join Reputation r on (a.user.id = r.author.id) " +
+                        "where a.id =:id group by a.id, u.id, u.imageLink, u.nickname", AnswerDto.class)
+                .setParameter("id", answerId)
+                .getResultStream().findAny();
+    }
 }
 
 

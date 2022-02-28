@@ -8,10 +8,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implements AnswerService {
+
+    private final AnswerDao answerDao;
+
     @Autowired
     public AnswerServiceImpl(AnswerDao answerDao) {
         super(answerDao);
+
+        this.answerDao = answerDao;
     }
+
+    @Override
+    @Transactional
+    public Boolean checkAnswerByQuestionIdAndUserId(Long questionId, Long userId) {
+        return answerDao.checkAnswerByQuestionIdAndUserId(questionId, userId);
+    }
+
+
 }
