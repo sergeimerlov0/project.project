@@ -56,7 +56,7 @@ class TestQuestionResourceController extends AbstractApiTest {
         //проверка на несуществующий вопрос
         this.mvc.perform(post("/api/user/question/1/view")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
         // проверка на добавление просмотра
         this.mvc.perform(post("/api/user/question/100/view")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
@@ -122,7 +122,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     void getNonExistedQuestionViewDtoById() throws Exception {
         this.mvc.perform(get("/api/user/question/200")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
