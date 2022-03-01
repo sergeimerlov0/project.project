@@ -5,7 +5,9 @@ import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,6 +61,22 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
     }
 
+    @GetMapping("/vote")
+    @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированные по голосам")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "UserDTO не найдены")
+    })
+    public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortDTO(@RequestParam int currentPageNumber,
+                                                                 @RequestParam(defaultValue = "10") int itemsOnPage) {
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "AllUserDtoSortVote");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+
+        return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
+
     @PutMapping(value = "/{userId}/change/password")
     @ApiOperation("Смена пароля пользователя с шифрованием")
     @ApiResponses(value = {
@@ -69,30 +87,28 @@ public class UserResourceController {
     public ResponseEntity<?> updatePasswordByEmail(@PathVariable("userId") long userId, @RequestBody String password) {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        Optional<User> optionalUser = userService.getByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        User user = optionalUser.get();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
-        if (user.getId().equals(userId)) {
-            Map<Pattern, String> conditions = Map.of(
-                    Pattern.compile(".*[a-z].*"), "строчные буквы",
-                    Pattern.compile(".*[A-Z].*"), "прописные буквы",
-                    Pattern.compile(".*\\d.*"), "цифры",
-                    Pattern.compile(".*[!@#$%].*"), "спецсимволы",
-                    Pattern.compile(".{6,}"), "не менее 6 символов");
-
-            Optional<String> stringOptional = conditions.entrySet().stream()
-                    .filter(e -> !password.matches(e.getKey().toString()))
-                    .map(Map.Entry::getValue).reduce((x, y) -> x + ", " + y);
-
-            if (stringOptional.isPresent()) {
-                return new ResponseEntity<>("Пароль должен содержать " + stringOptional.get(), HttpStatus.BAD_REQUEST);
-            }
-        } else {
+        if (!user.getId().equals(userId)) {
             return new ResponseEntity<>("Неверный ID пользователя", HttpStatus.NOT_FOUND);
         }
-
         if (passwordEncoder.matches(password, user.getPassword())) {
             return new ResponseEntity<>("Новый пароль совпадает с текущим", HttpStatus.BAD_REQUEST);
+        }
+
+        Map<Pattern, String> conditions = Map.of(
+                Pattern.compile(".*[a-z].*"), "строчные буквы",
+                Pattern.compile(".*[A-Z].*"), "прописные буквы",
+                Pattern.compile(".*\\d.*"), "цифры",
+                Pattern.compile(".*[!@#$%].*"), "спецсимволы",
+                Pattern.compile(".{6,}"), "не менее 6 символов");
+
+        Optional<String> stringOptional = conditions.entrySet().stream()
+                .filter(e -> !password.matches(e.getKey().toString()))
+                .map(Map.Entry::getValue).reduce((x, y) -> x + ", " + y);
+
+        if (stringOptional.isPresent()) {
+            return new ResponseEntity<>("Пароль должен содержать " + stringOptional.get(), HttpStatus.BAD_REQUEST);
         }
 
         userService.updatePasswordByEmail(user.getEmail(), passwordEncoder.encode(password));
