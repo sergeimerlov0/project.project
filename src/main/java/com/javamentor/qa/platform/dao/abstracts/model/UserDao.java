@@ -8,5 +8,5 @@ public interface UserDao extends ReadWriteDao<User, Long>  {
     Optional<User> getByEmail(String email);
     void deleteByEmail(String email);
     void updatePasswordByEmail(String email, String password);
-    Boolean isPresentByEmail(String email);
+    boolean isPresentByEmail(String email);
 }
