@@ -12,9 +12,9 @@ function sidebar() {
                 <nav class="nav flex-column">
                   <a href="#" class="nav-link active font-weight-bold pl-0 text-dark">Home</a>
                   <a class="nav-link text-uppercase font-weight-100 mt-1 pl-0 text-dark">Public</a>
-                  <a href="#" class="nav-link font-weight-100 text-dark">Questions</a>
-                  <a href="#" class="nav-link font-weight-100 text-dark">Tags</a>
-                  <a href="#" class="nav-link font-weight-100 text-dark">Users</a>
+                  <a href="/questions" class="nav-link font-weight-100 text-dark">Questions</a>
+                  <a href="/tags" class="nav-link font-weight-100 text-dark">Tags</a>
+                  <a href="/users" class="nav-link font-weight-100 text-dark">Users</a>
                   <a href="#" class="nav-link font-weight-100 text-dark">Unanswered</a>
                              
                 </nav>                
