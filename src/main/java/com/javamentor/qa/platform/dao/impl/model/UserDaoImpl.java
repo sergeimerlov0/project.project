@@ -32,12 +32,10 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
     @Override
     @Cacheable(value = "users", key = "#email")
-    public boolean isPresentByEmail(String email) {
+    public Boolean isPresentByEmail(String email) {
         log.info("Запрос пользователя из БД в методе isPresentByEmail");
-        String hql = "SELECT u.id FROM User u WHERE u.email = :email AND u.isEnabled = true";
-        List<User> query = entityManager.createQuery(hql, User.class).setParameter("email", email).getResultList();
-
-        return !query.isEmpty();
+        String hql = "SELECT COUNT(u)>0 FROM User u WHERE u.email = :email AND u.isEnabled = true";
+        return entityManager.createQuery(hql, Boolean.class).setParameter("email", email).getSingleResult();
     }
 
     @Override
@@ -55,6 +53,8 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
                 .executeUpdate();
     }
 
+    @Override
+    @CacheEvict(value = "users", key = "#email")
     public void updatePasswordByEmail (String email, String password) {
         String hql = "update User u set u.password = :password where u.email = :email";
         entityManager.createQuery(hql)
