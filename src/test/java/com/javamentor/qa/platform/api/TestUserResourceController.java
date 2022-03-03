@@ -6,20 +6,53 @@ import com.javamentor.qa.platform.AbstractApiTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Date;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestUserResourceController extends AbstractApiTest {
 
     private String email;
     private String password;
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/updatePassword/users.yml",
+            "datasets/UserResourceController/updatePassword/role.yml"},
+            cleanBefore = true, cleanAfter = true)
+    void updatePasswordByEmail() throws Exception {
+
+        email = "user@mail.ru";
+        password = "$2a$10$jEIIl6EDnJspLm0LGNCaXOiqvJQNdqPNDydyR2tR5gzhmMx2hQ/Lq"; //Пароль в базе 1qaz2WSX$
+
+        //проверяем что пароль изменится
+        mvc.perform(MockMvcRequestBuilders.put("/api/user/100/change/password")
+                        .header("Authorization", getJwtToken(email, password))
+                .content("123qweASD$"))
+                .andDo(print())
+                .andExpect(status().isOk());
+        //проверяем что пароль не соответствует требованиям
+        mvc.perform(MockMvcRequestBuilders.put("/api/user/100/change/password")
+                        .header("Authorization", getJwtToken(email, password))
+                        .content("123qw"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        //проверяем что новый пароль совпадает с текущим
+        mvc.perform(MockMvcRequestBuilders.put("/api/user/100/change/password")
+                        .header("Authorization", getJwtToken(email, password))
+                        .content("1qaz2WSX$"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        //проверяем что ID не совпадает с текущим пользователем
+        mvc.perform(MockMvcRequestBuilders.put("/api/user/101/change/password")
+                        .header("Authorization", getJwtToken(email, password))
+                        .content("123qweASD$"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     @DataSet(value = {
@@ -31,7 +64,7 @@ public class TestUserResourceController extends AbstractApiTest {
 
     }, cleanBefore = true, cleanAfter = true)
     void getUserById() throws Exception {
-        email = "user@mail.ru";
+        email = "user1@mail.ru";
         password = "password";
 
         //проверяем что вернется 1 user по ID 100
@@ -40,7 +73,7 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(100))
-                .andExpect(jsonPath("$.email").value("user@mail.ru"))
+                .andExpect(jsonPath("$.email").value("user1@mail.ru"))
                 .andExpect(jsonPath("$.fullName").value("user1"))
                 .andExpect(jsonPath("$.linkImage").value("user1link"))
                 .andExpect(jsonPath("$.city").value("user1city"))
@@ -50,14 +83,14 @@ public class TestUserResourceController extends AbstractApiTest {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/106")
                         .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.id").doesNotExist());
-
-
     }
 
     @Test
-    @DataSet(value = {"datasets/UserResourceController/getUserByReg/role.yml", "datasets/UserResourceController/getUserByReg/users.yml"},
+    @DataSet(value = {
+            "datasets/UserResourceController/getUserByReg/role.yml",
+            "datasets/UserResourceController/getUserByReg/users.yml"},
             cleanBefore = true, cleanAfter = true)
     void getUserByReg() throws Exception {
         //email и пароль админа

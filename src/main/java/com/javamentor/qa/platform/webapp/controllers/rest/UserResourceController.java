@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -21,15 +20,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-@Api("Rest Controller to get a User by ID")
 public class UserResourceController {
 
     private final UserDtoService userDtoService;
-
     private UserService userService;
 
     @Autowired
@@ -46,7 +45,7 @@ public class UserResourceController {
                 new ResponseEntity<>(userDtoService.getUserById(userId), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get users by Date Register")
+    @ApiOperation(value = "Получение пользователей по дате регистрации")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = PageDto.class),
             @ApiResponse(code = 400, message = "UserDto not exist")})
@@ -69,7 +68,7 @@ public class UserResourceController {
             @ApiResponse(code = 400, message = "UserDTO не найдены")
     })
     public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortDTO(@RequestParam int currentPageNumber,
-                                                              @RequestParam(defaultValue = "10") int itemsOnPage){
+                                                                 @RequestParam(defaultValue = "10") int itemsOnPage) {
         Map<String, Object> paginationMap = new HashMap<>();
         paginationMap.put("class", "AllUserDtoSortVote");
         paginationMap.put("currentPageNumber", currentPageNumber);
@@ -78,26 +77,45 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 
-    @PutMapping("/api/{userId}/change/password")
-    @ApiOperation("Смена пароля с шифрованием")
+    @PutMapping(value = "/{userId}/change/password")
+    @ApiOperation("Смена пароля пользователя с шифрованием")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Пароль изменён"),
+            @ApiResponse(code = 400, message = "Пароль не соответствует требованиям безопасности с расшифровкой"),
+            @ApiResponse(code = 404, message = "Неверный ID пользователя"),
+    })
     public ResponseEntity<?> updatePasswordByEmail(@PathVariable("userId") long userId, @RequestBody String password) {
+
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
-        if (user.getId().equals(userId)) {
-            String currentPass = user.getPassword();
-
-            String pat = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%]).{6,}";
-            if (password.matches(pat) && !passwordEncoder.matches(password, currentPass)) {
-                userService.updatePasswordByEmail(user.getEmail(), passwordEncoder.encode(password));
-
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                SecurityContext sc = SecurityContextHolder.getContext();
-                sc.setAuthentication(authentication);
-
-                return new ResponseEntity<>("Пароль изменён", HttpStatus.OK);
-            }
+        if (!user.getId().equals(userId)) {
+            return new ResponseEntity<>("Неверный ID пользователя", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>("Пароль не соответствует требованиям", HttpStatus.BAD_REQUEST);
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return new ResponseEntity<>("Новый пароль совпадает с текущим", HttpStatus.BAD_REQUEST);
+        }
+
+        Map<Pattern, String> conditions = Map.of(
+                Pattern.compile(".*[a-z].*"), "строчные буквы",
+                Pattern.compile(".*[A-Z].*"), "прописные буквы",
+                Pattern.compile(".*\\d.*"), "цифры",
+                Pattern.compile(".*[!@#$%].*"), "спецсимволы",
+                Pattern.compile(".{6,}"), "не менее 6 символов");
+
+        Optional<String> stringOptional = conditions.entrySet().stream()
+                .filter(e -> !password.matches(e.getKey().toString()))
+                .map(Map.Entry::getValue).reduce((x, y) -> x + ", " + y);
+
+        if (stringOptional.isPresent()) {
+            return new ResponseEntity<>("Пароль должен содержать " + stringOptional.get(), HttpStatus.BAD_REQUEST);
+        }
+
+        userService.updatePasswordByEmail(user.getEmail(), passwordEncoder.encode(password));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityContext sc = SecurityContextHolder.getContext();
+        sc.setAuthentication(authentication);
+
+        return new ResponseEntity<>("Пароль пользователя изменён", HttpStatus.OK);
     }
 }

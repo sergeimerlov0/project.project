@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -32,6 +31,14 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     }
 
     @Override
+    @Cacheable(value = "users", key = "#email")
+    public Boolean isPresentByEmail(String email) {
+        log.info("Запрос пользователя из БД в методе isPresentByEmail");
+        String hql = "SELECT COUNT(u)>0 FROM User u WHERE u.email = :email AND u.isEnabled = true";
+        return entityManager.createQuery(hql, Boolean.class).setParameter("email", email).getSingleResult();
+    }
+
+    @Override
     public List<User> getAll() {
         return entityManager.createQuery("SELECT u FROM User u inner join fetch u.role " +
                         "where u.isEnabled=true", User.class)
@@ -46,6 +53,8 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
                 .executeUpdate();
     }
 
+    @Override
+    @CacheEvict(value = "users", key = "#email")
     public void updatePasswordByEmail (String email, String password) {
         String hql = "update User u set u.password = :password where u.email = :email";
         entityManager.createQuery(hql)
