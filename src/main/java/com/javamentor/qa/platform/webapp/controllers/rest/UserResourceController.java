@@ -51,13 +51,15 @@ public class UserResourceController {
             @ApiResponse(code = 400, message = "UserDto not exist")})
     @GetMapping("/new")
     public ResponseEntity<PageDto<UserDto>> getUserByReg(@RequestParam("page") int currentPageNumber,
-                                                         @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage) {
+                                                         @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage,
+                                                         @RequestParam(value = "filter", required = false) String filter) {
         //Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
         Map<String, Object> objectMap = new HashMap<>();
         //Помещаем в мапу под ключ class нужный бин с нужной реализацией пагинации. Например, AllUser.
         objectMap.put("class", "RegUser");
         objectMap.put("page", currentPageNumber);
         objectMap.put("items", itemsOnPage);
+        if (filter != null) {objectMap.put("filter", filter);}
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
     }
 
@@ -68,12 +70,13 @@ public class UserResourceController {
             @ApiResponse(code = 400, message = "UserDTO не найдены")
     })
     public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortDTO(@RequestParam int currentPageNumber,
-                                                                 @RequestParam(defaultValue = "10") int itemsOnPage) {
+                                                                 @RequestParam(defaultValue = "10") int itemsOnPage,
+                                                                 @RequestParam(value = "filter", required = false) String filter) {
         Map<String, Object> paginationMap = new HashMap<>();
         paginationMap.put("class", "AllUserDtoSortVote");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
-
+        if (filter != null) {paginationMap.put("filter", filter);}
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 

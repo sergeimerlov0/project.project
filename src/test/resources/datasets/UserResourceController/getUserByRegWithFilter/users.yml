@@ -1,0 +1,49 @@
+user_entity:
+  - id: 110
+    about: "Something"
+    city: "Moscow"
+    email: "FilterTest1Kata@mail.ru"
+    full_name: "Maximilian"
+    image_link: "link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName"
+    password: "password"
+    persist_date: 2022-01-01 00:00:00
+    role_id: 101
+  - id: 111
+    about: "Something"
+    city: "Moscow"
+    email: "FilterTest2Kata@mail.ru"
+    full_name: "Iminuil"
+    image_link: "link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName"
+    password: "password"
+    persist_date: 2022-01-01 00:00:00
+    role_id: 101
+  - id: 112
+    about: "Something"
+    city: "Moscow"
+    email: "Filter@mail.ru"
+    full_name: "RickyKata"
+    image_link: "link"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-16 00:00:00
+    link_github: "github@link"
+    link_site: "site@link"
+    link_vk: "vk@link"
+    nickname: "NickName"
+    password: "password"
+    persist_date: 2022-01-01 00:00:00
+    role_id: 101
