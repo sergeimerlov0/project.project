@@ -26,12 +26,6 @@ public class TestUserResourceController extends AbstractApiTest {
         email = "user@mail.ru";
         password = "$2a$10$jEIIl6EDnJspLm0LGNCaXOiqvJQNdqPNDydyR2tR5gzhmMx2hQ/Lq"; //Пароль в базе 1qaz2WSX$
 
-        //проверяем что пароль изменится
-        mvc.perform(MockMvcRequestBuilders.put("/api/user/100/change/password")
-                        .header("Authorization", getJwtToken(email, password))
-                .content("123qweASD$"))
-                .andDo(print())
-                .andExpect(status().isOk());
         //проверяем что пароль не соответствует требованиям
         mvc.perform(MockMvcRequestBuilders.put("/api/user/100/change/password")
                         .header("Authorization", getJwtToken(email, password))
@@ -52,6 +46,13 @@ public class TestUserResourceController extends AbstractApiTest {
                         .content("123qweASD$"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+
+        //проверяем что пароль изменится
+        mvc.perform(MockMvcRequestBuilders.put("/api/user/100/change/password")
+                        .header("Authorization", getJwtToken(email, password))
+                        .content("123qweASD$"))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
