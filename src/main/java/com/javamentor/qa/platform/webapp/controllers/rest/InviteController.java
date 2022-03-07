@@ -27,7 +27,7 @@ public class InviteController {
     private final UserService userService;
     private final RoleService roleService;
 
-    @Value("${connection.url}/login")
+    @Value("#{systemProperties['connection.url']}/login")
     String loginEndPoint;
 
     @GetMapping()
