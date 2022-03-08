@@ -1,0 +1,24 @@
+question:
+  - id: 100
+    title: "test"
+    description: "test"
+    persist_date: "[DAY,NOW]"
+    user_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+  - id: 101
+    title: "test"
+    description: "test"
+    persist_date: "[DAY,NOW]"
+    user_id: 101
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+  - id: 102
+    title: "test"
+    description: "test"
+    persist_date: "[DAY,NOW]"
+    user_id: 102
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
