@@ -480,6 +480,55 @@ class TestQuestionResourceController extends AbstractApiTest {
     }
 
     @Test
+    @DataSet(value = {"datasets/QuestionResourceController/getAllSortedQuestions/answer.yml",
+            "datasets/QuestionResourceController/getAllSortedQuestions/question.yml",
+            "datasets/QuestionResourceController/getAllSortedQuestions/questionHasTag.yml",
+            "datasets/QuestionResourceController/getAllSortedQuestions/reputation.yml",
+            "datasets/QuestionResourceController/getAllSortedQuestions/role.yml",
+            "datasets/QuestionResourceController/getAllSortedQuestions/tag.yml",
+            "datasets/QuestionResourceController/getAllSortedQuestions/user.yml",
+            "datasets/QuestionResourceController/getAllSortedQuestions/voteQuestion.yml",
+            "datasets/QuestionResourceController/comment.yml",
+            "datasets/QuestionResourceController/commentQuestion.yml"
+    })
+    void getAllSortedQuestionViewDto() throws Exception {
+
+        // Проверяем возвращаемый Response.
+        // В датасетах 5 вопросов c id 100-105,
+        // TagId = 100 относится к вопросам 100, 101, 102
+        // TagId = 103 относится к вопросам 104, 105
+        // Игнорим тег 101, который имеется у вопросов 100 и 103
+        // Вопрос c id 102 имеет поле isDeleted = true
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sorted/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103&ignoredTags=101")
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(3))
+                .andExpect(jsonPath("$.totalResultCount").value(5))
+                .andExpect(jsonPath("$.itemsOnPage").value(2))
+                //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
+                .andExpect(jsonPath("$.items.[0].id").value(101))
+                .andExpect(jsonPath("$.items.[1].id").value(105))
+                //Проверяем, что значения полей QuestionViewDto, например, с id 101 заполнены
+                .andExpect(jsonPath("$.items.[0].title").value("test title by question 101"))
+                .andExpect(jsonPath("$.items.[0].authorId").value(101))
+                .andExpect(jsonPath("$.items.[0].authorReputation").value(2))
+                .andExpect(jsonPath("$.items.[0].authorName").value("User with id 101"))
+                .andExpect(jsonPath("$.items.[0].authorImage").value("image101"))
+                .andExpect(jsonPath("$.items.[0].description").value("test description by question 101"))
+                .andExpect(jsonPath("$.items.[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items.[0].countAnswer").value(1))
+                .andExpect(jsonPath("$.items.[0].countValuable").value(-1))
+                //Проверяем, что нужные QuestionViewDto также выгрузили список всех tags, связанных с ними
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].name").value("test tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].description").value("description for tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(102))
+                .andExpect(jsonPath("$.items.[1].listTagDto.[0].id").value(103));
+    }
+
+    @Test
     @DataSet(value = {"datasets/QuestionResourceController/getAllQuestionDtoDatasets/answer.yml",
             "datasets/QuestionResourceController/getAllQuestionDtoDatasets/question.yml",
             "datasets/QuestionResourceController/getAllQuestionDtoDatasets/questionHasTag.yml",

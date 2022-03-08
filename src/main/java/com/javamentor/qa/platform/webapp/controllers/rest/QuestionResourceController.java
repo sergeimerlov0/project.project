@@ -22,13 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -188,6 +182,23 @@ public class QuestionResourceController {
         paginationMap.put("itemsOnPage", itemsOnPage);
         paginationMap.put("trackedTags", trackedTags);
         paginationMap.put("ignoredTags", ignoredTags);
+
+        return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
+
+    @GetMapping("/sorted")
+    @ApiOperation(value = "Получение всех QuestionDto с пагинацией и сортировкой по голосам, ответам и просмотрам",
+            tags = {"Get All Sorted QuestionDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Все QuestionDto получены"),
+            @ApiResponse(code = 400, message = "QuestionDto не найдены")
+    })
+    public ResponseEntity<PageDto<QuestionViewDto>> getAllSortedQuestionDto(@RequestParam int currentPageNumber,
+                                                                            @RequestParam(defaultValue = "10") int itemsOnPage) {
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "AllQuestionDtoByVoitAndAnswerAndView");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
 
         return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }

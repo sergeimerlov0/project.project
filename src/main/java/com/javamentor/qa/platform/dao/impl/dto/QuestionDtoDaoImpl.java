@@ -24,7 +24,8 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 
         return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto." +
                 "QuestionDto(question.id, question.title, user.id, " +
-                "(SELECT sum (reputation.count) from Reputation reputation where reputation.author.id = user.id), " +
+                "(SELECT case when sum (reputation.count) is null then 0L else sum (reputation.count)" +
+                " end from Reputation reputation where reputation.author.id = :id)," +
                 "user.fullName, user.imageLink, " +
                 "question.description, 0L, " +
                 "(SELECT count (*) from Answer answer where answer.question.id = :id and answer.isDeleted = false ), " +
