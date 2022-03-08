@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -18,17 +18,19 @@ public class GetAllTagsViewDto implements PaginationDtoAble<TagViewDto> {
 
     @Override
     public List<TagViewDto> getItems(Map<String, Object> param) {
-        LocalDate oneDay = LocalDate.now().minusDays(1L);
-        LocalDate weekDays = LocalDate.now().minusDays(7L);
+        LocalDateTime oneDay = LocalDateTime.now().minusDays(1L);
+        LocalDateTime weekDays = LocalDateTime.now().minusDays(7L);
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto." +
                         "TagViewDto(tag.id, tag.name, tag.description, " +
                         "(select count (ques.id) from Question ques), " +
-                        "(select count (ques.id) from Question ques where ques.persistDateTime between '" + oneDay + "' and current_date )," +
-                        "(select count (ques.id) from Question ques where ques.persistDateTime between '" + weekDays + "' and current_date))" +
+                        "(select count (ques.id) from Question ques where ques.persistDateTime between :day and current_date )," +
+                        "(select count (ques.id) from Question ques where ques.persistDateTime between :week and current_date))" +
                         "from Tag tag " +
                         "join tag.questions as question", TagViewDto.class)
+                .setParameter("day", oneDay)
+                .setParameter("week", weekDays)
                 .setFirstResult((currentPageNumber - 1) * itemsOnPage)
                 .setMaxResults(itemsOnPage)
                 .getResultList();

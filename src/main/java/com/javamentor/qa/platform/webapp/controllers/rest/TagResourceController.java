@@ -8,7 +8,6 @@ import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.PaginationServiceDto;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
@@ -42,7 +41,6 @@ public class TagResourceController {
     private final TagDtoService tagDtoService;
     private final UserService userService;
     private final TagService tagService;
-    private final PaginationServiceDto<TagViewDto> paginationServiceDto;
 
     @ApiOperation(value = "Получение списка из 10 тэгов с " +
             "наибольшим количеством вопросов с данным тэгом", tags = {"Получение списка тэгов"})
@@ -154,6 +152,6 @@ public class TagResourceController {
         paginationMap.put("class", "TagsViewsSortedByName");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
-        return ResponseEntity.ok(paginationServiceDto.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+        return ResponseEntity.ok(tagDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 }
