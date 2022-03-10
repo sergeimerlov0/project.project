@@ -147,11 +147,13 @@ public class TagResourceController {
             @ApiResponse(code = 400, message = "TagViewDto not exist")})
     @GetMapping("/name")
     public ResponseEntity<PageDto<TagViewDto>> getTagsSorted(@RequestParam("page") int currentPageNumber,
-                                                             @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage) {
+                                                             @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage,
+                                                             @RequestParam(value = "filter", defaultValue = "", required = false) String filter) {
         Map<String, Object> paginationMap = new HashMap<>();
         paginationMap.put("class", "TagsViewsSortedByName");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
+        paginationMap.put("filter", filter);
         return ResponseEntity.ok(tagDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 }

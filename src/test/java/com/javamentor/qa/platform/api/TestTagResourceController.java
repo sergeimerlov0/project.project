@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -185,5 +186,48 @@ public class TestTagResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items[2].name", is("tag102")))
                 .andExpect(jsonPath("$.items[3].name", is("tag103")))
                 .andExpect(jsonPath("$.items[4].name", is("tag104")));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/TagResourceController/getTagsSorted/tag.yml",
+            "datasets/TagResourceController/getTagsSorted/question.yml",
+            "datasets/TagResourceController/getTagsSorted/user.yml",
+            "datasets/TagResourceController/getTagsSorted/role.yml",
+            "datasets/TagResourceController/getTagsSorted/questionHasTag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void getTagsSortedWithFilter() throws Exception {
+        //список тегов с фильтром "JavA" без учета регистра
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?page=1")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111"))
+                        .param("filter", "JavA"))
+                .andExpect((status().isOk()))
+                .andExpect(jsonPath("$.totalResultCount", is(16)))
+                .andExpect(jsonPath("$.items.length()", is(10)))
+                .andExpect(jsonPath("$.items[0].name", is("tag100")))
+                .andExpect(jsonPath("$.items[4].name", is("tag104")))
+                .andExpect(jsonPath("$.items[7].name", is("Java")))
+                .andExpect(jsonPath("$.items[9].name", is("tag109")));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/TagResourceController/getTagsWithString/tag.yml",
+            "datasets/TagResourceController/getTagsWithString/question.yml",
+            "datasets/TagResourceController/getTagsWithString/user.yml",
+            "datasets/TagResourceController/getTagsWithString/role.yml",
+            "datasets/TagResourceController/getTagsWithString/questionHasTag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    public void getTagsWithStringWithFilter() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/latter?string=tag10")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111"))
+                        .param("filter", "jaVaScript"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$[0].name", is("tag100")))
+                .andExpect(jsonPath("$[1].name", is("JavaScript")))
+                .andExpect(jsonPath("$[2].name", is("tag102")))
+                .andExpect(jsonPath("$[3].name", is("tag103")));
+
     }
 }
