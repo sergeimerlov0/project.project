@@ -20,22 +20,24 @@ public class GetAllTagsViewDto implements PaginationDtoAble<TagViewDto> {
     public List<TagViewDto> getItems(Map<String, Object> param) {
         LocalDateTime oneDay = LocalDateTime.now().minusDays(1L);
         LocalDateTime weekDays = LocalDateTime.now().minusDays(7L);
-        int currentPageNumber = (int) param.get("currentPageNumber");
-        int itemsOnPage = (int) param.get("itemsOnPage");
+        int currentPageNumber = Integer.parseInt(String.valueOf(param.get("currentPageNumber")));
+        int itemsOnPage = Integer.parseInt(String.valueOf(param.get("itemsOnPage")));
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto." +
                         "TagViewDto(tag.id, tag.name, tag.description, " +
                         "(select count (ques.id) from Question ques), " +
                         "(select count (ques.id) from Question ques where ques.persistDateTime between :day and current_date )," +
                         "(select count (ques.id) from Question ques where ques.persistDateTime between :week and current_date))" +
                         "from Tag tag " +
-                        "join tag.questions as question", TagViewDto.class)
+                        "join tag.questions as question" +
+                        "and WHERE (lower(tag.name) LIKE lower(CONCAT('%', :filter, '%')))" +
+                        "group by tag.id" , TagViewDto.class)
+                .setParameter("filter", param.get("filter"))
                 .setParameter("day", oneDay)
                 .setParameter("week", weekDays)
                 .setFirstResult((currentPageNumber - 1) * itemsOnPage)
                 .setMaxResults(itemsOnPage)
                 .getResultList();
     }
-
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
         return ((Long) entityManager.createQuery(
