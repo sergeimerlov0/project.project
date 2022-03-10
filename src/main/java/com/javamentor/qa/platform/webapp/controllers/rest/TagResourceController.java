@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.dto.TagViewDto;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
@@ -140,15 +141,15 @@ public class TagResourceController {
         return new ResponseEntity<>(tagDtoService.getTagsTop10WithString(partTag), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get tags sorted by name with pagination", tags = {"GetAllTagsDto"})
+    @ApiOperation(value = "Get tags sorted by name with pagination", tags = {"GetAllTagsViewDto"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = PageDto.class),
-            @ApiResponse(code = 400, message = "TagDto not exist")})
+            @ApiResponse(code = 400, message = "TagViewDto not exist")})
     @GetMapping("/name")
-    public ResponseEntity<PageDto<TagDto>> getTagsSorted(@RequestParam("page") int currentPageNumber,
-                                                         @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage) {
+    public ResponseEntity<PageDto<TagViewDto>> getTagsSorted(@RequestParam("page") int currentPageNumber,
+                                                             @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage) {
         Map<String, Object> paginationMap = new HashMap<>();
-        paginationMap.put("class", "TagsSortedByName");
+        paginationMap.put("class", "TagsViewsSortedByName");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
         return ResponseEntity.ok(tagDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
