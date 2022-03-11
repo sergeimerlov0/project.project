@@ -1,32 +1,31 @@
 const model = [
-  {
-    type: 'logo',
-    value: 'Kata',
-    imageStyles: {
-      width: '120px',
-      height: '40px'
+    {
+        type: 'logo',
+        value: 'Kata',
+        imageStyles: {
+            width: '120px',
+            height: '40px'
+        }
+    },
+    {
+        type: 'topnav', value: [
+            'About',
+            'Products',
+            'For Teams'
+        ]
+    },
+    {type: 'search'},
+    {
+        type: 'auth', value: [
+            'Logout'
+        ]
     }
-  },
-  {
-    type: 'topnav', value: [
-      'About',
-      'Products',
-      'For Teams'
-    ]
-  },
-  {type: 'search'},
-  {
-    type: 'auth', value: [
-      'Log in',
-      'Sign up'
-    ]
-  }
 ]
 
 const $header = document.querySelector('#header')
 
 function header() {
-  let html = `
+    let html = `
     <div class="container">
       <div class="row">
         <div style="display: flex;
@@ -39,25 +38,25 @@ function header() {
       </div>
     </div>
   `
-  $header.insertAdjacentHTML('beforeend', html)
+    $header.insertAdjacentHTML('beforeend', html)
 }
 
 header()
 const $header__inner = document.querySelector('#header__inner')
 model.forEach(block => {
-  let html = ''
+    let html = ''
 
-  if (block.type === 'topnav') {
-    html = topnav(block)
-  } else if (block.type === 'auth') {
-    html = auth(block)
-  } else if (block.type === 'logo') {
-    html = logo(block)
-  } else if (block.type === 'search') {
-    html = search(block)
-  }
+    if (block.type === 'topnav') {
+        html = topnav(block)
+    } else if (block.type === 'auth') {
+        html = auth(block)
+    } else if (block.type === 'logo') {
+        html = logo(block)
+    } else if (block.type === 'search') {
+        html = search(block)
+    }
 
-  $header__inner.insertAdjacentHTML('beforeend', html)
+    $header__inner.insertAdjacentHTML('beforeend', html)
 })
 
 const h = document.getElementById("header");
@@ -65,7 +64,7 @@ h.style.borderBottom = "1px solid #f5f5f5";
 h.className = "container-fluid fixed-top bg-light";
 
 function logo(block) {
-  return `
+    return `
       <div class="col-lg-2">
         <a style="float: left;
                   width: 120px;"
@@ -77,14 +76,14 @@ function logo(block) {
 }
 
 function topnav(block) {
-  let html = ''
-  block.value.forEach(item => {
-    html += `
+    let html = ''
+    block.value.forEach(item => {
+        html += `
       <a href="#" class="topnav__link text-dark">${item}</a>
     `
-  })
+    })
 
-  return `
+    return `
     <div class="col-lg-3">
       <nav style="display: flex;
                   align-items: center;
@@ -97,7 +96,7 @@ function topnav(block) {
 }
 
 function search(block) {
-  return `
+    return `
   <style>.search button:before {
       content: "🔍";
       font-size: 16px;
@@ -132,16 +131,21 @@ function search(block) {
 }
 
 function auth(block) {
-  let html = ''
-  block.value.forEach(item => {
-    html += `
+    let html = ''
+    block.value.forEach(item => {
+        html += `
       <button class="btn btn-small btn-primary">${item}</button>
     `
-  })
+    })
 
-  return `
+    return `
     <div class="col-lg-2">
-      ${html}
+      
+      <div>
+    <a href="/login" type="button" class="btn btn-small btn-primary" id="logout"'>Выйти</a>
+    </a>
+</div>
+    
     </div>
   `
 }
