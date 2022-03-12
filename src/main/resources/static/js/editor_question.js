@@ -26,20 +26,17 @@ let quill = new Quill('#document-full', {
 });
 
 let partTag = "";
-let typedLetter = "";
 let cardWrapper = null;
 let newString = "";
 let inputString = "";
-let format = "!@~$%^&*()\[\]{~}|.<>\/\"\'?";
-let errorSymbols = "\`\"\|\\";
+let format = "`~!@~$%^&*()\[\]{}|.<>\/\"\'?";
 var flagSuccess = 0;
-var count = 0;
+
 const titleInput = document.querySelector('#inputQuestion');
 const tagInput = document.querySelector('#inputTags');
 
 document.getElementById('inputTags').addEventListener('keyup', function (event) {
     inputString = event.target.value;
-    typedLetter = event.key;
     partTag = inputString.toLowerCase();
 
     if (inputString.includes(",") || inputString.includes(" ") || inputString.includes(";")) {
@@ -49,7 +46,7 @@ document.getElementById('inputTags').addEventListener('keyup', function (event) 
     for (let t = 0; t < format.length; t++) {
         //некоторые знаки (!@$%^&*()<>?~|) двоятся (пользователь печатает один знак, а сообщений выходит два)
 
-        if (inputString.includes(format.charAt(t))) {
+        if (inputString.endsWith(format.charAt(t))) {
             let el = document.getElementById('forTagAlert');
             removeAllChild(el);
             document.getElementById('forTagAlert').appendChild(warnMsg("Разделителем между метками может быть запятая, пробел или точка с запятой!", "alert-warning")
@@ -84,12 +81,12 @@ function lastSeparatorPosition(string) {
 }
 
 function getTagList(partTag) {
-    for(let t = 0; t < errorSymbols.length; t++) {
-        if (partTag.includes(errorSymbols.charAt(t))) {
+    for(let t = 0; t < format.length; t++) {
+        if (partTag.includes(format.charAt(t)) || partTag === "") {
             return;
         }
-
     }
+
     return  fetch('http://localhost:8091/api/user/tag/latter?string=' + partTag, {
         headers: {
             'Authorization': 'Bearer ' + window.token,
@@ -110,13 +107,16 @@ function checkError(response) {
 
 function renderTags(tagsJson) {
     removeCardWrapper();
-    if (tagsJson.length === 0 || tagsJson.length > 10 ) {
+    if (tagsJson.length === 0) {
         removeCardWrapper();
         return;
+    } else if (tagsJson.length > 5) {
+        tagsJson.length = 5;
     }
     cardWrapper = document.createElement('div');
     cardWrapper.className = "card-group";
-    for (let i = 0, y = 1; i < 5, y < 6; i++, y++) {
+
+    for (let i = 0, y = 1; i < tagsJson.length, y < tagsJson.length + 1; i++, y++) {
         cardWrapper.innerHTML += `<div class="card">
             <div class="card-body">
             <p id="tagName_${y}"  class="card-title"><strong>${tagsJson[i].name}</strong></p>
