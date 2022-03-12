@@ -186,4 +186,96 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.totalResultCount").value(4));
     }
 
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getUserByRegWithFilter/role.yml",
+            "datasets/UserResourceController/getUserByRegWithFilter/users.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void getUserByRegWithFilter() throws Exception {
+        //email и пароль юзера
+        email = "FilterTest1Kata@mail.ru";
+        password = "password";
+
+        //пытаемся получить список пользователей с фильтром "imi" без учета регистра в поле имени
+        mvc.perform(get("/api/user/new")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("page", "1")
+                        .param("items", "3")
+                        .param("filter", "ImI")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()").value(2));
+
+        //пытаемся получить список пользователей с фильтром "test" без учета регистра в поле почты
+        mvc.perform(get("/api/user/new")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("page", "1")
+                        .param("items", "3")
+                        .param("filter", "tEsT")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()").value(2));
+
+        //пытаемся получить список пользователей с фильтром "kata" без учета регистра в поле имени или почты
+        mvc.perform(get("/api/user/new")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("page", "1")
+                        .param("items", "5")
+                        .param("filter", "kAtA")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()").value(3));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getAllUserDtoSortVoteWithFilter/answer.yml",
+            "datasets/UserResourceController/getAllUserDtoSortVoteWithFilter/question.yml",
+            "datasets/UserResourceController/getAllUserDtoSortVoteWithFilter/reputation.yml",
+            "datasets/UserResourceController/getAllUserDtoSortVoteWithFilter/role.yml",
+            "datasets/UserResourceController/getAllUserDtoSortVoteWithFilter/user.yml",
+            "datasets/UserResourceController/getAllUserDtoSortVoteWithFilter/voteAnswer.yml",
+            "datasets/UserResourceController/getAllUserDtoSortVoteWithFilter/voteQuestion.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void getAllUserSortVoteWithFilter() throws Exception{
+        //email и пароль юзера
+        email = "3user@mail.com";
+        password = "3111";
+
+        //пытаемся получить список пользователей с фильтром "test" без учета регистра в поле имени
+        mvc.perform(get("/api/user/vote")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("currentPageNumber", "1")
+                        .param("itemsOnPage", "5")
+                        .param("filter", "tESt")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()").value(3));
+
+        //пытаемся получить список пользователей с фильтром "user" без учета регистра в поле почты
+        mvc.perform(get("/api/user/vote")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("currentPageNumber", "1")
+                        .param("itemsOnPage", "5")
+                        .param("filter", "UseR")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()").value(3));
+
+        //пытаемся получить список пользователей с фильтром "ru" без учета регистра в поле имени или почты
+        mvc.perform(get("/api/user/vote")
+                        .header("Authorization", getJwtToken(email, password))
+                        .param("currentPageNumber", "1")
+                        .param("itemsOnPage", "5")
+                        .param("filter", "rU")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()").value(2));
+    }
 }
