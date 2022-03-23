@@ -23,6 +23,8 @@ public class AllQuestionsByVoteAndAnswerAndViewByWeek implements PaginationDtoAb
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
+        List<Long> trackedTags = ((List<Long>) param.get("tracked"));
+        List<Long> ignoredTags = ((List<Long>) param.get("ignored"));
         return entityManager.createQuery(
                 "SELECT DISTINCT NEW com.javamentor.qa.platform.models.dto.QuestionViewDto" +
                         "(q.id, q.title, q.user.id, " +
@@ -38,8 +40,11 @@ public class AllQuestionsByVoteAndAnswerAndViewByWeek implements PaginationDtoAb
                         "WHERE q.id IN (SELECT q.id From Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
                         "AND q.id NOT IN (SELECT q.id From Question q JOIN q.tags tgs WHERE tgs.id IN :ignored) " +
                         "AND q.persistDateTime BETWEEN :week AND current_date " +
+                        "AND question.isDeleted = false " +
                         "ORDER BY countAnswer + countVoite ASC"
                         , QuestionViewDto.class)
+                .setParameter("ignored", ignoredTags)
+                .setParameter("tracked", trackedTags)
                 .setParameter("week", LocalDateTime.now().minusDays(7L))
                 .getResultStream()
                 .skip((long) itemsOnPage * (currentPageNumber - 1))

@@ -253,6 +253,7 @@ public class QuestionResourceController {
         PageDto<QuestionViewDto> pageDto = questionDtoService.getPageDto(page, items, objectMap);
         return ResponseEntity.ok().body(pageDto);
     }
+
     @GetMapping("/sortedByWeek")
     @ApiOperation(value = "Получение всех QuestionDto с пагинацией и сортировкой по голосам, ответам и просмотрам за неделю",
             tags = {"Get Sorted by Week QuestionDto"})
@@ -261,11 +262,15 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "QuestionDto не найдены")
     })
     public ResponseEntity<PageDto<QuestionViewDto>> getAllQuestionsByVoteAndAnswerByWeek(@RequestParam int currentPageNumber,
-                                                                            @RequestParam(defaultValue = "10") int itemsOnPage) {
+                                                                                         @RequestParam(defaultValue = "10") int itemsOnPage,
+                                                                                         @RequestParam(required = false) List<Long> trackedTags,
+                                                                                         @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags) {
         Map<String, Object> paginationMap = new HashMap<>();
         paginationMap.put("class", "AllQuestionsByVoteAndAnswerByWeek");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
+        paginationMap.put("tracked", trackedTags);
+        paginationMap.put("ignored", ignoredTags);
 
         return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }

@@ -957,7 +957,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     void getAllQuestionsByVoteAndAnswerByWeek() throws Exception {
 
         // добавить описание, что делает тест
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=1&itemsOnPage=2")
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
@@ -968,6 +968,9 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].id").value(100))
                 .andExpect(jsonPath("$.items.[1].id").value(101));
 
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=1&itemsOnPage=2&trackedTags=255,180&ignoredTags=305")
+                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
     }
 
 }
