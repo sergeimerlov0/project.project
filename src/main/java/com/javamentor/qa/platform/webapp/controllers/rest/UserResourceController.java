@@ -80,6 +80,21 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 
+    @GetMapping("/reputation")
+    @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированные по репутации")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "UserDTO не найдены")
+    })
+    public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortReputation(@RequestParam int currentPageNumber,
+                                                                        @RequestParam(defaultValue = "10") int itemsOnPage) {
+        Map<String, Object> paginationMap =new HashMap<>();
+        paginationMap.put("class", "AllUsersSortedByReputation");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+        return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
+
     @PutMapping(value = "/{userId}/change/password")
     @ApiOperation("Смена пароля пользователя с шифрованием")
     @ApiResponses(value = {
