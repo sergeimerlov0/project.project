@@ -1,10 +1,6 @@
 package com.javamentor.qa.platform.models.entity.question;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,8 +12,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "related_tag")
 public class RelatedTag implements Serializable {
-
     private static final long serialVersionUID = 2976172897344367292L;
+
     @Id
     @GeneratedValue(generator = "RelatedTag_seq")
     private Long id;

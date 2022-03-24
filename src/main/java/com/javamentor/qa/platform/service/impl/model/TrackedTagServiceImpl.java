@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service

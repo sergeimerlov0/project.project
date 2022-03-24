@@ -1,14 +1,10 @@
 package com.javamentor.qa.platform.models.entity;
 
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -22,12 +18,11 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "comment")
 public class Comment implements Serializable {
-
     private static final long serialVersionUID = -5103534612783672462L;
+
     @Id
     @GeneratedValue(generator = "Comment_seq")
     private Long id;
-
 
     @NotNull
     @Column

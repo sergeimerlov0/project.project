@@ -1,12 +1,8 @@
 package com.javamentor.qa.platform.models.entity.chat;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -18,7 +14,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "chat")
 public class Chat {
-
     @Id
     @GeneratedValue(generator = "Chat_seq")
     private Long id;
@@ -34,7 +29,6 @@ public class Chat {
     @Enumerated
     @Column(columnDefinition = "int2")
     private ChatType chatType;
-
 
     public Chat(ChatType chatType) {
         this.chatType = chatType;

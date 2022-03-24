@@ -4,16 +4,11 @@ import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserFavoriteQuestion;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -28,8 +23,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "question")
 public class Question implements Serializable {
-
     private static final long serialVersionUID = -4612026867697897418L;
+
     @Id
     @GeneratedValue(generator = "Question_seq")
     private Long id;

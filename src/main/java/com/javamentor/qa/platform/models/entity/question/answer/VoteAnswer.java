@@ -1,16 +1,11 @@
 package com.javamentor.qa.platform.models.entity.question.answer;
 
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
-
 
 @Entity
 @Table(name = "votes_on_answers", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "answer_id"})})
@@ -19,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VoteAnswer {
-
     @Id
     @GeneratedValue(generator = "AnswerVote_seq")
     private Long id;

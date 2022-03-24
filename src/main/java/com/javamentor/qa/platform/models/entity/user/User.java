@@ -1,16 +1,11 @@
 package com.javamentor.qa.platform.models.entity.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,13 +27,11 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "user_entity")
 public class User implements UserDetails {
-
     private static final long serialVersionUID = 8086496705293852501L;
 
     @Id
     @GeneratedValue(generator = "User_seq")
     private Long id;
-
 
     @Column(name = "email")
     @NonNull

@@ -2,11 +2,7 @@ package com.javamentor.qa.platform.models.entity;
 
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import javax.persistence.*;
 
 @Entity
@@ -16,7 +12,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "bookmarks")
 public class BookMarks {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

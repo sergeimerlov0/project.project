@@ -1,22 +1,10 @@
 package com.javamentor.qa.platform.models.entity.question;
 
 import com.javamentor.qa.platform.exception.ConstrainException;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -30,8 +18,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "tag")
 public class Tag implements Serializable {
-
     private static final long serialVersionUID = 6264105282197120461L;
+
     @Id
     @GeneratedValue(generator = "Tag_seq")
     private Long id;
@@ -82,5 +70,4 @@ public class Tag implements Serializable {
     public int hashCode() {
         return Objects.hash(id, name, description, persistDateTime);
     }
-    
 }

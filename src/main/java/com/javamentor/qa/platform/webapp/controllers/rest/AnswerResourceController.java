@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
@@ -37,13 +36,10 @@ import java.util.Optional;
 @RequestMapping("api/user/question/{questionId}/answer")
 @Api(value = "Работа с ответами на вопросы", tags = {"Ответ на вопрос"})
 public class AnswerResourceController {
-
     private final AnswerService answerService;
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
     private final QuestionService questionService;
-    private final ReputationService reputationService;
-    private final UserService userService;
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {

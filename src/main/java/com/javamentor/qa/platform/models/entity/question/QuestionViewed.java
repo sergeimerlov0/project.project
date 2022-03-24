@@ -1,17 +1,12 @@
 package com.javamentor.qa.platform.models.entity.question;
 
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
 
 @Entity
 @Table(name = "question_viewed")
@@ -20,8 +15,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionViewed implements Serializable {
-
-
     @Id
     @GeneratedValue(generator = "QuestionViewed_seq")
     private Long id;
@@ -37,7 +30,6 @@ public class QuestionViewed implements Serializable {
     @Column(name = "persist_date", updatable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     private LocalDateTime localDateTime = LocalDateTime.now();
-
 
     @Override
     public boolean equals(Object o) {
@@ -55,6 +47,3 @@ public class QuestionViewed implements Serializable {
         return Objects.hash(id, user, question, localDateTime);
     }
 }
-
-
-

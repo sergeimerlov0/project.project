@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.models.dto;
 
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnswerDto {
-
     private Long id;
     private Long userId;
     private Long userReputation;
@@ -26,5 +24,4 @@ public class AnswerDto {
     private Boolean isHelpful;
     private LocalDateTime dateAccept;
     private Long countValuable;
-
 }

@@ -4,10 +4,7 @@ import com.javamentor.qa.platform.exception.ApiRequestException;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -18,8 +15,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "comment_answer")
 public class CommentAnswer implements Serializable {
-
     private static final long serialVersionUID = 1350517718937674427L;
+
     @Id
     private Long id;
 

@@ -3,13 +3,9 @@ package com.javamentor.qa.platform.models.entity.user.reputation;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -25,6 +21,7 @@ import java.util.Objects;
 @Table(name = "reputation")
 public class Reputation implements Serializable {
     private static final long serialVersionUID = 7177182244933788025L;
+
     @Id
     @GeneratedValue(generator = "Reputation_seq")
     private Long id;
@@ -58,7 +55,6 @@ public class Reputation implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Answer.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "answer_id")
     private Answer answer;
-
 
     @Override
     public boolean equals(Object o) {

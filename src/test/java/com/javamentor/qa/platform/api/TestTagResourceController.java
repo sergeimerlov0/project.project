@@ -5,25 +5,20 @@ import com.javamentor.qa.platform.AbstractApiTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import java.util.Arrays;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestTagResourceController extends AbstractApiTest {
-
     @Test
     @DataSet(value = {
-            "datasets/TagResourceController/tagRelatedDatasets/tag.yml",
-            "datasets/TagResourceController/tagRelatedDatasets/question.yml",
-            "datasets/TagResourceController/tagRelatedDatasets/user.yml",
-            "datasets/TagResourceController/tagRelatedDatasets/role.yml",
-            "datasets/TagResourceController/tagRelatedDatasets/questionHasTag.yml"
+            "datasets/TagResourceController/getRelatedTagDto/tag.yml",
+            "datasets/TagResourceController/getRelatedTagDto/question.yml",
+            "datasets/TagResourceController/getRelatedTagDto/user.yml",
+            "datasets/TagResourceController/getRelatedTagDto/role.yml",
+            "datasets/TagResourceController/getRelatedTagDto/questionHasTag.yml"
     }, cleanBefore = true, cleanAfter = true)
     public void getRelatedTagDto() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/related")
@@ -47,18 +42,21 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/TagResourceController/tagTrackedAndIgnoredDatasets/user.yml",
-            "datasets/TagResourceController/tagTrackedAndIgnoredDatasets/role.yml",
-            "datasets/TagResourceController/tagTrackedAndIgnoredDatasets/tag.yml",
-            "datasets/TagResourceController/tagTrackedAndIgnoredDatasets/tagIgnored.yml",
-            "datasets/TagResourceController/tagTrackedAndIgnoredDatasets/tagTracked.yml"
+            "datasets/TagResourceController/getTrackedAndIgnoredTagDto/user.yml",
+            "datasets/TagResourceController/getTrackedAndIgnoredTagDto/role.yml",
+            "datasets/TagResourceController/getTrackedAndIgnoredTagDto/tag.yml",
+            "datasets/TagResourceController/getTrackedAndIgnoredTagDto/tagIgnored.yml",
+            "datasets/TagResourceController/getTrackedAndIgnoredTagDto/tagTracked.yml"
     }, cleanBefore = true, cleanAfter = true)
     public void getTrackedAndIgnoredTagDto() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/ignored")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
-        Assertions.assertTrue(em.createQuery("select t.ignoredTag.id from IgnoredTag t " +
-                        "where t.user.id=:id", Long.class)
+        Assertions.assertTrue(em.createQuery(
+                "SELECT t.ignoredTag.id " +
+                        "FROM IgnoredTag t " +
+                        "WHERE t.user.id = :id",
+                        Long.class)
                 .setParameter("id", 100L)
                 .getResultList()
                 .containsAll(Arrays.asList(100L, 101L)));
@@ -66,8 +64,11 @@ public class TestTagResourceController extends AbstractApiTest {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/tracked")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
-        Assertions.assertTrue(em.createQuery("select t.trackedTag.id from TrackedTag t " +
-                        "where t.user.id=:id", Long.class)
+        Assertions.assertTrue(em.createQuery(
+                "SELECT t.trackedTag.id " +
+                        "FROM TrackedTag t " +
+                        "WHERE t.user.id = :id",
+                        Long.class)
                 .setParameter("id", 100L)
                 .getResultList()
                 .containsAll(Arrays.asList(102L, 103L)));
@@ -75,18 +76,21 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/TagResourceController/addTrackedAndIgnoredTagDatasets/role.yml",
-            "datasets/TagResourceController/addTrackedAndIgnoredTagDatasets/user.yml",
-            "datasets/TagResourceController/addTrackedAndIgnoredTagDatasets/tag.yml",
-            "datasets/TagResourceController/addTrackedAndIgnoredTagDatasets/tagIgnored.yml",
-            "datasets/TagResourceController/addTrackedAndIgnoredTagDatasets/tagTracked.yml"
+            "datasets/TagResourceController/testAddTrackedAndIgnoredTag/role.yml",
+            "datasets/TagResourceController/testAddTrackedAndIgnoredTag/user.yml",
+            "datasets/TagResourceController/testAddTrackedAndIgnoredTag/tag.yml",
+            "datasets/TagResourceController/testAddTrackedAndIgnoredTag/tagIgnored.yml",
+            "datasets/TagResourceController/testAddTrackedAndIgnoredTag/tagTracked.yml"
     }, cleanBefore = true, cleanAfter = true)
     public void testAddTrackedAndIgnoredTag() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/102/ignored")
                         .header("Authorization", getJwtToken("123@mail.com", "password")))
                 .andExpect(status().isOk());
-        Assertions.assertTrue(em.createQuery("select t.ignoredTag.id from IgnoredTag t " +
-                        "where t.user.id=:id", Long.class)
+        Assertions.assertTrue(em.createQuery(
+                "SELECT t.ignoredTag.id " +
+                        "FROM IgnoredTag t " +
+                        "WHERE t.user.id = :id",
+                        Long.class)
                 .setParameter("id", 101L)
                 .getResultList()
                 .containsAll(Arrays.asList(100L, 101L, 102L)));
@@ -94,8 +98,11 @@ public class TestTagResourceController extends AbstractApiTest {
         mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/105/tracked")
                         .header("Authorization", getJwtToken("123@mail.com", "password")))
                 .andExpect(status().isOk());
-        Assertions.assertTrue(em.createQuery("select t.trackedTag.id from TrackedTag t " +
-                        "where t.user.id=:id", Long.class)
+        Assertions.assertTrue(em.createQuery(
+                "SELECT t.trackedTag.id " +
+                        "FROM TrackedTag t " +
+                        "WHERE t.user.id = :id",
+                        Long.class)
                 .setParameter("id", 101L)
                 .getResultList()
                 .containsAll(Arrays.asList(103L, 104L, 105L)));
@@ -123,11 +130,11 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/TagResourceController/getTagsWithString/tag.yml",
-            "datasets/TagResourceController/getTagsWithString/question.yml",
-            "datasets/TagResourceController/getTagsWithString/user.yml",
-            "datasets/TagResourceController/getTagsWithString/role.yml",
-            "datasets/TagResourceController/getTagsWithString/questionHasTag.yml"
+            "datasets/TagResourceController/getTagsWithString_ShouldReturn10Tags/tag.yml",
+            "datasets/TagResourceController/getTagsWithString_ShouldReturn10Tags/question.yml",
+            "datasets/TagResourceController/getTagsWithString_ShouldReturn10Tags/user.yml",
+            "datasets/TagResourceController/getTagsWithString_ShouldReturn10Tags/role.yml",
+            "datasets/TagResourceController/getTagsWithString_ShouldReturn10Tags/questionHasTag.yml"
     }, cleanBefore = true, cleanAfter = true)
     public void getTagsWithString_ShouldReturn10Tags() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/latter?string=tag")
@@ -156,7 +163,7 @@ public class TestTagResourceController extends AbstractApiTest {
             "datasets/TagResourceController/getTagsSorted/questionHasTag.yml"
     }, cleanBefore = true, cleanAfter = true)
     public void getTagsSorted() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?page=1")
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?currentPageNumber=1")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect((status().isOk()))
                 .andExpect(jsonPath("$.totalResultCount", is(16)))
@@ -169,14 +176,14 @@ public class TestTagResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/TagResourceController/getTagsSorted/tag.yml",
-            "datasets/TagResourceController/getTagsSorted/question.yml",
-            "datasets/TagResourceController/getTagsSorted/user.yml",
-            "datasets/TagResourceController/getTagsSorted/role.yml",
-            "datasets/TagResourceController/getTagsSorted/questionHasTag.yml"
+            "datasets/TagResourceController/getTagsSorted_Items5Page1_ShouldReturn5Tags/tag.yml",
+            "datasets/TagResourceController/getTagsSorted_Items5Page1_ShouldReturn5Tags/question.yml",
+            "datasets/TagResourceController/getTagsSorted_Items5Page1_ShouldReturn5Tags/user.yml",
+            "datasets/TagResourceController/getTagsSorted_Items5Page1_ShouldReturn5Tags/role.yml",
+            "datasets/TagResourceController/getTagsSorted_Items5Page1_ShouldReturn5Tags/questionHasTag.yml"
     }, cleanBefore = true, cleanAfter = true)
     public void getTagsSorted_Items5Page1_ShouldReturn5Tags() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?page=1&items=5")
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?currentPageNumber=1&itemsOnPage=5")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect((status().isOk()))
                 .andExpect(jsonPath("$.totalResultCount", is(16)))
@@ -198,7 +205,7 @@ public class TestTagResourceController extends AbstractApiTest {
     }, cleanBefore = true, cleanAfter = true)
     void getTagsSortedWithFilter() throws Exception {
         //список тегов с фильтром "JavA" без учета регистра
-        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?page=1")
+        mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/name?currentPageNumber=1")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111"))
                         .param("filter", "JavA"))
                 .andExpect((status().isOk()))

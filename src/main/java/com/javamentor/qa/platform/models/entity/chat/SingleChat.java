@@ -1,13 +1,8 @@
 package com.javamentor.qa.platform.models.entity.chat;
 
-
 import com.javamentor.qa.platform.exception.ApiRequestException;
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -18,7 +13,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "single_chat")
 public class SingleChat{
-
     @Id
     private Long id;
 

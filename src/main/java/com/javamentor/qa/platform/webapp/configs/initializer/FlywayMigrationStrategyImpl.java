@@ -1,4 +1,5 @@
 package com.javamentor.qa.platform.webapp.configs.initializer;
+
 import org.flywaydb.core.Flyway;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.stereotype.Component;
