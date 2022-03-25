@@ -123,7 +123,6 @@ public class TestDataInitService {
                     questions.add(question);
                     bookmark.setQuestion(question);
                     bookmark.setUser(user);
-                    bookmark.setPersistDateTime(bookmark.getPersistDateTime());
                     bookmarkService.persist(bookmark);
                 }
             }
