@@ -13,7 +13,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <link href="//cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet"/>
+
 </head>
+
 <body>
 
 <div class="container">
@@ -47,17 +50,14 @@
                         <li>Опишите, что вы пробовали</li>
                         <li>При необходимости добавьте немного кода</li>
                         <br>
-                        <p>Больше советов в боковой панели</p><br>
+                        <p>Больше советов в боковой панели</p></br>
                         <button type="button" class="btn btn-info" data-dismiss="modal">Начать писать</button>
                     </ol>
                 </div>
-
             </div>
         </div>
     </div>
-
 </div>
-
 <div class="container">
     <div class="pt-5">
         <h2>Задать публичный вопрос</h2><br>
@@ -65,46 +65,58 @@
     <div class="row">
         <div class="col-sm-7">
             <div class="float-left">
-
-                <form action="#" th:action="@{question/add/}" th:object="${question}" method="POST">
+                <form  id="questionForm">
                     <div class="card">
                         <p><h4>Заголовок</h4></p>
                         <div class="form-group">
                             <label for="inputQuestion" class=" font-weight-bold">Будьте конкретны. Представьте, что вы
                                 задаёте
                                 вопрос другому человеку.</label>
+                            <div id="forTitleAlert">
+                            </div>
                             <input type="text" class="form-control" id="inputQuestion"
                                    placeholder="В чем заключается Ваш вопрос? Будьте конкретны." required
                                    name="inputQuestion">
                         </div>
                         <br>
-
                         <p><h4>Основная часть</h4></p>
                         <div class="form-group">
-                            <label for="inputMainPart" class=" font-weight-bold">Добавьте всю информацию, которая может
+                            <label for="document-full" class="font-weight-bold" >Добавьте всю
+                                информацию, которая может
                                 понадобиться
                                 для ответа на ваш вопрос</label>
-                            <input type="text" class="form-control" id="inputMainPart" required name="inputMainPart">
+                            <div id="forContentAlert">
+                            </div>
+                            <div class="editor-full">
+                                <div id="document-full" class="ql-scroll-y" style="height: 300px;">
+                                </div>
+                            </div>
                         </div>
                         <br>
-
                         <p><h4>Метки</h4></p>
                         <div class="form-group">
-                            <label for="inputTags" class=" font-weight-bold">Добавьте не более 5 меток, описывающих о
+                            <label for="inputTags" class=" font-weight-bold">Добавьте не более 5 меток, описывающих
+                                о
                                 чём
                                 ваш
                                 вопрос</label>
+                            <div id="forTagAlert">
+                            </div>
                             <input type="text" class="form-control" id="inputTags"
                                    placeholder="например, [sql python-3.x c++]"
-                                   required name="text1">
+                                   required spellcheck="true" name="text1">
+                            <div id="tagCard" style="display: flex; line-height: normal;">
+                            </div>
                         </div>
                     </div>
+                    <div id="forSuccessAlert"></div>
                     <br>
-                    <button type="submit" class="btn btn-primary">Проверьте Ваш вопрос</button>
+                    <button id="checkQuestion" type="button" class="btn btn-primary">Проверьте Ваш вопрос
+                    </button>
+                    <button id="sendQuestion" type="button" class="btn btn-primary">Отправить вопрос</button>
                 </form>
             </div>
         </div>
-
         <div class="col-sm-4">
             <div class="float-right">
                 <div class="card">
@@ -114,8 +126,8 @@
                     <div class="card-body">
                         <p>Сообщество здесь, чтобы помочь вам с конкретными проблемами по программированию, алгоритмам,
                             языкам программирования.
-                        </p><br>
-                        <p>Избегайте публикации вопросов, на которые невозможно дать объективный ответ.</p>
+                        <p><br>
+                        <p>Избегайте публикации вопросов, на которые невозможно дать объективный ответ.<p>
                         <div class="dropdown">
                             <button class="btn btn-light dropdown-toggle"
                                     type="button" id="dropdownMenu1" data-toggle="dropdown"
@@ -165,5 +177,8 @@
         </div>
     </div>
 </div>
+<script src="//cdn.quilljs.com/1.3.7/quill.js"></script>
+<script src="//cdn.quilljs.com/1.0.0/quill.min.js"></script>
+<script src="../static/js/editor_question.js"></script>
 </body>
 </html>
