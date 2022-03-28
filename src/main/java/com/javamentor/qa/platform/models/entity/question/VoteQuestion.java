@@ -2,7 +2,10 @@ package com.javamentor.qa.platform.models.entity.question;
 
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.io.Serializable;

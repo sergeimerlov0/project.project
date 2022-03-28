@@ -29,7 +29,8 @@ public class GetAllTagsViewDto implements PaginationDtoAble<TagViewDto> {
                         "FROM Tag tag " +
                         "JOIN tag.questions AS question " +
                         "WHERE (LOWER(tag.name) LIKE LOWER(CONCAT('%', :filter, '%')))" +
-                        "GROUP BY tag.id" ,
+                        "GROUP BY tag.id " +
+                        "ORDER BY tag.id ASC" ,
                         TagViewDto.class)
                 .setParameter("filter", param.get("filter"))
                 .setParameter("day", LocalDateTime.now().minusDays(1L))

@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.api;
 
-
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import org.junit.jupiter.api.Test;

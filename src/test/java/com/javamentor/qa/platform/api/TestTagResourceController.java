@@ -168,10 +168,10 @@ public class TestTagResourceController extends AbstractApiTest {
                 .andExpect((status().isOk()))
                 .andExpect(jsonPath("$.totalResultCount", is(16)))
                 .andExpect(jsonPath("$.items.length()", is(10)))
-                .andExpect(jsonPath("$.items[0].name", is("tag100")))
-                .andExpect(jsonPath("$.items[4].name", is("tag104")))
-                .andExpect(jsonPath("$.items[7].name", is("tag107")))
-                .andExpect(jsonPath("$.items[9].name", is("tag109")));
+                .andExpect(jsonPath("$.items[0].title", is("tag100")))
+                .andExpect(jsonPath("$.items[4].title", is("tag104")))
+                .andExpect(jsonPath("$.items[7].title", is("tag107")))
+                .andExpect(jsonPath("$.items[9].title", is("tag109")));
     }
 
     @Test
@@ -188,11 +188,11 @@ public class TestTagResourceController extends AbstractApiTest {
                 .andExpect((status().isOk()))
                 .andExpect(jsonPath("$.totalResultCount", is(16)))
                 .andExpect(jsonPath("$.items.length()", is(5)))
-                .andExpect(jsonPath("$.items[0].name", is("tag100")))
-                .andExpect(jsonPath("$.items[1].name", is("tag101")))
-                .andExpect(jsonPath("$.items[2].name", is("tag102")))
-                .andExpect(jsonPath("$.items[3].name", is("tag103")))
-                .andExpect(jsonPath("$.items[4].name", is("tag104")));
+                .andExpect(jsonPath("$.items[0].title", is("tag100")))
+                .andExpect(jsonPath("$.items[1].title", is("tag101")))
+                .andExpect(jsonPath("$.items[2].title", is("tag102")))
+                .andExpect(jsonPath("$.items[3].title", is("tag103")))
+                .andExpect(jsonPath("$.items[4].title", is("tag104")));
     }
 
     @Test
@@ -210,11 +210,9 @@ public class TestTagResourceController extends AbstractApiTest {
                         .param("filter", "JavA"))
                 .andExpect((status().isOk()))
                 .andExpect(jsonPath("$.totalResultCount", is(16)))
-                .andExpect(jsonPath("$.items.length()", is(10)))
-                .andExpect(jsonPath("$.items[0].name", is("tag100")))
-                .andExpect(jsonPath("$.items[4].name", is("tag104")))
-                .andExpect(jsonPath("$.items[7].name", is("Java")))
-                .andExpect(jsonPath("$.items[9].name", is("tag109")));
+                .andExpect(jsonPath("$.items.length()", is(2)))
+                .andExpect(jsonPath("$.items[0].title", is("JavaScript")))
+                .andExpect(jsonPath("$.items[1].title", is("Java")));
     }
 
     @Test
@@ -228,11 +226,11 @@ public class TestTagResourceController extends AbstractApiTest {
     public void getTagsWithStringWithFilter() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/latter?string=tag10")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111"))
-                        .param("filter", "jaVaScript"))
+                        .param("filter", "jaVaScript")) //вот этот фильтр нигде не учитывается
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(4)))
                 .andExpect(jsonPath("$[0].name", is("tag100")))
-                .andExpect(jsonPath("$[1].name", is("JavaScript")))
+                .andExpect(jsonPath("$[1].name", is("tag101")))
                 .andExpect(jsonPath("$[2].name", is("tag102")))
                 .andExpect(jsonPath("$[3].name", is("tag103")));
 

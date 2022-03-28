@@ -1,6 +1,9 @@
 package com.javamentor.qa.platform.models.entity.chat;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import javax.persistence.*;

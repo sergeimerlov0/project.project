@@ -42,7 +42,8 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                                 "LEFT JOIN User user ON user.id = question.user.id " +
                                 "LEFT JOIN Answer answer ON answer.question.id = :id " +
                                 "WHERE question.id = :id " +
-                                "AND question.isDeleted = false",
+                                "AND question.isDeleted = false " +
+                                "ORDER BY question.id ASC",
                         QuestionDto.class)
                 .setParameter("id", id)
                 .getResultStream()
