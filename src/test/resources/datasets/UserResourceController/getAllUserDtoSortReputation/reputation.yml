@@ -1,0 +1,90 @@
+reputation:
+  - id: 100
+    persist_date: "[DAY,NOW]"
+    author_id: 102
+    sender_id: 100
+    count: 1
+    type: 0
+    question_id: 100
+    answer_id: null
+
+  - id: 101
+    persist_date: "[DAY,NOW]"
+    author_id: 101
+    sender_id: 102
+    count: 1
+    type: 1
+    question_id: null
+    answer_id: 101
+
+  - id: 102
+    persist_date: "[DAY,NOW]"
+    author_id: 100
+    sender_id: 101
+    count: 1
+    type: 1
+    question_id: null
+    answer_id: 100
+
+  - id: 103
+    persist_date: "[DAY,NOW]"
+    author_id: 102
+    sender_id: 101
+    count: 1
+    type: 1
+    question_id: null
+    answer_id: 102
+
+  - id: 104
+    persist_date: "[DAY,NOW]"
+    author_id: 103
+    sender_id: 101
+    count: 1
+    type: 1
+    question_id: null
+    answer_id: 103
+
+  - id: 105
+    persist_date: "[DAY,NOW]"
+    author_id: 102
+    sender_id: 100
+    count: 1
+    type: 0
+    question_id: 102
+    answer_id: null
+
+  - id: 106
+    persist_date: "[DAY,NOW]"
+    author_id: 100
+    sender_id: 102
+    count: 1
+    type: 0
+    question_id: 100
+    answer_id: null
+
+  - id: 107
+    persist_date: "[DAY,NOW]"
+    author_id: 101
+    sender_id: 100
+    count: 1
+    type: 0
+    question_id: 100
+    answer_id: null
+
+  - id: 108
+    persist_date: "[DAY,NOW]"
+    author_id: 102
+    sender_id: 100
+    count: 1
+    type: 1
+    question_id: null
+    answer_id: 102
+
+  - id: 109
+    persist_date: "[DAY,NOW]"
+    author_id: 101
+    sender_id: 102
+    count: 1
+    type: 1
+    question_id: null
+    answer_id: 101
