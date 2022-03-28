@@ -18,15 +18,15 @@ question:
   - id: 102
     title: "test2"
     description: "test2"
-    persist_date: "2017-10-14"
+    persist_date: "[2022-01-03]"
     user_id: 101
-    last_redaction_date: "2017-10-14"
+    last_redaction_date: "[2022-01-03]"
     is_deleted: true
 
   - id: 103
     title: "test3"
     description: "test3"
-    persist_date: "2017-10-14"
+    persist_date: "[2022-01-03]"
     user_id: 102
-    last_redaction_date: "2017-10-14"
+    last_redaction_date: "[2022-01-03]"
     is_deleted: false
