@@ -9,17 +9,12 @@ import lombok.Setter;
  * \* Created with IntelliJ IDEA.
  * \* User: Rustam
  */
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class RelatedTagsDto {
-
     Long id;
-
     String title;
-
     Integer countQuestion;
-
 }

@@ -22,41 +22,51 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 
         //@Todo в дальнейшем реализовать подсчёт просмотров (пока стоит 0)
 
-        return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto." +
-                "QuestionDto(question.id, question.title, user.id, " +
-                "(SELECT case when sum (reputation.count) is null then 0L else sum (reputation.count)" +
-                " end from Reputation reputation where reputation.author.id = :id)," +
-                "user.fullName, user.imageLink, " +
-                "question.description, 0L, " +
-                "(SELECT count (*) from Answer answer where answer.question.id = :id and answer.isDeleted = false ), " +
-                "((SELECT count (*) from VoteQuestion voteOnQuestion " +
-                "where voteOnQuestion.vote = 'UP_VOTE' and voteOnQuestion.question.id = :id) + " +
-                "(SELECT count (*) from VoteQuestion voteOnQuestion " +
-                "where voteOnQuestion.vote = 'DOWN_VOTE' and voteOnQuestion.question.id = :id)), " +
-                "question.persistDateTime, question.lastUpdateDateTime," +
-                "(select v.vote from VoteQuestion v where v.user.id = user.id and v.question.id = :id)) " +
-                "from Question question " +
-                "left join User user   on question.user.id = user.id " +
-                "left join Answer answer on answer.question.id = :id " +
-                "where question.id = :id and question.isDeleted = false", QuestionDto.class).setParameter("id", id).getResultStream().findAny();
+        return entityManager.createQuery(
+                        "SELECT new com.javamentor.qa.platform.models.dto.QuestionDto" +
+                                "(question.id, " +
+                                "question.title, " +
+                                "user.id, " +
+                                "(SELECT COALESCE(SUM(reputation.count), 0L) FROM Reputation reputation WHERE reputation.author.id = user.id)," +
+                                "user.fullName, " +
+                                "user.imageLink, " +
+                                "question.description, " +
+                                "0L, " +
+                                "(SELECT COUNT(*) FROM Answer answer WHERE answer.question.id = :id AND answer.isDeleted = false), " +
+                                "((SELECT COUNT(*) FROM VoteQuestion voteOnQuestion WHERE voteOnQuestion.vote = 'UP_VOTE' AND voteOnQuestion.question.id = :id) + " +
+                                "(SELECT COUNT(*) FROM VoteQuestion voteOnQuestion WHERE voteOnQuestion.vote = 'DOWN_VOTE' AND voteOnQuestion.question.id = :id)), " +
+                                "question.persistDateTime, " +
+                                "question.lastUpdateDateTime," +
+                                "(SELECT v.vote FROM VoteQuestion v WHERE v.user.id = user.id AND v.question.id = :id)) " +
+                                "FROM Question question " +
+                                "LEFT JOIN User user ON user.id = question.user.id " +
+                                "LEFT JOIN Answer answer ON answer.question.id = :id " +
+                                "WHERE question.id = :id " +
+                                "AND question.isDeleted = false " +
+                                "ORDER BY question.id ASC",
+                        QuestionDto.class)
+                .setParameter("id", id)
+                .getResultStream()
+                .findAny();
     }
 
     @Override
     public List<QuestionCommentDto> getQuestionCommentByQuestionId(Long id) {
         return entityManager.createQuery(
-                "SELECT new com.javamentor.qa.platform.models.dto.QuestionCommentDto (c.id, " +
-                        "cq.question.id," +
-                        "c.lastUpdateDateTime," +
-                        "c.persistDateTime," +
-                        "c.text," +
-                        "c.user.id," +
-                        "u.imageLink," +
-                        "(SELECT sum (r.count) from Reputation r where r.author.id = u.id))" +
-                        "FROM Comment c " +
-                        "INNER JOIN CommentQuestion cq ON(c.id = cq.comment.id)" +
-                        "LEFT OUTER JOIN User u ON(c.user.id = u.id)" +
-                        "WHERE cq.question.id = :id"
-                , QuestionCommentDto.class)
+                        "SELECT new com.javamentor.qa.platform.models.dto.QuestionCommentDto " +
+                                "(c.id, " +
+                                "cq.question.id, " +
+                                "c.lastUpdateDateTime, " +
+                                "c.persistDateTime, " +
+                                "c.text, " +
+                                "c.user.id, " +
+                                "u.imageLink, " +
+                                "(SELECT COALESCE(SUM(reputation.count), 0L) FROM Reputation reputation WHERE reputation.author.id = c.user.id))" +
+                                "FROM Comment c " +
+                                "INNER JOIN CommentQuestion cq ON c.id = cq.comment.id " +
+                                "LEFT OUTER JOIN User u ON c.user.id = u.id " +
+                                "WHERE cq.question.id = :id",
+                        QuestionCommentDto.class)
                 .setParameter("id", id)
                 .getResultList();
     }

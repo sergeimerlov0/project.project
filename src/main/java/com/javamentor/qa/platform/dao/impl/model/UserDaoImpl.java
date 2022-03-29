@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -17,7 +16,6 @@ import java.util.Optional;
 @Slf4j
 @Repository
 public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao {
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -25,8 +23,14 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     @Cacheable(value = "users", key = "#email")
     public Optional<User> getByEmail(String email) {
         log.info("Запрос пользователя из БД в методе getByEmail");
-        String hql = "SELECT u FROM User u inner join fetch u.role where u.email = :email and u.isEnabled=true";
-        TypedQuery<User> query = entityManager.createQuery(hql, User.class).setParameter("email", email);
+        TypedQuery<User> query = entityManager.createQuery(
+                "SELECT u " +
+                        "FROM User u " +
+                        "INNER JOIN FETCH u.role " +
+                        "WHERE u.email = :email " +
+                        "AND u.isEnabled = true",
+                        User.class)
+                .setParameter("email", email);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
 
@@ -34,21 +38,34 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     @Cacheable(value = "users", key = "#email")
     public Boolean isPresentByEmail(String email) {
         log.info("Запрос пользователя из БД в методе isPresentByEmail");
-        String hql = "SELECT COUNT(u)>0 FROM User u WHERE u.email = :email AND u.isEnabled = true";
-        return entityManager.createQuery(hql, Boolean.class).setParameter("email", email).getSingleResult();
+        return entityManager.createQuery(
+                "SELECT COUNT(u)>0 " +
+                        "FROM User u " +
+                        "WHERE u.email = :email " +
+                        "AND u.isEnabled = true",
+                        Boolean.class)
+                .setParameter("email", email)
+                .getSingleResult();
     }
 
     @Override
     public List<User> getAll() {
-        return entityManager.createQuery("SELECT u FROM User u inner join fetch u.role " +
-                        "where u.isEnabled=true", User.class)
+        return entityManager.createQuery(
+                "SELECT u " +
+                        "FROM User u " +
+                        "INNER JOIN FETCH u.role " +
+                        "WHERE u.isEnabled = true",
+                        User.class)
                 .getResultList();
     }
 
     @Override
     @CacheEvict(value = "users", key = "#email")
     public void deleteByEmail(String email) {
-        entityManager.createQuery("UPDATE User SET isEnabled=false WHERE email = :email")
+        entityManager.createQuery(
+                "UPDATE User " +
+                        "SET isEnabled = false " +
+                        "WHERE email = :email")
                 .setParameter("email", email)
                 .executeUpdate();
     }
@@ -56,8 +73,10 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     @Override
     @CacheEvict(value = "users", key = "#email")
     public void updatePasswordByEmail (String email, String password) {
-        String hql = "update User u set u.password = :password where u.email = :email";
-        entityManager.createQuery(hql)
+        entityManager.createQuery(
+                "UPDATE User u " +
+                        "SET u.password = :password " +
+                        "WHERE u.email = :email")
                 .setParameter("password", password)
                 .setParameter("email", email).executeUpdate();
     }

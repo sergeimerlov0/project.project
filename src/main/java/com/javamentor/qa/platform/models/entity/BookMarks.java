@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 
 @Entity
@@ -16,7 +15,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "bookmarks")
 public class BookMarks {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

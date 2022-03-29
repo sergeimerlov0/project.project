@@ -7,7 +7,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public abstract class QuestionConverter {
-
     public abstract Question questionCreateDtoToQuestion(QuestionCreateDto questionCreateDto);
 
     public Tag mapStringToTag(String tagName) {

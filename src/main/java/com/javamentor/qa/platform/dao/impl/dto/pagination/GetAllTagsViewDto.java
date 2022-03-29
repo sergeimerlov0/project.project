@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.dao.impl.dto.pagination;
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.TagViewDto;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
@@ -12,37 +11,37 @@ import java.util.Map;
 
 @Repository("TagsViewsSortedByName")
 public class GetAllTagsViewDto implements PaginationDtoAble<TagViewDto> {
-
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public List<TagViewDto> getItems(Map<String, Object> param) {
-        LocalDateTime oneDay = LocalDateTime.now().minusDays(1L);
-        LocalDateTime weekDays = LocalDateTime.now().minusDays(7L);
-        int currentPageNumber = Integer.parseInt(String.valueOf(param.get("currentPageNumber")));
-        int itemsOnPage = Integer.parseInt(String.valueOf(param.get("itemsOnPage")));
-        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto." +
-                        "TagViewDto(tag.id, tag.name, tag.description, " +
-                        "(select count (ques.id) from Question ques), " +
-                        "(select count (ques.id) from Question ques where ques.persistDateTime between :day and current_date )," +
-                        "(select count (ques.id) from Question ques where ques.persistDateTime between :week and current_date))" +
-                        "from Tag tag " +
-                        "join tag.questions as question" +
-                        "and WHERE (lower(tag.name) LIKE lower(CONCAT('%', :filter, '%')))" +
-                        "group by tag.id" , TagViewDto.class)
+        int currentPageNumber = (int) param.get("currentPageNumber");
+        int itemsOnPage = (int) param.get("itemsOnPage");
+        return entityManager.createQuery(
+                "SELECT new com.javamentor.qa.platform.models.dto.TagViewDto" +
+                        "(tag.id, " +
+                        "tag.name, " +
+                        "tag.description, " +
+                        "(SELECT COUNT(ques.id) FROM Question ques), " +
+                        "(SELECT COUNT(ques.id) FROM Question ques WHERE ques.persistDateTime BETWEEN :day AND current_date), " +
+                        "(SELECT COUNT(ques.id) FROM Question ques WHERE ques.persistDateTime BETWEEN :week AND current_date)) " +
+                        "FROM Tag tag " +
+                        "JOIN tag.questions AS question " +
+                        "WHERE (LOWER(tag.name) LIKE LOWER(CONCAT('%', :filter, '%')))" +
+                        "GROUP BY tag.id " +
+                        "ORDER BY tag.id ASC" ,
+                        TagViewDto.class)
                 .setParameter("filter", param.get("filter"))
-                .setParameter("day", oneDay)
-                .setParameter("week", weekDays)
+                .setParameter("day", LocalDateTime.now().minusDays(1L))
+                .setParameter("week", LocalDateTime.now().minusDays(7L))
                 .setFirstResult((currentPageNumber - 1) * itemsOnPage)
                 .setMaxResults(itemsOnPage)
                 .getResultList();
     }
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        return ((Long) entityManager.createQuery(
-                        "select count(t) from Tag t"
-                )
+        return ((Long) entityManager.createQuery("SELECT COUNT(t) FROM Tag t")
                 .getSingleResult()).intValue();
     }
 }

@@ -5,14 +5,13 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PreRemove;
 
 public class AnswerListener {
-
     @PersistenceContext()
     private EntityManager entityManager;
 
     @PreRemove
     public void preRemove(Answer answer) {
         Long answerId = answer.getId();
-        entityManager.createQuery("delete from Reputation where answer.id=:answerId")
+        entityManager.createQuery("DELETE FROM Reputation WHERE answer.id = :answerId")
                 .setParameter("answerId", answerId)
                 .executeUpdate();
     }

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +17,6 @@ import java.util.Optional;
 @Service
 @Transactional
 public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements UserService {
-
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
 
@@ -66,8 +64,6 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         userDao.deleteByEmail(email);
     }
 
-
-
     public String generateRandomPassword() {
         List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.UpperCase, 1),
                 new CharacterRule(EnglishCharacterData.LowerCase, 1),
@@ -75,6 +71,7 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         PasswordGenerator generator = new PasswordGenerator();
         return generator.generatePassword(15, rules);
     }
+
     @Override
     public void updatePasswordByEmail(String email, String password) {
         userDao.updatePasswordByEmail(email, password);

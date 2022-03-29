@@ -15,10 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long> implements VoteAnswerService {
-
     private final VoteAnswerDao voteAnswerDao;
     private final ReputationDao reputationDao;
-
     private final static Integer UP_VOTE = 10;
     private final static Integer DOWN_VOTE = -5;
 

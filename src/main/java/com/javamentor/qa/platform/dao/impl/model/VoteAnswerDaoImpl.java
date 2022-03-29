@@ -8,15 +8,18 @@ import javax.persistence.PersistenceContext;
 
 @Repository
 public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implements VoteAnswerDao {
-
     @PersistenceContext
     EntityManager entityManager;
 
     @Override
     public Long getTotalVotesByAnswerId(Long id) {
-        return (Long) entityManager.createQuery("select ((select count(*) from VoteAnswer v where v.answer.id =:id and v.vote = 'UP_VOTE') - " +
-                        "(select count(*) from VoteAnswer v where v.answer.id =:id and v.vote = 'DOWN_VOTE')) from VoteAnswer v where v.answer.id = :id")
-                .setParameter("id",id).getSingleResult();
+        return (Long) entityManager.createQuery(
+                "SELECT " +
+                        "((SELECT COUNT(*) FROM VoteAnswer v WHERE v.answer.id = :id AND v.vote = 'UP_VOTE') - " +
+                        "(SELECT COUNT(*) FROM VoteAnswer v WHERE v.answer.id = :id AND v.vote = 'DOWN_VOTE')) " +
+                        "FROM VoteAnswer v " +
+                        "WHERE v.answer.id = :id")
+                .setParameter("id",id)
+                .getSingleResult();
     }
 }
-

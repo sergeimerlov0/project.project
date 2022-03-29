@@ -1,13 +1,11 @@
 package com.javamentor.qa.platform.models.entity.user.reputation;
 
 import org.springframework.stereotype.Component;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 @Component
 public class ReputationValidator implements ConstraintValidator<CombinedNotNullQuestionOrAnswer, Reputation> {
-
     @Override
     public void initialize(final CombinedNotNullQuestionOrAnswer combinedNotNull) {
     }

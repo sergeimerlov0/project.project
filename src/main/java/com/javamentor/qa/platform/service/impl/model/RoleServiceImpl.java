@@ -7,12 +7,10 @@ import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
 @Service
 public class RoleServiceImpl extends ReadWriteServiceImpl<Role, Long> implements RoleService {
-
     public RoleServiceImpl(ReadWriteDao<Role, Long> readWriteDao) {
         super(readWriteDao);
     }
