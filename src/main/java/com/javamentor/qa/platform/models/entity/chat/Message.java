@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -20,7 +19,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "message")
 public class Message {
-
     @Id
     @GeneratedValue(generator = "Message_seq")
     private Long id;
@@ -45,7 +43,6 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "chat_id")
     private Chat chat;
-
 
     public Message(String message, User userSender, Chat chat) {
         this.message = message;

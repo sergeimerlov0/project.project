@@ -24,13 +24,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 @NoArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
-
     private UserDetailsService userDetailsService;
     private JwtAuthorizationFilter authorizationFilter;
 
     @Autowired
-    public void setUserDetailsService(@Qualifier("userDetailsServiceImpl")
-                                              UserDetailsService userDetailsService,
+    public void setUserDetailsService(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService,
                                       JwtAuthorizationFilter filter) {
         this.authorizationFilter = filter;
         this.userDetailsService = userDetailsService;

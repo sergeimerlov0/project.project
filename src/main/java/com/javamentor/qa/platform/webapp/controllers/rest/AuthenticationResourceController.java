@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class AuthenticationResourceController {
-
     private final RoleService roleService;
     private final JwtAuthenticationProvider authenticationProvider;
 

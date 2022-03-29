@@ -23,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +34,6 @@ import java.util.Optional;
 @RequestMapping("api/user/question")
 @Api(value = "Работа с вопросами", tags = {"Вопросы"})
 public class QuestionResourceController {
-
     private final QuestionDtoService questionDtoService;
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
@@ -77,8 +75,7 @@ public class QuestionResourceController {
     })
     public ResponseEntity<?> getQuestionDtoNoAnswer(@RequestParam int page,
                                                     @RequestParam(defaultValue = "10") int items,
-                                                    @RequestParam(required = false, defaultValue = "0")
-                                                            List<Long> ignoredTags,
+                                                    @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags,
                                                     @RequestParam(required = false) List<Long> trackedTags) {
         Map<String, Object> map = new HashMap<>();
         map.put("class", "QuestionDtoNoAnswer");
@@ -182,7 +179,6 @@ public class QuestionResourceController {
         paginationMap.put("itemsOnPage", itemsOnPage);
         paginationMap.put("trackedTags", trackedTags);
         paginationMap.put("ignoredTags", ignoredTags);
-
         return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 
@@ -199,7 +195,6 @@ public class QuestionResourceController {
         paginationMap.put("class", "AllQuestionDtoByVoitAndAnswerAndView");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
-
         return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 

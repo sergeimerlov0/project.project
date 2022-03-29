@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.models.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,8 +25,8 @@ public class QuestionViewDto {
     private List<TagDto> listTagDto;
 
     public QuestionViewDto(Long id, String title, Long authorId, Long authorReputation, String authorName,
-                       String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable,
-                       LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime) {
+                           String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable,
+                           LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;

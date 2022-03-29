@@ -12,7 +12,6 @@ import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -24,12 +23,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -39,7 +36,6 @@ public class TagResourceController {
     private final TrackedTagService trackedTagService;
     private final IgnoredTagService ignoredTagService;
     private final TagDtoService tagDtoService;
-    private final UserService userService;
     private final TagService tagService;
 
     @ApiOperation(value = "Получение списка из 10 тэгов с " +
@@ -91,14 +87,12 @@ public class TagResourceController {
             if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
                 return ResponseEntity.badRequest().body("Tag with id found in ignored");
             }
-
             TrackedTag trackedTag = new TrackedTag();
             trackedTag.setTrackedTag(tag.get());
             trackedTag.setUser(user);
             trackedTagService.persist(trackedTag);
             return ResponseEntity.ok(tagDtoService.getTrackedTagById(userId));
         }
-
         return ResponseEntity.badRequest().body("Tag with this ID was not found");
     }
 
@@ -120,15 +114,12 @@ public class TagResourceController {
             if (ignoredTagService.tagIsPresentInTheListOfUser(userId, id)) {
                 return ResponseEntity.badRequest().body("Tag with id found in ignored");
             }
-
             IgnoredTag ignoredTag = new IgnoredTag();
             ignoredTag.setIgnoredTag(tag.get());
             ignoredTag.setUser(user);
             ignoredTagService.persist(ignoredTag);
             return ResponseEntity.ok(tagDtoService.getIgnoreTagById(userId));
-
         }
-
         return ResponseEntity.badRequest().body("Tag with this ID was not found");
     }
 
@@ -146,8 +137,8 @@ public class TagResourceController {
             @ApiResponse(code = 200, message = "Success", response = PageDto.class),
             @ApiResponse(code = 400, message = "TagViewDto not exist")})
     @GetMapping("/name")
-    public ResponseEntity<PageDto<TagViewDto>> getTagsSorted(@RequestParam("page") int currentPageNumber,
-                                                             @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage,
+    public ResponseEntity<PageDto<TagViewDto>> getTagsSorted(@RequestParam("currentPageNumber") int currentPageNumber,
+                                                             @RequestParam(value = "itemsOnPage", defaultValue = "10", required = false) Integer itemsOnPage,
                                                              @RequestParam(value = "filter", defaultValue = "", required = false) String filter) {
         Map<String, Object> paginationMap = new HashMap<>();
         paginationMap.put("class", "TagsViewsSortedByName");

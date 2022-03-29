@@ -11,9 +11,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -28,8 +26,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "question")
 public class Question implements Serializable {
-
     private static final long serialVersionUID = -4612026867697897418L;
+
     @Id
     @GeneratedValue(generator = "Question_seq")
     private Long id;

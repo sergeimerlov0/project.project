@@ -8,13 +8,11 @@ import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class TagDtoServiceImpl extends PaginationServiceDtoImpl<TagViewDto> implements TagDtoService {
-
     private final TagDtoDao tagDtoDao;
 
     @Override

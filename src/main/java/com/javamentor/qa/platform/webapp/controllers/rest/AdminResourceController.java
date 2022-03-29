@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.Optional;
 
 @RestController
@@ -20,7 +19,6 @@ import java.util.Optional;
 @RequestMapping("api/admin")
 @Api(value = "Security")
 public class AdminResourceController {
-
     private final UserService userService;
 
     @ApiOperation(value = "Права доступа и авторизации пользователя", tags = {"isEnabled"})

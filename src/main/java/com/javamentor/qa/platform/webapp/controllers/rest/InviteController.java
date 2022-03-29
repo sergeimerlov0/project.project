@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/invite")
 @Api(value = "Поучение сообщения с паролем для регистрации на платформе", tags = {"Регистрация на платформе"})
 public class InviteController {
-
     private final MailService mailService;
     private final UserService userService;
     private final RoleService roleService;
@@ -36,7 +35,6 @@ public class InviteController {
         String message = String.format("Hello, %s! Your password for logging system by address %s - '%s'. " +
                 "Don't forgot change your password after logging system", email, loginEndPoint, password);
         User user = new User(email, password, email, roleService.getRoleByName("USER").get());
-
         userService.persist(user);
         mailService.send(email, "registration in Kata StackOverFlow", message);
     }

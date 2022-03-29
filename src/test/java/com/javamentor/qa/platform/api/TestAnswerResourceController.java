@@ -8,24 +8,22 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class TestAnswerResourceController extends AbstractApiTest {
-
     @Test
     @DataSet(value = {
-            "datasets/AnswerResourceController/answer.yml",
-            "datasets/AnswerResourceController/tag.yml",
-            "datasets/AnswerResourceController/user.yml",
-            "datasets/AnswerResourceController/role.yml",
-            "datasets/AnswerResourceController/question.yml",
-            "datasets/AnswerResourceController/questionHasTag.yml",
-            "datasets/AnswerResourceController/reputation.yml",
-            "datasets/AnswerResourceController/voteAnswer.yml"
+            "datasets/AnswerResourceController/deleteAnswerById/answer.yml",
+            "datasets/AnswerResourceController/deleteAnswerById/tag.yml",
+            "datasets/AnswerResourceController/deleteAnswerById/user.yml",
+            "datasets/AnswerResourceController/deleteAnswerById/role.yml",
+            "datasets/AnswerResourceController/deleteAnswerById/question.yml",
+            "datasets/AnswerResourceController/deleteAnswerById/questionHasTag.yml",
+            "datasets/AnswerResourceController/deleteAnswerById/reputation.yml",
+            "datasets/AnswerResourceController/deleteAnswerById/voteAnswer.yml"
     })
     void deleteAnswerById() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.delete("/api/user/question/100/answer/100")
@@ -40,14 +38,14 @@ class TestAnswerResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/AnswerResourceController/answer.yml",
-            "datasets/AnswerResourceController/tag.yml",
-            "datasets/AnswerResourceController/user.yml",
-            "datasets/AnswerResourceController/role.yml",
-            "datasets/AnswerResourceController/question.yml",
-            "datasets/AnswerResourceController/questionHasTag.yml",
-            "datasets/AnswerResourceController/reputation.yml",
-            "datasets/AnswerResourceController/voteAnswer.yml"
+            "datasets/AnswerResourceController/tryToDeleteNonExistedId/answer.yml",
+            "datasets/AnswerResourceController/tryToDeleteNonExistedId/tag.yml",
+            "datasets/AnswerResourceController/tryToDeleteNonExistedId/user.yml",
+            "datasets/AnswerResourceController/tryToDeleteNonExistedId/role.yml",
+            "datasets/AnswerResourceController/tryToDeleteNonExistedId/question.yml",
+            "datasets/AnswerResourceController/tryToDeleteNonExistedId/questionHasTag.yml",
+            "datasets/AnswerResourceController/tryToDeleteNonExistedId/reputation.yml",
+            "datasets/AnswerResourceController/tryToDeleteNonExistedId/voteAnswer.yml"
     })
     void tryToDeleteNonExistedId() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.delete("/api/user/question/100/answer/104")
@@ -57,17 +55,16 @@ class TestAnswerResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/AnswerResourceController/getAnswerDatasets/answer.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/question.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/questionHasTag.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/tag.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/reputation.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/role.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/user.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/voteAnswer.yml"
+            "datasets/AnswerResourceController/getAnswerByQuestionId/answer.yml",
+            "datasets/AnswerResourceController/getAnswerByQuestionId/question.yml",
+            "datasets/AnswerResourceController/getAnswerByQuestionId/questionHasTag.yml",
+            "datasets/AnswerResourceController/getAnswerByQuestionId/tag.yml",
+            "datasets/AnswerResourceController/getAnswerByQuestionId/reputation.yml",
+            "datasets/AnswerResourceController/getAnswerByQuestionId/role.yml",
+            "datasets/AnswerResourceController/getAnswerByQuestionId/user.yml",
+            "datasets/AnswerResourceController/getAnswerByQuestionId/voteAnswer.yml"
     })
     public void getAnswerByQuestionId() throws Exception {
-
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/100/answer")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
@@ -83,17 +80,16 @@ class TestAnswerResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/AnswerResourceController/getAnswerDatasets/answer.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/question.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/questionHasTag.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/tag.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/reputation.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/role.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/user.yml",
-            "datasets/AnswerResourceController/getAnswerDatasets/voteAnswer.yml"
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/answer.yml",
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/question.yml",
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/questionHasTag.yml",
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/tag.yml",
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/reputation.yml",
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/role.yml",
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/user.yml",
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/voteAnswer.yml"
     })
     public void getEmptyListAnswerByQuestionId() throws Exception {
-
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/2000/answer")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
@@ -103,17 +99,16 @@ class TestAnswerResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/AnswerResourceController/votingApiDatasets/answer.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/question.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/questionHasTag.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/tag.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/reputation.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/role.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/user.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/voteAnswer.yml"
+            "datasets/AnswerResourceController/setUpVoteAnswerByAnswerId/answer.yml",
+            "datasets/AnswerResourceController/setUpVoteAnswerByAnswerId/question.yml",
+            "datasets/AnswerResourceController/setUpVoteAnswerByAnswerId/questionHasTag.yml",
+            "datasets/AnswerResourceController/setUpVoteAnswerByAnswerId/tag.yml",
+            "datasets/AnswerResourceController/setUpVoteAnswerByAnswerId/reputation.yml",
+            "datasets/AnswerResourceController/setUpVoteAnswerByAnswerId/role.yml",
+            "datasets/AnswerResourceController/setUpVoteAnswerByAnswerId/user.yml",
+            "datasets/AnswerResourceController/setUpVoteAnswerByAnswerId/voteAnswer.yml"
     })
     public void setUpVoteAnswerByAnswerId() throws Exception {
-
         //Проверяем возвращаемое значение. В датасетах в базе данных уже было 2 голоса ЗА ответ с id 100
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
@@ -121,7 +116,7 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andExpect(content().string("3"));
 
         //Проверяем, что в БД появилась запись о голосовании от пользователя с id 100 (наш авторизованный юзер) по ответу с id 100
-        Assertions.assertTrue(em.createQuery("select v.vote from VoteAnswer v where v.user.id=:user and v.answer.id=:answer")
+        Assertions.assertTrue(em.createQuery("SELECT v.vote FROM VoteAnswer v WHERE v.user.id = :user AND v.answer.id = :answer")
                 .setParameter("user", 100L)
                 .setParameter("answer", 100L)
                 .getSingleResult()
@@ -129,7 +124,7 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .contentEquals("UP_VOTE"));
 
         //Проверяем, что в БД изменилась репутация пользователя с id 101 (автор) по ответу с id 100. В датасетах изначальная репутация была 106
-        Assertions.assertTrue(em.createQuery("select sum(r.count) from Reputation r where r.author.id=:author")
+        Assertions.assertTrue(em.createQuery("SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = :author")
                 .setParameter("author", 101L)
                 .getSingleResult()
                 .toString()
@@ -139,33 +134,41 @@ class TestAnswerResourceController extends AbstractApiTest {
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
                         .header("Authorization", getJwtToken("test2@test.ru", "123")))
                 .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString().contains("Voting for your answer with id " + 100 + " not allowed"));
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("Voting for your answer with id " + 100 + " not allowed"));
 
         //проверяем невозможность проголосовать дважды за один ответ, как за, так и против
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("ConstraintViolationException"));
 
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("ConstraintViolationException"));
     }
 
     @Test
     @DataSet(value = {
-            "datasets/AnswerResourceController/votingApiDatasets/answer.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/question.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/questionHasTag.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/tag.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/reputation.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/role.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/user.yml",
-            "datasets/AnswerResourceController/votingApiDatasets/voteAnswer.yml"
+            "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/answer.yml",
+            "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/question.yml",
+            "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/questionHasTag.yml",
+            "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/tag.yml",
+            "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/reputation.yml",
+            "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/role.yml",
+            "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/user.yml",
+            "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/voteAnswer.yml"
     })
     public void setDownVoteAnswerByAnswerId() throws Exception {
-
         //Проверяем возвращаемое значение. В датасетах в базе данных уже было 2 голоса ЗА ответ с id 100
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
@@ -173,7 +176,7 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andExpect(content().string("1"));
 
         //Проверяем, что в БД появилась запись о голосовании от пользователя с id 100 (наш авторизованный юзер) по ответу с id 100
-        Assertions.assertTrue(em.createQuery("select v.vote from VoteAnswer v where v.user.id=:user and v.answer.id=:answer")
+        Assertions.assertTrue(em.createQuery("SELECT v.vote FROM VoteAnswer v WHERE v.user.id = :user AND v.answer.id = :answer")
                 .setParameter("user", 100L)
                 .setParameter("answer", 100L)
                 .getSingleResult()
@@ -181,7 +184,7 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .contentEquals("DOWN_VOTE"));
 
         //Проверяем, что в БД изменилась репутация пользователя с id 101 (автор) по ответу с id 100. В датасетах изначальная репутация была 106
-        Assertions.assertTrue(em.createQuery("select sum(r.count) from Reputation r where r.author.id=:author")
+        Assertions.assertTrue(em.createQuery("SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = :author")
                 .setParameter("author", 101L)
                 .getSingleResult()
                 .toString()
@@ -191,33 +194,41 @@ class TestAnswerResourceController extends AbstractApiTest {
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
                         .header("Authorization", getJwtToken("test2@test.ru", "123")))
                 .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString().contains("Voting for your answer with id " + 100 + " not allowed"));
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("Voting for your answer with id " + 100 + " not allowed"));
 
         //проверяем невозможность проголосовать дважды за один ответ, как за, так и против
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("ConstraintViolationException"));
 
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString().contains("ConstraintViolationException"));
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("ConstraintViolationException"));
     }
 
     @Test
     @DataSet(value = {
-            "datasets/AnswerResourceController/addAnswerDatasets/answer.yml",
-            "datasets/AnswerResourceController/addAnswerDatasets/question.yml",
-            "datasets/AnswerResourceController/addAnswerDatasets/questionHasTag.yml",
-            "datasets/AnswerResourceController/addAnswerDatasets/tag.yml",
-            "datasets/AnswerResourceController/addAnswerDatasets/reputation.yml",
-            "datasets/AnswerResourceController/addAnswerDatasets/role.yml",
-            "datasets/AnswerResourceController/addAnswerDatasets/user.yml",
-            "datasets/AnswerResourceController/addAnswerDatasets/voteAnswer.yml"
+            "datasets/AnswerResourceController/addNewAnswer/answer.yml",
+            "datasets/AnswerResourceController/addNewAnswer/question.yml",
+            "datasets/AnswerResourceController/addNewAnswer/questionHasTag.yml",
+            "datasets/AnswerResourceController/addNewAnswer/tag.yml",
+            "datasets/AnswerResourceController/addNewAnswer/reputation.yml",
+            "datasets/AnswerResourceController/addNewAnswer/role.yml",
+            "datasets/AnswerResourceController/addNewAnswer/user.yml",
+            "datasets/AnswerResourceController/addNewAnswer/voteAnswer.yml"
     })
     public void addNewAnswer() throws Exception {
-
         AnswerBodyDto answerBodyDto = new AnswerBodyDto("test");
         AnswerBodyDto answerBodyDtoNull = null;
 
@@ -238,7 +249,7 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.body").value("test"));
 
         //Проверяем, что в БД появилась запись о новом ответе с id 1
-        Assertions.assertTrue(em.createQuery("select a from Answer a where a.user.id=:user and a.id=:answer")
+        Assertions.assertTrue(em.createQuery("SELECT a FROM Answer a WHERE a.user.id = :user AND a.id = :answer")
                 .setParameter("user", 100L)
                 .setParameter("answer", 1L)
                 .getResultList().size() > 0);
@@ -251,7 +262,7 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andExpect(status().isBadRequest());
 
         //Проверяем, что в БД не появилась запись о новом ответе с id 2
-        Assertions.assertEquals(0, em.createQuery("select a from Answer a where a.user.id=:user and a.id=:answer")
+        Assertions.assertEquals(0, em.createQuery("SELECT a FROM Answer a WHERE a.user.id = :user AND a.id = :answer")
                 .setParameter("user", 100L)
                 .setParameter("answer", 2L)
                 .getResultList().size());
@@ -269,6 +280,5 @@ class TestAnswerResourceController extends AbstractApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
-
     }
 }

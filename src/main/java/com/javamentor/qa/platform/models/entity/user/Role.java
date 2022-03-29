@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -16,8 +15,8 @@ import java.util.Objects;
 @NoArgsConstructor
 @Table(name = "role")
 public class Role implements GrantedAuthority {
-
     private static final long serialVersionUID = 5731253987889984670L;
+
     @Id
     @GeneratedValue(generator = "Role_seq")
     private Long id;

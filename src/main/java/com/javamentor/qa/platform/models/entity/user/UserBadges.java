@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -17,8 +16,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "user_badges")
 public class UserBadges implements Serializable {
-
     private static final long serialVersionUID = 7887575908980210093L;
+
     @Id
     @GeneratedValue(generator = "UserBadges_seq")
     private Long id;
@@ -52,4 +51,3 @@ public class UserBadges implements Serializable {
         return Objects.hash(id, ready);
     }
 }
-
