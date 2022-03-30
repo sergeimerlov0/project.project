@@ -17,14 +17,12 @@ import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 @Service
 public class TestDataInitService {
-
     private final RoleService roleService;
     private final UserService userService;
     private final Flyway flyway;
@@ -71,7 +69,6 @@ public class TestDataInitService {
         for (int x = 1; x <= 50; x++) {
             name.delete(0, name.length()).append("tag:").append(x);
             description.delete(0, description.length()).append("this is tag by name: ").append(name);
-
             Tag tag = new Tag();
             tag.setName(name.toString());
             tag.setDescription(description.toString());
@@ -197,7 +194,6 @@ public class TestDataInitService {
             u.setNickname(nickname.toString());
 
             userService.persist(u);
-
         }
     }
 
@@ -226,7 +222,6 @@ public class TestDataInitService {
                     ignoredTagService.persist(ignoredTag);
                 }
             }
-
         }
     }
 }

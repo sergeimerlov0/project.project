@@ -3,14 +3,11 @@ package com.javamentor.qa.platform.service.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.ReadOnlyDao;
 import com.javamentor.qa.platform.service.abstracts.model.ReadOnlyService;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-
 public abstract class ReadOnlyServiceImpl<E, K> implements ReadOnlyService<E, K> {
-
     private final ReadOnlyDao<E, K> readOnlyDao;
 
     public ReadOnlyServiceImpl(ReadOnlyDao<E, K> readOnlyDao) {

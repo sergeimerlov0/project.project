@@ -11,13 +11,11 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import java.util.Objects;
 
 @Slf4j
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
-
     private UserDetailsService userDetailsService;
     private PasswordEncoder passwordEncoder;
 

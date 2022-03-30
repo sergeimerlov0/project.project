@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
@@ -18,7 +17,6 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "group_chat")
 public class GroupChat{
-
     @Id
     private Long id;
 

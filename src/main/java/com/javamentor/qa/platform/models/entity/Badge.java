@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -15,8 +14,8 @@ import java.io.Serializable;
 @Setter
 @Table(name = "badges")
 public class Badge implements Serializable {
-
     private static final long serialVersionUID = 3714949012456624550L;
+
     @Id
     @GeneratedValue(generator = "Badge_seq")
     private Long id;

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -25,6 +24,7 @@ import java.util.Objects;
 @Table(name = "reputation")
 public class Reputation implements Serializable {
     private static final long serialVersionUID = 7177182244933788025L;
+
     @Id
     @GeneratedValue(generator = "Reputation_seq")
     private Long id;
@@ -58,7 +58,6 @@ public class Reputation implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Answer.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "answer_id")
     private Answer answer;
-
 
     @Override
     public boolean equals(Object o) {
