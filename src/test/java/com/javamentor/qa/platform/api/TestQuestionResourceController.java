@@ -1007,26 +1007,34 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.totalResultCount").value(4))
                 .andExpect(jsonPath("$.itemsOnPage").value(2))
                 .andExpect(jsonPath("$.items.length()").value(2L))
-                .andExpect(jsonPath("$.items.[0].id").value(100))
-                .andExpect(jsonPath("$.items.[1].id").value(101));
+                .andExpect(jsonPath("$.items.[0].id").value(101))
+                .andExpect(jsonPath("$.items.[1].id").value(102));
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=1&itemsOnPage=2&trackedTags=255,180&ignoredTags=305")
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=1&itemsOnPage=2")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=1&itemsOnPage=2&ignoredTags=102")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=100&itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=1&trackedTags=100,103&ignoredTags=102")
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?itemsOnPage=2&ignoredTags=102")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=100&itemsOnPage=2&ignoredTags=102")
-                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
-                .andExpect(status().isBadRequest());
-
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?currentPageNumber=100&itemsOnPage=2&trackedTags=100,103")
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?itemsOnPage=2&trackedTags=100")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
 

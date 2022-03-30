@@ -40,8 +40,8 @@ public class AllQuestionsByVoteAndAnswerAndViewByWeek implements PaginationDtoAb
                         "WHERE q.id IN (SELECT q.id From Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
                         "AND q.id NOT IN (SELECT q.id From Question q JOIN q.tags tgs WHERE tgs.id IN :ignored) " +
                         "AND q.persistDateTime BETWEEN :week AND current_date " +
-                        "AND question.isDeleted = false " +
-                        "ORDER BY countAnswer + countVoite ASC"
+                        "AND q.isDeleted = false " +
+                        "ORDER BY countAnswer, countVoite ASC"
                         , QuestionViewDto.class)
                 .setParameter("ignored", ignoredTags)
                 .setParameter("tracked", trackedTags)
