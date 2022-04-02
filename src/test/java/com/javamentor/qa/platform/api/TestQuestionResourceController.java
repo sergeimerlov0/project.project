@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.api;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.YamlDataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
@@ -9,6 +10,10 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.jayway.jsonpath.JsonPath;
+import org.apache.commons.lang3.time.DateUtils;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ReplacementDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +21,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import java.io.FileInputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -1040,4 +1050,84 @@ class TestQuestionResourceController extends AbstractApiTest {
 
     }
 
+//    Это МОЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕ
+    @Test
+    @DataSet(value = {"datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/answer.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/question.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/questionHasTag.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/reputation.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/role.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/tag.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/user.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/voteQuestion.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/comment.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/commentQuestion.yml"
+    }, cleanBefore = true, cleanAfter = false)
+    void getAllQuestionsByVoteAndAnswerAndViewByMonth() throws Exception {
+
+        // добавить описание, что делает тест
+
+//        String dataSetFile = "resources/datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/question.yml";
+//        IDataSet dataSet = new YamlDataSet(new FileInputStream(dataSetFile));
+//        ReplacementDataSet rDataSet = new ReplacementDataSet(dataSet);
+//        Set<String> keys = dataSetAdjustments.keySet();
+//        rDataSet.addReplacementObject("[persist_date]", DateUtils.addDays(new Date(), -2));
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(3))
+                .andExpect(jsonPath("$.totalResultCount").value(5))
+                .andExpect(jsonPath("$.itemsOnPage").value(2))
+                //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
+                .andExpect(jsonPath("$.items.[0].id").value(101))
+                .andExpect(jsonPath("$.items.[1].id").value(105))
+                //Проверяем, что значения полей QuestionViewDto, например, с id 101 заполнены
+                .andExpect(jsonPath("$.items.[0].title").value("test title by question 101"))
+                .andExpect(jsonPath("$.items.[0].authorId").value(101))
+                .andExpect(jsonPath("$.items.[0].authorReputation").value(2))
+                .andExpect(jsonPath("$.items.[0].authorName").value("User with id 101"))
+                .andExpect(jsonPath("$.items.[0].authorImage").value("image101"))
+                .andExpect(jsonPath("$.items.[0].description").value("test description by question 101"))
+                .andExpect(jsonPath("$.items.[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items.[0].countAnswer").value(1))
+                .andExpect(jsonPath("$.items.[0].countValuable").value(-1))
+                //Проверяем, что нужные QuestionViewDto также выгрузили список всех tags, связанных с ними
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].name").value("test tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].description").value("description for tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(102))
+                .andExpect(jsonPath("$.items.[1].listTagDto.[0].id").value(103));
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2")
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+                .andExpect(status().isOk());
+
+//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103")
+//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+//                .andExpect(status().isOk());
+//
+//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&ignoredTags=102")
+//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+//                .andExpect(status().isOk());
+//
+//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
+//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+//                .andExpect(status().isBadRequest());
+//
+//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
+//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+//                .andExpect(status().isBadRequest());
+//
+//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?itemsOnPage=2&ignoredTags=102")
+//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+//                .andExpect(status().isBadRequest());
+//
+//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?itemsOnPage=2&trackedTags=100")
+//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+//                .andExpect(status().isBadRequest());
+
+    }
 }

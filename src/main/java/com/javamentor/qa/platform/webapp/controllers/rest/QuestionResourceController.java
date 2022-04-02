@@ -270,4 +270,22 @@ public class QuestionResourceController {
 
         return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
+
+    //    ЭТО МОЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕ
+    @GetMapping("/sortedByMonth")
+    @ApiOperation(value = "Получение за месяц QuestionDto с пагинацией и сортировкой по голосам, ответам и просмотрам за месяц",
+            tags = {"Get Month Sorted QuestionDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "QuestionDto получены"),
+            @ApiResponse(code = 400, message = "QuestionDto не найдены")
+    })
+    public ResponseEntity<PageDto<QuestionViewDto>> getMonthSortedQuestionDto(@RequestParam int currentPageNumber,
+                                                                              @RequestParam(defaultValue = "10") int itemsOnPage) {
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "AllQuestionsDtoByVoteAndAnswerAndViewByMonth");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+
+        return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
 }
