@@ -14,14 +14,14 @@ public class BookmarksDaoImpl extends ReadWriteDaoImpl<Bookmarks, Long> implemen
     private EntityManager entityManager;
 
     @Override
-    public List<Long> bookmarkByUserId(Long userId) {
+    public List<Long> bookmarkedQuestionByUserId(Long userId) {
         return entityManager
                 .createQuery("select t.question.id from Bookmarks t where t.user.id=:id", Long.class)
                 .setParameter("id", userId).getResultList();
     }
 
     @Override
-    public boolean questionIsPresentInTheListOfUser(Long userId, Long questionId) {
+    public boolean bookmarkExistsByQuestionIdByUserId(Long userId, Long questionId) {
         long count = entityManager
                 .createQuery("select count(t) from Bookmarks t where t.user.id=:userId and t.question.id=:questionId", Long.class)
                 .setParameter("userId", userId)

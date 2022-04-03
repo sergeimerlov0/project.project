@@ -108,10 +108,10 @@ public class TestDataInitService {
     }
 
     private void addBookmark(){
-        List<Question> questions = new ArrayList<>();
+        List<Bookmarks> bookmarks = new ArrayList<>();
 
         for (int x = 2; x <= 50; x++) {
-            questions.clear();
+            bookmarks.clear();
             int countbookmarks = (int) (Math.random() * 4);
             User user = userService.getById((long) x).get();
 
@@ -119,8 +119,8 @@ public class TestDataInitService {
                 Bookmarks bookmark = new Bookmarks();
                 Question question = questionService.getById((long) (1 + (int) (Math.random() * 49))).get();
 
-                if(!questions.contains(question) && bookmarkService.bookmarkByUserId(user.getId()).size() < countbookmarks){
-                    questions.add(question);
+                if(!bookmarks.contains(question) && bookmarkService.bookmarkByUserId(user.getId()).size() < countbookmarks){
+                    bookmarks.add(bookmark);
                     bookmark.setQuestion(question);
                     bookmark.setUser(user);
                     bookmarkService.persist(bookmark);

@@ -20,11 +20,11 @@ public class BookmarkServiceImpl extends ReadWriteServiceImpl<Bookmarks, Long> i
 
     @Override
     public List<Long> bookmarkByUserId(Long userId) {
-        return bookmarksDao.bookmarkByUserId(userId);
+        return bookmarksDao.bookmarkedQuestionByUserId(userId);
     }
 
     @Override
     public boolean questionIsPresentInTheListOfUser(Long userId, Long questionId) {
-        return bookmarksDao.questionIsPresentInTheListOfUser(userId, questionId);
+        return bookmarksDao.bookmarkExistsByQuestionIdByUserId(userId, questionId);
     }
 }
