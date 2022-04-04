@@ -26,9 +26,9 @@ question:
   - id: 103
     title: "test title by question 103"
     description: "test description by question 103"
-    persist_date: "[DAY,NOW]"
+    persist_date: "[NOW-32d]"
     user_id: 102
-    last_redaction_date: "[DAY,NOW]"
+    last_redaction_date: "[NOW-32d]"
     is_deleted: false
 
   - id: 104

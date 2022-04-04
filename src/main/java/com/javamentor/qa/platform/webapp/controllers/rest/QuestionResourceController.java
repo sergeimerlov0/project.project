@@ -271,7 +271,6 @@ public class QuestionResourceController {
         return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 
-    //    ЭТО МОЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕ
     @GetMapping("/sortedByMonth")
     @ApiOperation(value = "Получение за месяц QuestionDto с пагинацией и сортировкой по голосам, ответам и просмотрам за месяц",
             tags = {"Get Month Sorted QuestionDto"})

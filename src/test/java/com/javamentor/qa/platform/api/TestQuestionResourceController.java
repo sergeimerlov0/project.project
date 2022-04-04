@@ -1047,10 +1047,8 @@ class TestQuestionResourceController extends AbstractApiTest {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?itemsOnPage=2&trackedTags=100")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
-
     }
 
-//    Это МОЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕ
     @Test
     @DataSet(value = {"datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/answer.yml",
             "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/question.yml",
@@ -1065,21 +1063,13 @@ class TestQuestionResourceController extends AbstractApiTest {
     }, cleanBefore = true, cleanAfter = false)
     void getAllQuestionsByVoteAndAnswerAndViewByMonth() throws Exception {
 
-        // добавить описание, что делает тест
-
-//        String dataSetFile = "resources/datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/question.yml";
-//        IDataSet dataSet = new YamlDataSet(new FileInputStream(dataSetFile));
-//        ReplacementDataSet rDataSet = new ReplacementDataSet(dataSet);
-//        Set<String> keys = dataSetAdjustments.keySet();
-//        rDataSet.addReplacementObject("[persist_date]", DateUtils.addDays(new Date(), -2));
-
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
                         .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
                 .andExpect(status().isOk())
-                //Проверяем собранный PageDto
+                //Проверяем собранный PageDto, в него не попадают удаленные и с датой больше 30 дней
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
-                .andExpect(jsonPath("$.totalPageCount").value(3))
-                .andExpect(jsonPath("$.totalResultCount").value(5))
+                .andExpect(jsonPath("$.totalPageCount").value(2))
+                .andExpect(jsonPath("$.totalResultCount").value(4))
                 .andExpect(jsonPath("$.itemsOnPage").value(2))
                 //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
                 .andExpect(jsonPath("$.items.[0].id").value(101))
@@ -1100,34 +1090,5 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].description").value("description for tag 100"))
                 .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(102))
                 .andExpect(jsonPath("$.items.[1].listTagDto.[0].id").value(103));
-
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2")
-                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
-                .andExpect(status().isOk());
-
-//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103")
-//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
-//                .andExpect(status().isOk());
-//
-//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&ignoredTags=102")
-//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
-//                .andExpect(status().isOk());
-//
-//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
-//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
-//                .andExpect(status().isBadRequest());
-//
-//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
-//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
-//                .andExpect(status().isBadRequest());
-//
-//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?itemsOnPage=2&ignoredTags=102")
-//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
-//                .andExpect(status().isBadRequest());
-//
-//        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?itemsOnPage=2&trackedTags=100")
-//                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
-//                .andExpect(status().isBadRequest());
-
     }
 }
