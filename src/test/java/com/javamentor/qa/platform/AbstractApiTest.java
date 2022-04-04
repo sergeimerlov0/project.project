@@ -12,10 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @DBRider
@@ -24,11 +22,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @DBUnit(caseSensitiveTableNames = true, cacheConnection = false, allowEmptyFields = true)
 @AutoConfigureMockMvc
 public class AbstractApiTest {
-
     @Autowired
     public MockMvc mvc;
+
     @PersistenceContext
     protected EntityManager em;
+
     @Autowired
     protected ObjectMapper objectMapper;
 

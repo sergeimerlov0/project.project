@@ -17,7 +17,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +26,6 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserResourceController {
-
     private final UserDtoService userDtoService;
     private UserService userService;
 
@@ -50,15 +48,15 @@ public class UserResourceController {
             @ApiResponse(code = 200, message = "Success", response = PageDto.class),
             @ApiResponse(code = 400, message = "UserDto not exist")})
     @GetMapping("/new")
-    public ResponseEntity<PageDto<UserDto>> getUserByReg(@RequestParam("page") int currentPageNumber,
-                                                         @RequestParam(value = "items", defaultValue = "10", required = false) Integer itemsOnPage,
+    public ResponseEntity<PageDto<UserDto>> getUserByReg(@RequestParam("currentPageNumber") int currentPageNumber,
+                                                         @RequestParam(value = "itemsOnPage", defaultValue = "10", required = false) Integer itemsOnPage,
                                                          @RequestParam(value = "filter", defaultValue = "", required = false) String filter) {
         //Здесь забираем параметры из запроса currentPageNumber и itemsOnPage
         Map<String, Object> objectMap = new HashMap<>();
         //Помещаем в мапу под ключ class нужный бин с нужной реализацией пагинации. Например, AllUser.
         objectMap.put("class", "RegUser");
-        objectMap.put("page", currentPageNumber);
-        objectMap.put("items", itemsOnPage);
+        objectMap.put("currentPageNumber", currentPageNumber);
+        objectMap.put("itemsOnPage", itemsOnPage);
         objectMap.put("filter", filter);
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, objectMap));
     }
@@ -80,6 +78,21 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
     }
 
+    @GetMapping("/reputation")
+    @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированные по репутации")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "UserDTO не найдены")
+    })
+    public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortReputation(@RequestParam int currentPageNumber,
+                                                                        @RequestParam(defaultValue = "10") int itemsOnPage) {
+        Map<String, Object> paginationMap =new HashMap<>();
+        paginationMap.put("class", "AllUsersSortedByReputation");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+        return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
+
     @PutMapping(value = "/{userId}/change/password")
     @ApiOperation("Смена пароля пользователя с шифрованием")
     @ApiResponses(value = {
@@ -88,10 +101,8 @@ public class UserResourceController {
             @ApiResponse(code = 404, message = "Неверный ID пользователя"),
     })
     public ResponseEntity<?> updatePasswordByEmail(@PathVariable("userId") long userId, @RequestBody String password) {
-
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-
         if (!user.getId().equals(userId)) {
             return new ResponseEntity<>("Неверный ID пользователя", HttpStatus.NOT_FOUND);
         }
@@ -118,7 +129,6 @@ public class UserResourceController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(authentication);
-
         return new ResponseEntity<>("Пароль пользователя изменён", HttpStatus.OK);
     }
 }

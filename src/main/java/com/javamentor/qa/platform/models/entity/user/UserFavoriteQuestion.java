@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -20,8 +19,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "user_favorite_question")
 public class UserFavoriteQuestion implements Serializable {
-
     private static final long serialVersionUID = 754968028813775944L;
+
     @Id
     @GeneratedValue(generator = "UserFavoriteQuestion_seq")
     private Long id;

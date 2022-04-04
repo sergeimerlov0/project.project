@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
 import org.springframework.beans.factory.annotation.Value;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.lang.reflect.ParameterizedType;
@@ -9,7 +8,6 @@ import java.util.Collection;
 
 
 public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
-
     @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
     private int batchSize;
 
@@ -30,23 +28,20 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
 
 
     public void deleteById(K id) {
-        Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
+        Class<E> clazz = (Class<E>)((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
-        String hql = "DELETE " + clazz.getName() + " WHERE id = :id";
-        entityManager.createQuery(hql).setParameter("id", id).executeUpdate();
+        entityManager.createQuery("DELETE " + clazz.getName() + " WHERE id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
     }
 
     public void persistAll(E... entities) {
         int i = 0;
-
         for (E entity : entities) {
             entityManager.persist(entity);
-
             i++;
-
             // Flush a batch of inserts and release memory
             if (i % batchSize == 0 && i > 0) {
-
                 entityManager.flush();
                 entityManager.clear();
                 i = 0;
@@ -56,20 +51,15 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
             entityManager.flush();
             entityManager.clear();
         }
-
     }
 
     public void persistAll(Collection<E> entities) {
         int i = 0;
-
         for (E entity : entities) {
             entityManager.persist(entity);
-
             i++;
-
             // Flush a batch of inserts and release memory
             if (i % batchSize == 0 && i > 0) {
-
                 entityManager.flush();
                 entityManager.clear();
                 i = 0;
@@ -91,15 +81,11 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
 
     public void updateAll(Iterable<? extends E> entities) {
         int i = 0;
-
         for (E entity : entities) {
             entityManager.merge(entity);
-
             i++;
-
             // Flush a batch of inserts and release memory
             if (i % batchSize == 0 && i > 0) {
-
                 entityManager.flush();
                 entityManager.clear();
                 i = 0;
@@ -110,5 +96,4 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
             entityManager.clear();
         }
     }
-
 }

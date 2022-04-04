@@ -9,13 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implements AnswerService {
-
     private final AnswerDao answerDao;
 
     @Autowired
     public AnswerServiceImpl(AnswerDao answerDao) {
         super(answerDao);
-
         this.answerDao = answerDao;
     }
 
@@ -24,6 +22,4 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
     public Boolean checkAnswerByQuestionIdAndUserId(Long questionId, Long userId) {
         return answerDao.checkAnswerByQuestionIdAndUserId(questionId, userId);
     }
-
-
 }
