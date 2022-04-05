@@ -199,7 +199,6 @@ public class TestDataInitService {
             u.setNickname(nickname.toString());
 
             userService.persist(u);
-
         }
     }
 
