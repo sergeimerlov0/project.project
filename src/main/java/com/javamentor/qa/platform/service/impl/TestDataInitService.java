@@ -203,6 +203,28 @@ public class TestDataInitService {
         }
     }
 
+    private void addBookmark(){
+        List<Bookmarks> bookmarks = new ArrayList<>();
+
+        for (int x = 2; x <= 50; x++) {
+            bookmarks.clear();
+            int countbookmarks = (int) (Math.random() * 4);
+            User user = userService.getById((long) x).get();
+
+            for (int y = 0; y <= 5; y++) {
+                Bookmarks bookmark = new Bookmarks();
+                Question question = questionService.getById((long) (1 + (int) (Math.random() * 49))).get();
+
+                if(!bookmarks.contains(question) && bookmarkService.bookmarkByUserId(user.getId()).size() < countbookmarks){
+                    bookmarks.add(bookmark);
+                    bookmark.setQuestion(question);
+                    bookmark.setUser(user);
+                    bookmarkService.persist(bookmark);
+                }
+            }
+        }
+    }
+
     private void addTrackedAndIgnoredTag() {
         List<Tag> tags = new ArrayList<>();
 
@@ -226,27 +248,6 @@ public class TestDataInitService {
                     ignoredTag.setIgnoredTag(tag);
                     ignoredTag.setUser(user);
                     ignoredTagService.persist(ignoredTag);
-                }
-            }
-        }
-    }
-    private void addBookmark(){
-        List<Bookmarks> bookmarks = new ArrayList<>();
-
-        for (int x = 2; x <= 50; x++) {
-            bookmarks.clear();
-            int countbookmarks = (int) (Math.random() * 4);
-            User user = userService.getById((long) x).get();
-
-            for (int y = 0; y <= 5; y++) {
-                Bookmarks bookmark = new Bookmarks();
-                Question question = questionService.getById((long) (1 + (int) (Math.random() * 49))).get();
-
-                if(!bookmarks.contains(question) && bookmarkService.bookmarkByUserId(user.getId()).size() < countbookmarks){
-                    bookmarks.add(bookmark);
-                    bookmark.setQuestion(question);
-                    bookmark.setUser(user);
-                    bookmarkService.persist(bookmark);
                 }
             }
         }
