@@ -7,7 +7,7 @@ import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.models.entity.Bookmarks;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -204,7 +204,7 @@ public class TestDataInitService {
     }
 
     private void addBookmark(){
-        List<Bookmarks> bookmarks = new ArrayList<>();
+        List<BookMarks> bookmarks = new ArrayList<>();
 
         for (int x = 2; x <= 50; x++) {
             bookmarks.clear();
@@ -212,7 +212,7 @@ public class TestDataInitService {
             User user = userService.getById((long) x).get();
 
             for (int y = 0; y <= 5; y++) {
-                Bookmarks bookmark = new Bookmarks();
+                BookMarks bookmark = new BookMarks();
                 Question question = questionService.getById((long) (1 + (int) (Math.random() * 49))).get();
 
                 if(!bookmarks.contains(question) && bookmarkService.bookmarkByUserId(user.getId()).size() < countbookmarks){

@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "bookmarks")
-public class Bookmarks {
+public class BookMarks {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
