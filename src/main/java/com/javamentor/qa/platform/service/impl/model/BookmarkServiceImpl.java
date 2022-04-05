@@ -24,7 +24,7 @@ public class BookmarkServiceImpl extends ReadWriteServiceImpl<BookMarks, Long> i
     }
 
     @Override
-    public boolean questionIsPresentInTheListOfUser(Long userId, Long questionId) {
+    public boolean bookmarkExistsByQuestionIdByUserId(Long userId, Long questionId) {
         return bookmarksDao.bookmarkExistsByQuestionIdByUserId(userId, questionId);
     }
 }

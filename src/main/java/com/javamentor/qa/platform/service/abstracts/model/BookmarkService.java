@@ -7,5 +7,5 @@ import java.util.List;
 public interface BookmarkService extends ReadWriteService<BookMarks, Long>{
     List<Long> bookmarkByUserId(Long userId);
 
-    boolean questionIsPresentInTheListOfUser(Long userId, Long questionId);
+    boolean bookmarkExistsByQuestionIdByUserId(Long userId, Long questionId);
 }
