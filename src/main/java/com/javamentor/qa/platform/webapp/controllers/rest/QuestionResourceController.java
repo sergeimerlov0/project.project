@@ -39,8 +39,7 @@ public class QuestionResourceController {
     private final TagService tagService;
     private final QuestionConverter questionConverter;
     private final QuestionViewedService questionViewedService;
-//    private final BookmarksService bookmarksService;
-    //TODO:заклонить  от букмарктейбл вренчи
+    private final BookmarkService bookmarkService;
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -282,11 +281,11 @@ public class QuestionResourceController {
     public ResponseEntity<?> createBookmark(@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
-        BookMarks bookMark = new BookMarks();
+        BookMarks bookmark = new BookMarks();
         if (optionalQuestion.isPresent()) {
-            bookMark.setQuestion(questionService.getById(questionId).orElseThrow(/*TODO: Прокинуть нужное исключение*/));
-            bookMark.setUser(user);
-//            bookmarksService.persist(bookMark);
+            bookmark.setQuestion(questionService.getById(questionId).orElseThrow(/*TODO: Прокинуть нужное исключение*/));
+            bookmark.setUser(user);
+            bookmarkService.persist(bookmark);
             return ResponseEntity.ok().body("Вопрос с Id:" + questionId + " для пользователя с Id:" +
                                             user.getId() + " добавлен в закладки");
         }
