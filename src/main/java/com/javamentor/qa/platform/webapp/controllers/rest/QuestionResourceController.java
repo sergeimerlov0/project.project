@@ -3,16 +3,14 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +39,8 @@ public class QuestionResourceController {
     private final TagService tagService;
     private final QuestionConverter questionConverter;
     private final QuestionViewedService questionViewedService;
+//    private final BookmarksService bookmarksService;
+    //TODO:заклонить  от букмарктейбл вренчи
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -269,5 +270,26 @@ public class QuestionResourceController {
         paginationMap.put("ignored", ignoredTags);
 
         return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
+
+    @PostMapping("/{questionId}/bookmark")
+    @ApiOperation(value = "Add a new bookmark for authorized user", tags = {"Bookmarks"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Закладка успешно созданна"),
+            @ApiResponse(code = 400, message = "При добавлении закладки что-то пошло не так")
+
+    })
+    public ResponseEntity<?> createBookmark(@PathVariable Long questionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Optional<Question> optionalQuestion = questionService.getById(questionId);
+        BookMarks bookMark = new BookMarks();
+        if (optionalQuestion.isPresent()) {
+            bookMark.setQuestion(questionService.getById(questionId).orElseThrow(/*TODO: Прокинуть нужное исключение*/));
+            bookMark.setUser(user);
+//            bookmarksService.persist(bookMark);
+            return ResponseEntity.ok().body("Вопрос с Id:" + questionId + " для пользователя с Id:" +
+                                            user.getId() + " добавлен в закладки");
+        }
+        return ResponseEntity.badRequest().body("Закладка не добавлена");
     }
 }
