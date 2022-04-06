@@ -5,14 +5,8 @@ question_has_tag:
   - question_id: 100
     tag_id: 101
 
-  - question_id: 100
-    tag_id: 102
-
   - question_id: 101
     tag_id: 100
-
-  - question_id: 101
-    tag_id: 102
 
   - question_id: 102
     tag_id: 100
@@ -21,7 +15,10 @@ question_has_tag:
     tag_id: 101
 
   - question_id: 104
-    tag_id: 103
+    tag_id: 102
+
+  - question_id: 104
+    tag_id: 100
 
   - question_id: 105
     tag_id: 103

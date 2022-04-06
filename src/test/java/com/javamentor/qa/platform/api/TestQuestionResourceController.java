@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.api;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.api.dataset.YamlDataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
@@ -10,10 +9,6 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.jayway.jsonpath.JsonPath;
-import org.apache.commons.lang3.time.DateUtils;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ReplacementDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +17,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.io.FileInputStream;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -1060,10 +1052,10 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/voteQuestion.yml",
             "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/comment.yml",
             "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/commentQuestion.yml"
-    }, cleanBefore = true, cleanAfter = false)
+    }, cleanBefore = true, cleanAfter = true)
     void getAllQuestionsByVoteAndAnswerAndViewByMonth() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103&ignoredTags=102")
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2")
                         .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
                 .andExpect(status().isOk())
                 //Проверяем собранный PageDto, в него не попадают удаленные и с датой больше 30 дней
@@ -1088,7 +1080,19 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].name").value("test tag 100"))
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].description").value("description for tag 100"))
-                .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(102))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
                 .andExpect(jsonPath("$.items.[1].listTagDto.[0].id").value(103));
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&trackedTags=100&ignoredTags=102")
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto, в него попадают искомые теги и не попадают игнорируемые
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(2))
+                .andExpect(jsonPath("$.itemsOnPage").value(2))
+                //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
+                .andExpect(jsonPath("$.items.[0].id").value(101))
+                .andExpect(jsonPath("$.items.[1].id").value(100));
     }
 }
