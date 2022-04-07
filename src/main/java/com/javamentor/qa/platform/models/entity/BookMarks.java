@@ -6,7 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -24,4 +28,9 @@ public class BookMarks {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Question question;
+
+    @CreationTimestamp
+    @Column(name = "persist_date", updatable = false)
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    private LocalDateTime persistDateTime;
 }
