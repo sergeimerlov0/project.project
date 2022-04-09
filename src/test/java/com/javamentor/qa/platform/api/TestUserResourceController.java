@@ -283,7 +283,7 @@ public class TestUserResourceController extends AbstractApiTest {
             "datasets/UserResourceController/getAllUserSortVoteWithFilter/voteAnswer.yml",
             "datasets/UserResourceController/getAllUserSortVoteWithFilter/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
-    void getAllUserSortVoteWithFilter() throws Exception{
+    void getAllUserSortVoteWithFilter() throws Exception {
         //email и пароль юзера
         email = "3user@mail.com";
         password = "3111";
@@ -320,5 +320,38 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items.length()").value(2));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getQuestionsByUser/answer.yml",
+            "datasets/UserResourceController/getQuestionsByUser/question.yml",
+            "datasets/UserResourceController/getQuestionsByUser/reputation.yml",
+            "datasets/UserResourceController/getQuestionsByUser/role.yml",
+            "datasets/UserResourceController/getQuestionsByUser/user.yml",
+            "datasets/UserResourceController/getQuestionsByUser/voteAnswer.yml",
+            "datasets/UserResourceController/getQuestionsByUser/voteQuestion.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void getQuestionsByUser() throws Exception {
+        //email и пароль юзера
+        email = "3user@mail.com";
+        password = "3111";
+
+        mvc.perform(get("/api/user/100/profile/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1));
+
+        mvc.perform(get("/api/user/101/profile/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+
+        mvc.perform(get("/api/user/155/profile/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 }
