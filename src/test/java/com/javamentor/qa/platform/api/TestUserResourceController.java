@@ -330,7 +330,9 @@ public class TestUserResourceController extends AbstractApiTest {
             "datasets/UserResourceController/getQuestionsByUser/role.yml",
             "datasets/UserResourceController/getQuestionsByUser/user.yml",
             "datasets/UserResourceController/getQuestionsByUser/voteAnswer.yml",
-            "datasets/UserResourceController/getQuestionsByUser/voteQuestion.yml"
+            "datasets/UserResourceController/getQuestionsByUser/voteQuestion.yml",
+            "datasets/UserResourceController/getQuestionsByUser/tag.yml",
+            "datasets/UserResourceController/getQuestionsByUser/questionHasTag.yml"
     }, cleanBefore = true, cleanAfter = true)
     void getQuestionsByUser() throws Exception {
         //email и пароль юзера
@@ -341,13 +343,19 @@ public class TestUserResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].questionId").value(100))
+                .andExpect(jsonPath("$[0].tagList.length()").value(3));
 
         mvc.perform(get("/api/user/101/profile/questions")
                         .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].questionId").value(101))
+                .andExpect(jsonPath("$[1].questionId").value(103))
+                .andExpect(jsonPath("$[0].tagList.length()").value(1))
+                .andExpect(jsonPath("$[1].tagList.length()").value(0));
 
         mvc.perform(get("/api/user/155/profile/questions")
                         .header("Authorization", getJwtToken(email, password)))
