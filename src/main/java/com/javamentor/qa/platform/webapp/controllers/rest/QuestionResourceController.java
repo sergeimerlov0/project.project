@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.exception.ApiRequestException;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
@@ -274,7 +275,7 @@ public class QuestionResourceController {
     @PostMapping("/{questionId}/bookmark")
     @ApiOperation(value = "Add a new bookmark for authorized user", tags = {"Bookmarks"})
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Закладка успешно созданна"),
+            @ApiResponse(code = 200, message = "Закладка успешно создана"),
             @ApiResponse(code = 400, message = "При добавлении закладки что-то пошло не так")
 
     })
@@ -283,11 +284,12 @@ public class QuestionResourceController {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         BookMarks bookmark = new BookMarks();
         if (optionalQuestion.isPresent()) {
-            bookmark.setQuestion(questionService.getById(questionId).orElseThrow(/*TODO: Прокинуть нужное исключение*/));
+            bookmark.setQuestion(optionalQuestion.orElseThrow(() ->
+            new ApiRequestException("Такого вопроса нет в базе данных")));
             bookmark.setUser(user);
             bookmarkService.persist(bookmark);
             return ResponseEntity.ok().body("Вопрос с Id:" + questionId + " для пользователя с Id:" +
-                                            user.getId() + " добавлен в закладки");
+                    user.getId() + " добавлен в закладки");
         }
         return ResponseEntity.badRequest().body("Закладка не добавлена");
     }
