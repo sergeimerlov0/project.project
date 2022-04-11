@@ -1040,4 +1040,16 @@ class TestQuestionResourceController extends AbstractApiTest {
 
     }
 
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/user.yml",
+            "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/question.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void testCreateBookmark() throws Exception {
+
+        mvc.perform(post("/api/user/question/100/bookmark")
+                        .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", getJwtToken("volodya@mail.ru", "123")))
+                .andExpect(status().isForbidden());
+    }
 }
