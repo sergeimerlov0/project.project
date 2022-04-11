@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -25,7 +26,7 @@ public class TestUserResourceController extends AbstractApiTest {
         //проверяем что пароль изменится
         mvc.perform(MockMvcRequestBuilders.put("/api/user/100/change/password")
                         .header("Authorization", getJwtToken(email, password))
-                .content("123qweASD$"))
+                        .content("123qweASD$"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -155,9 +156,9 @@ public class TestUserResourceController extends AbstractApiTest {
             "datasets/UserResourceController/getAllUserSortVote/user.yml",
             "datasets/UserResourceController/getAllUserSortVote/voteAnswer.yml",
             "datasets/UserResourceController/getAllUserSortVote/voteQuestion.yml"}, cleanBefore = true, cleanAfter = true)
-    void getAllUserSortVote() throws Exception{
+    void getAllUserSortVote() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/vote/?currentPageNumber=1")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
 
                 //Проверяем страницу
@@ -180,7 +181,7 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items[0].fullName").value("User with id 101"));
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/vote/?currentPageNumber=2&itemsOnPage=2")
-                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.currentPageNumber").value(2))
                 .andExpect(jsonPath("$.itemsOnPage").value(2))
@@ -196,9 +197,9 @@ public class TestUserResourceController extends AbstractApiTest {
             "datasets/UserResourceController/getAllUserDtoSortReputation/role.yml",
             "datasets/UserResourceController/getAllUserDtoSortReputation/user.yml"
     }, cleanBefore = true, cleanAfter = true)
-    void getAllUserSortReputation() throws Exception{
+    void getAllUserSortReputation() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/reputation/?currentPageNumber=1")
-                .header("Authorization", getJwtToken("Vasya103@mail.ru", "103")))
+                        .header("Authorization", getJwtToken("Vasya103@mail.ru", "103")))
                 .andExpect(status().isOk())
 
                 //Проверяем страницу
@@ -221,7 +222,7 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items[1].fullName").value("Vasya 101"));
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/reputation/?currentPageNumber=2&itemsOnPage=2")
-                .header("Authorization", getJwtToken("Vasya103@mail.ru", "103")))
+                        .header("Authorization", getJwtToken("Vasya103@mail.ru", "103")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.currentPageNumber").value(2))
                 .andExpect(jsonPath("$.itemsOnPage").value(2))
@@ -283,7 +284,7 @@ public class TestUserResourceController extends AbstractApiTest {
             "datasets/UserResourceController/getAllUserSortVoteWithFilter/voteAnswer.yml",
             "datasets/UserResourceController/getAllUserSortVoteWithFilter/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
-    void getAllUserSortVoteWithFilter() throws Exception{
+    void getAllUserSortVoteWithFilter() throws Exception {
         //email и пароль юзера
         email = "3user@mail.com";
         password = "3111";
@@ -321,4 +322,49 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items.length()").value(2));
     }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getDeletedQuestionsByUser/answer.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/comment.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/commentQuestion.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/question.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/questionHasTag.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/reputation.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/role.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/tag.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/user.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/voteQuestion.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void getDeletedQuestionsByUser() throws Exception {
+        //email и пароль юзера
+        email = "3user@mail.com";
+        password = "3111";
+
+        mvc.perform(get("/api/user/100/profile/delete/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].questionId").value(100))
+                .andExpect(jsonPath("$[0].tagList.length()").value(3));
+
+        mvc.perform(get("/api/user/101/profile/delete/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].questionId").value(101))
+                .andExpect(jsonPath("$[1].questionId").value(102))
+                .andExpect(jsonPath("$[0].tagList.length()").value(1))
+                .andExpect(jsonPath("$[1].tagList.length()").value(1));
+
+        mvc.perform(get("/api/user/155/profile/delete/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+
 }

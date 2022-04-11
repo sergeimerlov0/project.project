@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileDeletedQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -28,12 +29,15 @@ import java.util.regex.Pattern;
 public class UserResourceController {
     private final UserDtoService userDtoService;
     private UserService userService;
+    private final UserProfileDeletedQuestionDtoService userProfileDeletedQuestionDtoService;
 
     @Autowired
-    public UserResourceController(UserDtoService userDtoService, UserService userservice) {
+    public UserResourceController(UserDtoService userDtoService, UserService userService, UserProfileDeletedQuestionDtoService userProfileDeletedQuestionDtoService) {
         this.userDtoService = userDtoService;
-        this.userService = userservice;
+        this.userService = userService;
+        this.userProfileDeletedQuestionDtoService = userProfileDeletedQuestionDtoService;
     }
+
 
     @GetMapping("/{userId}")
     @ApiOperation("Получение пользователя по ID")
@@ -86,7 +90,7 @@ public class UserResourceController {
     })
     public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortReputation(@RequestParam int currentPageNumber,
                                                                         @RequestParam(defaultValue = "10") int itemsOnPage) {
-        Map<String, Object> paginationMap =new HashMap<>();
+        Map<String, Object> paginationMap = new HashMap<>();
         paginationMap.put("class", "AllUsersSortedByReputation");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
@@ -130,5 +134,20 @@ public class UserResourceController {
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(authentication);
         return new ResponseEntity<>("Пароль пользователя изменён", HttpStatus.OK);
+
+    }
+
+    @GetMapping("/{userId}/profile/delete/questions")
+    @ApiOperation("Получение удаленных вопросов пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Получен список удаленных вопросов"),
+            @ApiResponse(code = 400, message = "Для данного пользователя список удаленных вопросов отсутствует"),
+            @ApiResponse(code = 404, message = "Неверный ID пользователя"),
+    })
+    public ResponseEntity<?> getDeletedQuestionsByUser(@PathVariable("userId") long userId) {
+        return userProfileDeletedQuestionDtoService.getUserProfileDeletedQuestionDtoByUserId(userId).isEmpty() ?
+                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(userProfileDeletedQuestionDtoService.getUserProfileDeletedQuestionDtoByUserId(userId), HttpStatus.OK);
+
     }
 }
