@@ -1,0 +1,72 @@
+answer:
+  - id: 100
+    user_id: 100
+    question_id: 100
+    html_body: "test0"
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    update_date: "[DAY,NOW]"
+
+  - id: 101
+    html_body: "test1"
+    user_id: 101
+    question_id: 100
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: false
+    update_date: "[DAY,NOW]"
+
+  - id: 102
+    html_body: "test2"
+    user_id: 102
+    question_id: 100
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    update_date: "[DAY,NOW]"
+
+  - id: 103
+    html_body: "test1"
+    user_id: 101
+    question_id: 101
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    update_date: "[DAY,NOW]"
+
+  - id: 104
+    html_body: "test2"
+    user_id: 101
+    question_id: 102
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    update_date: "[DAY,NOW]"
+
+  - id: 105
+    html_body: "test1"
+    user_id: 101
+    question_id: 104
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    update_date: "[DAY,NOW]"
+
+  - id: 106
+    html_body: "test1"
+    user_id: 100
+    question_id: 103
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    update_date: "[DAY,NOW]"
+
+  - id: 107
+    html_body: "test1"
+    user_id: 102
+    question_id: 103
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    update_date: "[DAY,NOW]"
