@@ -36,16 +36,16 @@ public class AllQuestionsByVoteAndAnswerAndViewByWeek implements PaginationDtoAb
                         "q.persistDateTime, " +
                         "q.lastUpdateDateTime) " +
                         "FROM Question q " +
-                        "JOIN q.tags tgs " +
-                        "WHERE q.id IN (SELECT q.id From Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
+                        "LEFT JOIN q.user AS author ON (q.user.id = author.id) " +
+                        "LEFT JOIN q.answers AS answer ON (q.id = answer.question.id) " +
+                        "WHERE q.isDeleted = false " +
+                        "AND q.id IN (SELECT q.id From Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
                         "AND q.id NOT IN (SELECT q.id From Question q JOIN q.tags tgs WHERE tgs.id IN :ignored) " +
-                        "AND q.persistDateTime BETWEEN :week AND current_date " +
-                        "AND q.isDeleted = false " +
+                        "AND  q.persistDateTime >= current_date()-7 " +
                         "ORDER BY countAnswer, countVoite ASC"
                         , QuestionViewDto.class)
                 .setParameter("ignored", ignoredTags)
                 .setParameter("tracked", trackedTags)
-                .setParameter("week", LocalDateTime.now().minusDays(7L))
                 .setFirstResult((currentPageNumber - 1) * itemsOnPage)
                 .setMaxResults(itemsOnPage)
                 .getResultList();
