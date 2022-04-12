@@ -18,8 +18,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.HashMap;
 import java.util.List;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -1042,14 +1042,22 @@ class TestQuestionResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
-            "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/user.yml",
-            "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/question.yml"
+            "datasets/QuestionResourceController/testCreateBookmark/user.yml",
+            "datasets/QuestionResourceController/testCreateBookmark/question.yml",
+            "datasets/QuestionResourceController/testCreateBookmark/role.yml"
     }, cleanBefore = true, cleanAfter = true)
     void testCreateBookmark() throws Exception {
-
+        //Создание закладки для 100 юзера на 100 вопрос
         mvc.perform(post("/api/user/question/100/bookmark")
-                        .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", getJwtToken("volodya@mail.ru", "123")))
-                .andExpect(status().isForbidden());
+                        .header("Authorization", getJwtToken("user1@gmail.com", "123")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Вопрос с Id:100 для пользователя с Id:100 добавлен в закладки")));
+
+        //Создание закладки для 100 юзера на несуществующий вопрос
+        mvc.perform(post("/api/user/question/99/bookmark")
+                        .header("Authorization", getJwtToken("user1@gmail.com", "123")))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Закладка не добавлена, вопроса ID 99 не существует")));
+
     }
 }

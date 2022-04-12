@@ -11,7 +11,11 @@ import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -284,13 +288,12 @@ public class QuestionResourceController {
         Optional<Question> optionalQuestion = questionService.getById(questionId);
         BookMarks bookmark = new BookMarks();
         if (optionalQuestion.isPresent()) {
-            bookmark.setQuestion(optionalQuestion.orElseThrow(() ->
-            new ApiRequestException("Такого вопроса нет в базе данных")));
+            bookmark.setQuestion(optionalQuestion.orElseThrow());
             bookmark.setUser(user);
             bookmarkService.persist(bookmark);
             return ResponseEntity.ok().body("Вопрос с Id:" + questionId + " для пользователя с Id:" +
                     user.getId() + " добавлен в закладки");
         }
-        return ResponseEntity.badRequest().body("Закладка не добавлена");
+        return ResponseEntity.badRequest().body("Закладка не добавлена, вопроса ID " + questionId + " не существует");
     }
 }
