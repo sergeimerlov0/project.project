@@ -4,7 +4,6 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserProfileQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -28,14 +27,12 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/user")
 public class UserResourceController {
     private final UserDtoService userDtoService;
-    private final UserProfileQuestionDtoService userProfileQuestionDtoService;
     private UserService userService;
 
     @Autowired
-    public UserResourceController(UserDtoService userDtoService, UserService userservice, UserProfileQuestionDtoService userProfileQuestionDtoService) {
+    public UserResourceController(UserDtoService userDtoService, UserService userservice) {
         this.userDtoService = userDtoService;
         this.userService = userservice;
-        this.userProfileQuestionDtoService = userProfileQuestionDtoService;
     }
 
     @GetMapping("/{userId}")
@@ -143,8 +140,8 @@ public class UserResourceController {
             @ApiResponse(code = 404, message = "Неверный ID пользователя"),
     })
     public ResponseEntity<?> getQuestionsByUser(@PathVariable("userId") long userId){
-        return userProfileQuestionDtoService.getUserProfileQuestionDtoAddByUserId(userId).isEmpty() ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(userProfileQuestionDtoService.getUserProfileQuestionDtoAddByUserId(userId), HttpStatus.OK);
+        return userDtoService.getUserProfileQuestionDtoAddByUserId(userId).isEmpty() ?
+                new ResponseEntity<>("Для данного пользователя список вопросов отсутствует", HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(userDtoService.getUserProfileQuestionDtoAddByUserId(userId), HttpStatus.OK);
     }
 }
