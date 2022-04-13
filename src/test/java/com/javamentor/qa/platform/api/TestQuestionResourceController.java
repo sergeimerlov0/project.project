@@ -16,8 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import java.util.HashMap;
 import java.util.List;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -1037,7 +1039,60 @@ class TestQuestionResourceController extends AbstractApiTest {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?itemsOnPage=2&trackedTags=100")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
-
     }
 
+    @Test
+    @DataSet(value = {"datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/answer.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/question.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/questionHasTag.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/reputation.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/role.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/tag.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/user.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/voteQuestion.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/comment.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/commentQuestion.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void getAllQuestionsByVoteAndAnswerAndViewByMonth() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2")
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto, в него не попадают удаленные и с датой больше 30 дней
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(2))
+                .andExpect(jsonPath("$.totalResultCount").value(4))
+                .andExpect(jsonPath("$.itemsOnPage").value(2))
+                //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
+                .andExpect(jsonPath("$.items.[0].id").value(101))
+                .andExpect(jsonPath("$.items.[1].id").value(105))
+                //Проверяем, что значения полей QuestionViewDto, например, с id 101 заполнены
+                .andExpect(jsonPath("$.items.[0].title").value("test title by question 101"))
+                .andExpect(jsonPath("$.items.[0].authorId").value(101))
+                .andExpect(jsonPath("$.items.[0].authorReputation").value(2))
+                .andExpect(jsonPath("$.items.[0].authorName").value("User with id 101"))
+                .andExpect(jsonPath("$.items.[0].authorImage").value("image101"))
+                .andExpect(jsonPath("$.items.[0].description").value("test description by question 101"))
+                .andExpect(jsonPath("$.items.[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items.[0].countAnswer").value(1))
+                .andExpect(jsonPath("$.items.[0].countValuable").value(-1))
+                //Проверяем, что нужные QuestionViewDto также выгрузили список всех tags, связанных с ними
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].name").value("test tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].description").value("description for tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[1].listTagDto.[0].id").value(103));
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&trackedTags=100&ignoredTags=102")
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto, в него попадают искомые теги и не попадают игнорируемые
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(2))
+                .andExpect(jsonPath("$.itemsOnPage").value(2))
+                //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
+                .andExpect(jsonPath("$.items.[0].id").value(101))
+                .andExpect(jsonPath("$.items.[1].id").value(100));
+    }
 }
