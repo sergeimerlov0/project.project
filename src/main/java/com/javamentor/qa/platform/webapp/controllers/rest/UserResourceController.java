@@ -4,7 +4,6 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserProfileDeletedQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -29,13 +28,13 @@ import java.util.regex.Pattern;
 public class UserResourceController {
     private final UserDtoService userDtoService;
     private UserService userService;
-    private final UserProfileDeletedQuestionDtoService userProfileDeletedQuestionDtoService;
+
 
     @Autowired
-    public UserResourceController(UserDtoService userDtoService, UserService userService, UserProfileDeletedQuestionDtoService userProfileDeletedQuestionDtoService) {
+    public UserResourceController(UserDtoService userDtoService, UserService userService) {
         this.userDtoService = userDtoService;
         this.userService = userService;
-        this.userProfileDeletedQuestionDtoService = userProfileDeletedQuestionDtoService;
+
     }
 
 
@@ -145,9 +144,9 @@ public class UserResourceController {
             @ApiResponse(code = 404, message = "Неверный ID пользователя"),
     })
     public ResponseEntity<?> getDeletedQuestionsByUser(@PathVariable("userId") long userId) {
-        return userProfileDeletedQuestionDtoService.getUserProfileDeletedQuestionDtoByUserId(userId).isEmpty() ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(userProfileDeletedQuestionDtoService.getUserProfileDeletedQuestionDtoByUserId(userId), HttpStatus.OK);
+        return userDtoService.getAllDeletedQuestionsByUserId(userId).isEmpty() ?
+                new ResponseEntity<>("Для данного пользователя список удаленных вопросов отсутствует", HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(userDtoService.getAllDeletedQuestionsByUserId(userId), HttpStatus.OK);
 
     }
 }
