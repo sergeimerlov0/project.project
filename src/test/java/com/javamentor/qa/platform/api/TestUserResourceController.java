@@ -383,6 +383,14 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$[0].id").value(100))
                 .andExpect(jsonPath("$[1].id").value(101));
 
+        mvc.perform(get("/api/user/101/profile/bookmarks")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].questionId").value(102))
+                .andExpect(jsonPath("$[0].id").value(102));
+
         mvc.perform(get("/api/user/106/profile/questions")
                         .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
