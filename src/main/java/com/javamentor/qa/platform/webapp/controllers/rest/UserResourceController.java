@@ -29,14 +29,11 @@ public class UserResourceController {
     private final UserDtoService userDtoService;
     private UserService userService;
 
-
     @Autowired
-    public UserResourceController(UserDtoService userDtoService, UserService userService) {
+    public UserResourceController(UserDtoService userDtoService, UserService userservice) {
         this.userDtoService = userDtoService;
-        this.userService = userService;
-
+        this.userService = userservice;
     }
-
 
     @GetMapping("/{userId}")
     @ApiOperation("Получение пользователя по ID")
@@ -89,7 +86,7 @@ public class UserResourceController {
     })
     public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortReputation(@RequestParam int currentPageNumber,
                                                                         @RequestParam(defaultValue = "10") int itemsOnPage) {
-        Map<String, Object> paginationMap = new HashMap<>();
+        Map<String, Object> paginationMap =new HashMap<>();
         paginationMap.put("class", "AllUsersSortedByReputation");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
