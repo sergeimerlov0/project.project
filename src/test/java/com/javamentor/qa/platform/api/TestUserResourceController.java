@@ -362,4 +362,30 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getBookmarksByUser/bookmarks.yml",
+            "datasets/UserResourceController/getBookmarksByUser/question.yml",
+            "datasets/UserResourceController/getBookmarksByUser/role.yml",
+            "datasets/UserResourceController/getBookmarksByUser/users.yml",
+    }, cleanBefore = true, cleanAfter = true)
+    void getBookmarksByUser() throws Exception{
+        email = "3user@mail.com";
+        password = "3111";
+
+        mvc.perform(get("/api/user/100/profile/bookmarks")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].questionId").value(100))
+                .andExpect(jsonPath("$[1].questionId").value(101))
+                .andExpect(jsonPath("$[0].id").value(100))
+                .andExpect(jsonPath("$[1].id").value(101));
+
+        mvc.perform(get("/api/user/106/profile/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 }
