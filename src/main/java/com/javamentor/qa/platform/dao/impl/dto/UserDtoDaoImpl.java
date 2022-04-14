@@ -36,6 +36,22 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
+    public List<UserProfileQuestionDto> getUserProfileQuestionDtoAddByUserId(Long userId) {
+        return entityManager.createQuery(
+                        "SELECT new com.javamentor.qa.platform.models.dto.UserProfileQuestionDto(" +
+                                "question.id, " +
+                                "question.title, " +
+                                "(SELECT COUNT(*) FROM Answer answer WHERE answer.question.id = question.id AND answer.isDeleted = false), " +
+                                "question.persistDateTime) " +
+                                "FROM Question question " +
+                                "WHERE question.user.id = :userId " +
+                                "AND question.isDeleted = false",
+                        UserProfileQuestionDto.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    @Override
     public List<UserProfileQuestionDto> getAllDeletedQuestionsByUserId(Long id) {
         return entityManager.createQuery(
                         "select new com.javamentor.qa.platform.models.dto.UserProfileQuestionDto(" +

@@ -32,6 +32,26 @@ public class UserDtoServiceImpl extends PaginationServiceDtoImpl<UserDto> implem
         return userDtoDao.getUserById(id);
     }
 
+    @Override
+    @Transactional
+    public List<UserProfileQuestionDto> getUserProfileQuestionDtoAddByUserId(Long userId) {
+        List<UserProfileQuestionDto> listQuestions = userDtoDao.getUserProfileQuestionDtoAddByUserId(userId);
+        List<Long> listId = listQuestions
+                .stream()
+                .map(UserProfileQuestionDto::getQuestionId)
+                .collect(Collectors.toList());
+        Map<Long, List<TagDto>> tags = tagDtoDao.getMapTagsByQuestionIds(listId);
+
+        for (UserProfileQuestionDto userProfileQuestionDto : listQuestions) {
+            userProfileQuestionDto.setTagList(
+                    tags.get(userProfileQuestionDto.getQuestionId()) != null ?
+                            tags.get(userProfileQuestionDto.getQuestionId()) :
+                            new ArrayList<>());
+        }
+
+        return listQuestions;
+    }
+
 
     @Override
     @Transactional
