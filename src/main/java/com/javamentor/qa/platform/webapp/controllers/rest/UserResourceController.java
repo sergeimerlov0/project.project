@@ -131,4 +131,17 @@ public class UserResourceController {
         sc.setAuthentication(authentication);
         return new ResponseEntity<>("Пароль пользователя изменён", HttpStatus.OK);
     }
+
+    @GetMapping("/{userId}/profile/questions")
+    @ApiOperation("Получение вопросов пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Получен список вопросов"),
+            @ApiResponse(code = 400, message = "Для данного пользователя список вопросов отсутствует"),
+            @ApiResponse(code = 404, message = "Неверный ID пользователя"),
+    })
+    public ResponseEntity<?> getQuestionsByUser(@PathVariable("userId") long userId){
+        return userDtoService.getUserProfileQuestionDtoAddByUserId(userId).isEmpty() ?
+                new ResponseEntity<>("Для данного пользователя список вопросов отсутствует", HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(userDtoService.getUserProfileQuestionDtoAddByUserId(userId), HttpStatus.OK);
+    }
 }
