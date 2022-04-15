@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.dao.impl.dto.pagination;
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GetAllQuestionDtoImpl implements PaginationDtoAble<QuestionViewDto> {
     @PersistenceContext
-    EntityManager entityManager;
+   private EntityManager entityManager;
 
     @Override
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
