@@ -26,8 +26,8 @@ public class GlobalSearchResourceController {
     @GetMapping("")
     @ApiOperation(value = "Получение списка вопросов по критериям поиска")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Вот что удалось найти"),
-            @ApiResponse(code = 400, message = "Нам не удалось ничего найти")
+            @ApiResponse(code = 200, message = "Поиск прошел успешно"),
+            @ApiResponse(code = 400, message = "Что-то пошло не так")
     })
     public ResponseEntity<PageDto<QuestionViewDto>> getQuestionDtoByTagId(@RequestParam String q,
                                                    @RequestParam int page,
