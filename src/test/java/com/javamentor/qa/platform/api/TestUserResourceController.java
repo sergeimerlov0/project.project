@@ -283,7 +283,7 @@ public class TestUserResourceController extends AbstractApiTest {
             "datasets/UserResourceController/getAllUserSortVoteWithFilter/voteAnswer.yml",
             "datasets/UserResourceController/getAllUserSortVoteWithFilter/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
-    void getAllUserSortVoteWithFilter() throws Exception{
+    void getAllUserSortVoteWithFilter() throws Exception {
         //email и пароль юзера
         email = "3user@mail.com";
         password = "3111";
@@ -321,4 +321,90 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items.length()").value(2));
     }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getQuestionsByUser/answer.yml",
+            "datasets/UserResourceController/getQuestionsByUser/question.yml",
+            "datasets/UserResourceController/getQuestionsByUser/reputation.yml",
+            "datasets/UserResourceController/getQuestionsByUser/role.yml",
+            "datasets/UserResourceController/getQuestionsByUser/user.yml",
+            "datasets/UserResourceController/getQuestionsByUser/voteAnswer.yml",
+            "datasets/UserResourceController/getQuestionsByUser/voteQuestion.yml",
+            "datasets/UserResourceController/getQuestionsByUser/tag.yml",
+            "datasets/UserResourceController/getQuestionsByUser/questionHasTag.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void getQuestionsByUser() throws Exception {
+        //email и пароль юзера
+        email = "3user@mail.com";
+        password = "3111";
+
+        mvc.perform(get("/api/user/100/profile/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].questionId").value(100))
+                .andExpect(jsonPath("$[0].tagList.length()").value(3));
+
+        mvc.perform(get("/api/user/101/profile/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].questionId").value(101))
+                .andExpect(jsonPath("$[1].questionId").value(103))
+                .andExpect(jsonPath("$[0].tagList.length()").value(1))
+                .andExpect(jsonPath("$[1].tagList.length()").value(0));
+
+        mvc.perform(get("/api/user/155/profile/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getDeletedQuestionsByUser/answer.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/comment.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/commentQuestion.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/question.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/questionHasTag.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/reputation.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/role.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/tag.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/user.yml",
+            "datasets/UserResourceController/getDeletedQuestionsByUser/voteQuestion.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void getDeletedQuestionsByUser() throws Exception {
+        //email и пароль юзера
+        email = "3user@mail.com";
+        password = "3111";
+
+        mvc.perform(get("/api/user/100/profile/delete/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].questionId").value(100))
+                .andExpect(jsonPath("$[0].tagList.length()").value(3));
+
+        mvc.perform(get("/api/user/101/profile/delete/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].questionId").value(101))
+                .andExpect(jsonPath("$[1].questionId").value(102))
+                .andExpect(jsonPath("$[0].tagList.length()").value(1))
+                .andExpect(jsonPath("$[1].tagList.length()").value(1));
+
+        mvc.perform(get("/api/user/155/profile/delete/questions")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+
 }

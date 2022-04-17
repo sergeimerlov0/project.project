@@ -29,11 +29,14 @@ public class UserResourceController {
     private final UserDtoService userDtoService;
     private UserService userService;
 
+
     @Autowired
-    public UserResourceController(UserDtoService userDtoService, UserService userservice) {
+    public UserResourceController(UserDtoService userDtoService, UserService userService) {
         this.userDtoService = userDtoService;
-        this.userService = userservice;
+        this.userService = userService;
+
     }
+
 
     @GetMapping("/{userId}")
     @ApiOperation("Получение пользователя по ID")
@@ -86,7 +89,7 @@ public class UserResourceController {
     })
     public ResponseEntity<PageDto<UserDto>> getAllUserDtoSortReputation(@RequestParam int currentPageNumber,
                                                                         @RequestParam(defaultValue = "10") int itemsOnPage) {
-        Map<String, Object> paginationMap =new HashMap<>();
+        Map<String, Object> paginationMap = new HashMap<>();
         paginationMap.put("class", "AllUsersSortedByReputation");
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
@@ -130,5 +133,33 @@ public class UserResourceController {
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(authentication);
         return new ResponseEntity<>("Пароль пользователя изменён", HttpStatus.OK);
+
+    }
+
+    @GetMapping("/{userId}/profile/delete/questions")
+    @ApiOperation("Получение удаленных вопросов пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Получен список удаленных вопросов"),
+            @ApiResponse(code = 400, message = "Для данного пользователя список удаленных вопросов отсутствует"),
+            @ApiResponse(code = 404, message = "Неверный ID пользователя"),
+    })
+    public ResponseEntity<?> getDeletedQuestionsByUser(@PathVariable("userId") long userId) {
+        return userDtoService.getAllDeletedQuestionsByUserId(userId).isEmpty() ?
+                new ResponseEntity<>("Для данного пользователя список удаленных вопросов отсутствует", HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(userDtoService.getAllDeletedQuestionsByUserId(userId), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/{userId}/profile/questions")
+    @ApiOperation("Получение вопросов пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Получен список вопросов"),
+            @ApiResponse(code = 400, message = "Для данного пользователя список вопросов отсутствует"),
+            @ApiResponse(code = 404, message = "Неверный ID пользователя"),
+    })
+    public ResponseEntity<?> getQuestionsByUser(@PathVariable("userId") long userId){
+        return userDtoService.getUserProfileQuestionDtoAddByUserId(userId).isEmpty() ?
+                new ResponseEntity<>("Для данного пользователя список вопросов отсутствует", HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(userDtoService.getUserProfileQuestionDtoAddByUserId(userId), HttpStatus.OK);
     }
 }
