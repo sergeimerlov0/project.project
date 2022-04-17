@@ -1095,4 +1095,27 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].id").value(101))
                 .andExpect(jsonPath("$.items.[1].id").value(100));
     }
+
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/testAddCommentToQuestion/answer.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/comment.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/commentQuestion.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/question.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/questionHasTag.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/reputation.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/role.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/tag.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/user.yml",
+
+    }, cleanBefore = true, cleanAfter = true)
+    void addCommentToQuestion() throws Exception {
+
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1/comment")
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+                .andExpect(status().isOk());
+    }
+
 }

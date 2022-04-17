@@ -3,16 +3,16 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
+import com.javamentor.qa.platform.models.entity.Comment;
+import com.javamentor.qa.platform.models.entity.CommentType;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ public class QuestionResourceController {
     private final TagService tagService;
     private final QuestionConverter questionConverter;
     private final QuestionViewedService questionViewedService;
+    private final CommentQuestionService commentQuestionService;
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -161,6 +163,25 @@ public class QuestionResourceController {
             }
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/{id}/comment")
+    @ApiOperation(value = "Добавление комментария в вопрос", tags = {"Add comment to question"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Комментарий успешно добавлен"),
+            @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
+    })
+    public ResponseEntity<Integer> addQuestionToComment(@PathVariable Long id,
+                                                        @RequestBody String comment) {
+
+        if (questionService.getById(id).isPresent()) {
+            Comment commentQuestion = new Comment();
+            commentQuestion.setText(comment);
+            commentQuestionService.persist(commentQuestion);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping
