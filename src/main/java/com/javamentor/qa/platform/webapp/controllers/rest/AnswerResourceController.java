@@ -2,15 +2,14 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
+import com.javamentor.qa.platform.models.entity.Comment;
+import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +37,7 @@ import java.util.Optional;
 @Api(value = "Работа с ответами на вопросы", tags = {"Ответ на вопрос"})
 public class AnswerResourceController {
     private final AnswerService answerService;
+    private final CommentAnswerService CommentAnswerService;
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
     private final QuestionService questionService;
@@ -121,5 +122,24 @@ public class AnswerResourceController {
                 return answerDtoService.getAnswerDtoByAnswerId(answer.getId()).isPresent() ?
                         ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerId(answer.getId())) :
                         ResponseEntity.badRequest().body("Ошибка создания Dto");
+    }
+
+    @ApiOperation(value = "Добавление комментария к ответу", tags = {"Добавление комментария"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное добавление комментария к ответу"),
+            @ApiResponse(code = 400, message = "Ошибка добавления комментария к ответу")})
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<?> addNewCommentForAnswer(@PathVariable("id") Long answerId,
+                                                    @Valid @RequestBody String answerComment) {
+        Optional<Answer> optionalAnswer = answerService.getById(answerId);
+        if (optionalAnswer.isEmpty()) {
+            return ResponseEntity.badRequest().body("Answer with id " + answerId + " not found");
+        }
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        CommentAnswer commentAnswer = new CommentAnswer(answerComment, user);
+        CommentAnswerService.persist(commentAnswer);
+
+        return ResponseEntity.ok().body("Answer successfully add");
     }
 }

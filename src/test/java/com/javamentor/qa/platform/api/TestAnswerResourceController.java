@@ -281,4 +281,55 @@ class TestAnswerResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @DataSet(value = {
+            "datasets/AnswerResourceController/addNewCommentAnswer/answer.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/commentAnswer.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/question.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/questionHasTag.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/tag.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/reputation.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/role.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/user.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/voteAnswer.yml"
+    })
+    public void addNewCommentForAnswer() throws Exception {
+        AnswerBodyDto answerBodyDto = new AnswerBodyDto("test");
+        AnswerBodyDto answerBodyDtoNull = null;
+
+        //Проверяем возвращаемое значение.
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/1/comment")
+                        .content(objectMapper.writeValueAsString(answerBodyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(100L))
+                .andExpect(jsonPath("$.comment").value("test100"))
+                .andExpect(jsonPath("$.answer_id").value(100L));
+
+        //Проверяем, что в БД появилась запись о новом комментарии с id 1
+        Assertions.assertTrue(em.createQuery("SELECT a FROM CommentAnswer a WHERE a.id = :comment_answer")
+                .setParameter("comment_answer", 1L)
+                .getResultList().size() > 0);
+
+        //Проверяем, что в БД не появилась запись о новом комментарии с id 2
+        Assertions.assertEquals(0, em.createQuery("SELECT a FROM CommentAnswer a WHERE  a.id = :comment_answer")
+                .setParameter("comment_answer", 2L)
+                .getResultList().size());
+
+        //проверяем на несуществующий комментарий
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/99/answer/1/comment")
+                        .content(objectMapper.writeValueAsString(answerBodyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+        //проверяем на null
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/1/comment")
+                        .content(objectMapper.writeValueAsString(answerBodyDtoNull))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+    }
 }
