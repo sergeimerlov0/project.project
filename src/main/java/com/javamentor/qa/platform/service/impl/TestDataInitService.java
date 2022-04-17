@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
@@ -7,13 +8,7 @@ import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.RoleService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +23,7 @@ public class TestDataInitService {
     private final Flyway flyway;
     private final AnswerService answerService;
     private final QuestionService questionService;
+    private final BookmarkService bookmarkService;
     private final TagService tagService;
     private final TrackedTagService trackedTagService;
     private final IgnoredTagService ignoredTagService;
@@ -36,7 +32,7 @@ public class TestDataInitService {
     public TestDataInitService(RoleService roleService, UserService userService, Flyway flyway,
                                AnswerService answerService, QuestionService questionService,
                                TagService tagService, TrackedTagService trackedTagService,
-                               IgnoredTagService ignoredTagService) {
+                               IgnoredTagService ignoredTagService, BookmarkService bookmarkService) {
         this.roleService = roleService;
         this.userService = userService;
         this.flyway = flyway;
@@ -45,6 +41,7 @@ public class TestDataInitService {
         this.tagService = tagService;
         this.trackedTagService = trackedTagService;
         this.ignoredTagService = ignoredTagService;
+        this.bookmarkService = bookmarkService;
     }
 
     public void init() {
@@ -54,6 +51,7 @@ public class TestDataInitService {
         addQuestion();
         addAnswer();
         addTrackedAndIgnoredTag();
+        addBookmark();
     }
 
     private void addRole() {
@@ -196,6 +194,29 @@ public class TestDataInitService {
             userService.persist(u);
         }
     }
+
+    private void addBookmark(){
+        List<BookMarks> bookmarks = new ArrayList<>();
+
+        for (int x = 2; x <= 50; x++) {
+            bookmarks.clear();
+            int countbookmarks = (int) (Math.random() * 4);
+            User user = userService.getById((long) x).get();
+
+            for (int y = 0; y <= 5; y++) {
+                BookMarks bookmark = new BookMarks();
+                Question question = questionService.getById((long) (1 + (int) (Math.random() * 49))).get();
+
+                if(!bookmarks.contains(question) && bookmarkService.bookmarkByUserId(user.getId()).size() < countbookmarks){
+                    bookmarks.add(bookmark);
+                    bookmark.setQuestion(question);
+                    bookmark.setUser(user);
+                    bookmarkService.persist(bookmark);
+                }
+            }
+        }
+    }
+
 
     private void addTrackedAndIgnoredTag() {
         List<Tag> tags = new ArrayList<>();
