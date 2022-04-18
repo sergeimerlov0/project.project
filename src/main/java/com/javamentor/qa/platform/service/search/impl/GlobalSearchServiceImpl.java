@@ -17,10 +17,10 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class GlobalSearchServiceImpl extends PaginationServiceDtoImpl<QuestionViewDto>  implements GlobalSearchService {
+public class GlobalSearchServiceImpl extends PaginationServiceDtoImpl<QuestionViewDto> implements GlobalSearchService {
 
 
-    private final  QuestionDtoService questionDtoService;
+    private final QuestionDtoService questionDtoService;
 
 
     @Override
@@ -28,8 +28,7 @@ public class GlobalSearchServiceImpl extends PaginationServiceDtoImpl<QuestionVi
     public PageDto<QuestionViewDto> getResultPageGlobalSearch(int itemsOnPage, int currentPageNumber, Map<String, Object> map) {
         GlobalSearchManager manager = new GlobalSearchManagerImpl();
         String parseStr = (String) map.get("parseStr");
-        List<String> parserResult = new ArrayList<>();
-       parserResult = manager.filter(parseStr, parserResult);
+        List<String> parserResult = manager.filter(parseStr);
         for (String s : parserResult) {
             if (s != null) {
                 map.put("class", s);
