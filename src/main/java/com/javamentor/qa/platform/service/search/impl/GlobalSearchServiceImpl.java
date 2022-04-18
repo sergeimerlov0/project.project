@@ -11,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,17 +26,31 @@ public class GlobalSearchServiceImpl extends PaginationServiceDtoImpl<QuestionVi
     public PageDto<QuestionViewDto> getResultPageGlobalSearch(int itemsOnPage, int currentPageNumber, Map<String, Object> map) {
         GlobalSearchManager manager = new GlobalSearchManagerImpl();
         String parseStr = (String) map.get("parseStr");
-        List<String> parserResult = manager.filter(parseStr);
+        List<String> parserResult = (manager.filter(parseStr));
         for (String s : parserResult) {
-            if (s != null) {
+            if (s != Optional.empty().toString()) {
                 map.put("class", s);
                 return questionDtoService.getPageDto(itemsOnPage, currentPageNumber, map);
             }
 
         }
-        return null; //вместо null должна быть логика поиска, которая отработает, если все элементы в parserResult равны null
+        return null;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -3,14 +3,12 @@ package com.javamentor.qa.platform.service.search.manager.impl;
 
 import com.javamentor.qa.platform.service.search.manager.abstrats.GlobalSearchManager;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class GlobalSearchManagerImpl implements GlobalSearchManager {
-
-
-
 
 
     @Override
