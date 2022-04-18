@@ -1,6 +1,8 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.dto.BookmarksDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookmarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
@@ -38,6 +40,7 @@ public class UserResourceController {
         this.userService = userservice;
         this.bookmarksDtoService = bookmarksDtoService;
     }
+
 
     @GetMapping("/{userId}")
     @ApiOperation("Получение пользователя по ID")
@@ -95,17 +98,6 @@ public class UserResourceController {
         paginationMap.put("currentPageNumber", currentPageNumber);
         paginationMap.put("itemsOnPage", itemsOnPage);
         return ResponseEntity.ok(userDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
-    }
-
-    @GetMapping("/{userId}/profile/bookmarks")
-    @ApiOperation(value = "Получение всех закладок BookmarksDto в профиле пользователя")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success"),
-            @ApiResponse(code = 400, message = "закладки не найдены"),
-            @ApiResponse(code = 404, message = "Неверный ID пользователя")
-    })
-    public ResponseEntity<List<BookmarksDto>> getBookmarksDtoByUserId(@PathVariable("userId") long userId) {
-        return ResponseEntity.ok(bookmarksDtoService.getBookmarksDtoByUserId(userId));
     }
 
     @PutMapping(value = "/{userId}/change/password")
@@ -173,5 +165,16 @@ public class UserResourceController {
         return userDtoService.getUserProfileQuestionDtoAddByUserId(userId).isEmpty() ?
                 new ResponseEntity<>("Для данного пользователя список вопросов отсутствует", HttpStatus.NOT_FOUND) :
                 new ResponseEntity<>(userDtoService.getUserProfileQuestionDtoAddByUserId(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/profile/bookmarks")
+    @ApiOperation(value = "Получение всех закладок BookmarksDto в профиле пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "закладки не найдены"),
+            @ApiResponse(code = 404, message = "Неверный ID пользователя")
+    })
+    public ResponseEntity<List<BookmarksDto>> getBookmarksDtoByUserId(@PathVariable("userId") long userId) {
+        return ResponseEntity.ok(bookmarksDtoService.getBookmarksDtoByUserId(userId));
     }
 }
