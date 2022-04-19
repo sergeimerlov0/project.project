@@ -28,13 +28,13 @@ public class GlobalSearchServiceImpl extends PaginationServiceDtoImpl<QuestionVi
         String parseStr = (String) map.get("parseStr");
         List<String> parserResult = (manager.filter(parseStr));
         for (String s : parserResult) {
-            if (s != Optional.empty().toString()) {
+            if (!s.equals(Optional.empty().toString())) {
                 map.put("class", s);
                 return questionDtoService.getPageDto(itemsOnPage, currentPageNumber, map);
             }
-
         }
-        return null;
+        map.put("class", "QuestionPageDtoBasicSearch");
+        return questionDtoService.getPageDto(itemsOnPage, currentPageNumber, map);
     }
 }
 
