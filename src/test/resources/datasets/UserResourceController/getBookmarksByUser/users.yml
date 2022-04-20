@@ -1,0 +1,45 @@
+user_entity:
+  - id: 100
+    email: "3user@mail.com"
+    full_name: "FirstTestRU"
+    city: "city100"
+    password: "3111"
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image100"
+    nickname: "user100"
+    is_enabled: true
+
+  - id: 101
+    email: "_user101@mail.com"
+    full_name: "SecondTest"
+    city: "city101"
+    password: "123"
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image101"
+    nickname: "user101"
+    is_enabled: true
+
+  - id: 102
+    email: "_user102@mail.com"
+    full_name: "NotTest"
+    city: "city102"
+    password: "123"
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image102"
+    nickname: "user102"
+    is_enabled: true
+    persist_date: 2021-01-04 00:00:00
+
+  - id: 103
+    email: "_Admin103@mail.ru"
+    full_name: "NotAdmin"
+    city: "city103"
+    password: "123"
+    role_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    image_link: "image103"
+    nickname: "user103"
+    is_enabled: true

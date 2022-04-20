@@ -2,7 +2,9 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.dto.BookmarksDto;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.BookmarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -28,15 +31,15 @@ import java.util.regex.Pattern;
 public class UserResourceController {
     private final UserDtoService userDtoService;
     private UserService userService;
-
+    private final BookmarksDtoService bookmarksDtoService;
 
     @Autowired
-    public UserResourceController(UserDtoService userDtoService, UserService userService) {
+    public UserResourceController(UserDtoService userDtoService, UserService userservice,
+                                  BookmarksDtoService bookmarksDtoService) {
         this.userDtoService = userDtoService;
-        this.userService = userService;
-
+        this.userService = userservice;
+        this.bookmarksDtoService = bookmarksDtoService;
     }
-
 
     @GetMapping("/{userId}")
     @ApiOperation("Получение пользователя по ID")
@@ -161,5 +164,16 @@ public class UserResourceController {
         return userDtoService.getUserProfileQuestionDtoAddByUserId(userId).isEmpty() ?
                 new ResponseEntity<>("Для данного пользователя список вопросов отсутствует", HttpStatus.NOT_FOUND) :
                 new ResponseEntity<>(userDtoService.getUserProfileQuestionDtoAddByUserId(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/profile/bookmarks")
+    @ApiOperation(value = "Получение всех закладок BookmarksDto в профиле пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "закладки не найдены"),
+            @ApiResponse(code = 404, message = "Неверный ID пользователя")
+    })
+    public ResponseEntity<List<BookmarksDto>> getBookmarksDtoByUserId(@PathVariable("userId") long userId) {
+        return ResponseEntity.ok(bookmarksDtoService.getBookmarksDtoByUserId(userId));
     }
 }
