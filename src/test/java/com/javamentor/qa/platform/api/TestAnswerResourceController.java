@@ -285,28 +285,26 @@ class TestAnswerResourceController extends AbstractApiTest {
     @Test
     @DataSet(value = {
             "datasets/AnswerResourceController/addNewCommentAnswer/answer.yml",
-            "datasets/AnswerResourceController/addNewCommentAnswer/commentAnswer.yml",
             "datasets/AnswerResourceController/addNewCommentAnswer/question.yml",
             "datasets/AnswerResourceController/addNewCommentAnswer/questionHasTag.yml",
             "datasets/AnswerResourceController/addNewCommentAnswer/tag.yml",
             "datasets/AnswerResourceController/addNewCommentAnswer/reputation.yml",
             "datasets/AnswerResourceController/addNewCommentAnswer/role.yml",
             "datasets/AnswerResourceController/addNewCommentAnswer/user.yml",
-            "datasets/AnswerResourceController/addNewCommentAnswer/voteAnswer.yml"
+            "datasets/AnswerResourceController/addNewCommentAnswer/voteAnswer.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/comment.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/commentAnswer.yml"
     })
     public void addNewCommentForAnswer() throws Exception {
         AnswerBodyDto answerBodyDto = new AnswerBodyDto("test");
         AnswerBodyDto answerBodyDtoNull = null;
 
-        //Проверяем возвращаемое значение.
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/1/comment")
+        //Проверяем возвращаемый статус
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/comment")
                         .content(objectMapper.writeValueAsString(answerBodyDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(100L))
-                .andExpect(jsonPath("$.comment").value("test100"))
-                .andExpect(jsonPath("$.answer_id").value(100L));
+                .andExpect(status().isOk());
 
         //Проверяем, что в БД появилась запись о новом комментарии с id 1
         Assertions.assertTrue(em.createQuery("SELECT a FROM CommentAnswer a WHERE a.id = :comment_answer")

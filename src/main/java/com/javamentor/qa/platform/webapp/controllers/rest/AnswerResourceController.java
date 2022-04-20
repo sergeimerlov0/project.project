@@ -2,31 +2,22 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
-import com.javamentor.qa.platform.models.entity.Comment;
-import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -137,7 +128,8 @@ public class AnswerResourceController {
         }
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        CommentAnswer commentAnswer = new CommentAnswer(answerComment, user);
+
+        CommentAnswer commentAnswer = new CommentAnswer(answerComment, user, optionalAnswer.get());
         CommentAnswerService.persist(commentAnswer);
 
         return ResponseEntity.ok().body("Answer successfully add");
