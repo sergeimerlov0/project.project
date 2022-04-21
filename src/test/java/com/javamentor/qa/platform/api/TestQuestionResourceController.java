@@ -3,12 +3,15 @@ package com.javamentor.qa.platform.api;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
+import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.jayway.jsonpath.JsonPath;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +22,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -1039,6 +1042,37 @@ class TestQuestionResourceController extends AbstractApiTest {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?itemsOnPage=2&trackedTags=100")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/testCreateBookmark/user.yml",
+            "datasets/QuestionResourceController/testCreateBookmark/question.yml",
+            "datasets/QuestionResourceController/testCreateBookmark/role.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void testCreateBookmark() throws Exception {
+        //Создание закладки для 100 юзера на 100 вопрос
+        mvc.perform(post("/api/user/question/100/bookmark")
+                        .header("Authorization", getJwtToken("user1@gmail.com", "123")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Вопрос с Id:100 для пользователя с Id:100 добавлен в закладки")))
+                .andReturn();
+
+        //Проверяем закладку из БД
+        BookMarks bookMarks = em.createQuery("FROM BookMarks a " +
+                                                     "WHERE a.question.id = :questionId " +
+                                                     "AND a.user.id = :userId", BookMarks.class)
+                .setParameter("questionId" , 100L)
+                .setParameter("userId", 100L)
+                .getSingleResult();
+        Assertions.assertNotNull(bookMarks);
+
+        //Создание закладки для 100 юзера на несуществующий вопрос
+        mvc.perform(post("/api/user/question/99/bookmark")
+                        .header("Authorization", getJwtToken("user1@gmail.com", "123")))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Закладка не добавлена, вопроса ID 99 не существует")));
+
     }
 
     @Test
