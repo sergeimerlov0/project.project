@@ -1,4 +1,3 @@
-console.log("Привет")
 
 window.token = getCookie('token');
 
