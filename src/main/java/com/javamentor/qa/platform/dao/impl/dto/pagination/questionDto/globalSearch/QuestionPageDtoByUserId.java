@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.impl.dto.pagination.questionDto.GlobalSearchDto;
+package com.javamentor.qa.platform.dao.impl.dto.pagination.questionDto.globalSearch;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;

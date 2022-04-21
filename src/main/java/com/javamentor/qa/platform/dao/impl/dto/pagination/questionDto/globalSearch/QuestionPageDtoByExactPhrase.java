@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.impl.dto.pagination.questionDto.GlobalSearchDto;
+package com.javamentor.qa.platform.dao.impl.dto.pagination.questionDto.globalSearch;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Repository("QuestionPageDtoBasicSearch")
+@Repository("QuestionPageDtoByExactPhrase")
 @RequiredArgsConstructor
-public class QuestionPageDtoBasicSearch implements PaginationDtoAble<QuestionViewDto> {
+public class QuestionPageDtoByExactPhrase implements PaginationDtoAble<QuestionViewDto> {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -21,7 +21,7 @@ public class QuestionPageDtoBasicSearch implements PaginationDtoAble<QuestionVie
 
     @Override
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
-        String str = ((String) param.get("parseStr"));
+        String exactPhrase = ((String) param.get("parseStr")).replace("\"", "");
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
         return entityManager.createQuery("SELECT DISTINCT new com.javamentor.qa.platform.models.dto.QuestionViewDto" +
@@ -43,10 +43,10 @@ public class QuestionPageDtoBasicSearch implements PaginationDtoAble<QuestionVie
                         "FROM Question question " +
                         "LEFT OUTER JOIN question.user AS author ON (question.user.id = author.id) " +
                         "LEFT OUTER JOIN question.answers AS answer ON (question.id = answer.question.id) " +
-                        "LEFT JOIN question.user WHERE LOWER (question.title) LiKE LOWER (CONCAT('%',:str,'%')) OR " +
-                        "LOWER (question.description) LIKE LOWER (CONCAT('%',:str,'%')) OR question.id IN (SELECT question.id from Question question JOIN question.tags tag " +
-                        "WHERE LOWER (tag.name)  LIKE LOWER (concat('%',:str,'%'))) ORDER BY question.id", QuestionViewDto.class)
-                .setParameter("str", str)
+                        "LEFT JOIN question.user WHERE LOWER(question.description) LIKE LOWER (CONCAT('%',:exactPhrase,'%')) " +
+                        "OR LOWER(question.title) LIKE LOWER (CONCAT('%',:exactPhrase,'%'))" +
+                        "ORDER BY question.id ", QuestionViewDto.class)
+                .setParameter("exactPhrase", exactPhrase)
                 .getResultStream()
                 .skip((currentPageNumber - 1) * itemsOnPage)
                 .limit(itemsOnPage)
@@ -55,13 +55,11 @@ public class QuestionPageDtoBasicSearch implements PaginationDtoAble<QuestionVie
 
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        String str = ((String) param.get("parseStr"));
+        String exactPhrase = ((String) param.get("parseStr")).replace("\"", "");
         return Math.toIntExact((Long) entityManager.createQuery("SELECT COUNT(DISTINCT question.id) FROM Question question LEFT JOIN question.user " +
-                        "WHERE LOWER (question.description) LIKE LOWER (CONCAT('%',:str ,'%')) OR LOWER (question.title) " +
-                        "LIKE LOWER (CONCAT('%',:str,'%')) OR question.id IN (SELECT question.id from Question question JOIN question.tags tag " +
-                        "WHERE LOWER(tag.name) LIKE LOWER (concat('%',:str,'%')))")
-                .setParameter("str", str)
+                        "WHERE LOWER (question.description) LIKE LOWER (CONCAT('%',:exactPhrase ,'%')) OR LOWER (question.title) " +
+                        "LIKE LOWER (CONCAT('%',:exactPhrase,'%')) ")
+                .setParameter("exactPhrase", exactPhrase)
                 .getSingleResult());
-
     }
 }
