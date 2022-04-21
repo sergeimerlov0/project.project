@@ -5,3 +5,10 @@ comment:
     persist_date: "[DAY,NOW]"
     last_redaction_date: "[DAY,NOW]"
     user_id: 100
+
+  - id: 105
+    text: ""
+    comment_type: 1
+    persist_date: "[DAY,NOW]"
+    last_redaction_date: "[DAY,NOW]"
+    user_id: 100

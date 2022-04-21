@@ -306,18 +306,25 @@ class TestAnswerResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
 
-        //Проверяем, что в БД появилась запись о новом комментарии с id 1
-        Assertions.assertTrue(em.createQuery("SELECT a FROM CommentAnswer a WHERE a.id = :comment_answer")
-                .setParameter("comment_answer", 1L)
+        //проверяем на пустой комментарий
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/105/comment")
+                        .content(objectMapper.writeValueAsString(answerBodyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+        //Проверяем, что в БД появилась запись с новым комментарием с id 100
+        Assertions.assertTrue(em.createQuery("SELECT a FROM CommentAnswer a WHERE a.comment.id = :comment_id")
+                .setParameter("comment_id", 100L)
                 .getResultList().size() > 0);
 
-        //Проверяем, что в БД не появилась запись о новом комментарии с id 2
-        Assertions.assertEquals(0, em.createQuery("SELECT a FROM CommentAnswer a WHERE  a.id = :comment_answer")
-                .setParameter("comment_answer", 2L)
+        //Проверяем, что в БД не появилась запись с новым комментарием с id 101
+        Assertions.assertEquals(0, em.createQuery("SELECT a FROM CommentAnswer a WHERE  a.comment.id = :comment_id")
+                .setParameter("comment_id", 101L)
                 .getResultList().size());
 
         //проверяем на несуществующий комментарий
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/99/answer/1/comment")
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/1/comment")
                         .content(objectMapper.writeValueAsString(answerBodyDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
