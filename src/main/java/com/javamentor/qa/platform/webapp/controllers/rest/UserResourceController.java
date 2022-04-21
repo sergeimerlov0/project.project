@@ -41,6 +41,7 @@ public class UserResourceController {
         this.bookmarksDtoService = bookmarksDtoService;
     }
 
+
     @GetMapping("/{userId}")
     @ApiOperation("Получение пользователя по ID")
     public ResponseEntity<?> getUserById(@PathVariable("userId") Long userId) {
