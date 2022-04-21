@@ -7,6 +7,8 @@ answer:
     is_deleted_by_moderator: false
     is_helpful: true
     update_date: "[DAY,NOW]"
+    date_accept_time: "[DAY,NOW]"
+
 
   - id: 101
     html_body: "test1"
@@ -16,6 +18,8 @@ answer:
     is_deleted_by_moderator: false
     is_helpful: false
     update_date: "[DAY,NOW]"
+    date_accept_time: "[DAY,NOW]"
+
 
   - id: 102
     html_body: "test2"
@@ -25,3 +29,4 @@ answer:
     is_deleted_by_moderator: false
     is_helpful: true
     update_date: "[DAY,NOW]"
+    date_accept_time: "[DAY,NOW]"

@@ -1,7 +1,7 @@
 comment:
   - id: 100
     text: "some text 1"
-    comment_type: 2
+    comment_type: 1
     persist_date: "[DAY,NOW]"
     last_redaction_date: "[DAY,NOW]"
     user_id: 100

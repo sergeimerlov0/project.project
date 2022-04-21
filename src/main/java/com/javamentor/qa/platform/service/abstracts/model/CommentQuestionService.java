@@ -1,8 +1,9 @@
 package com.javamentor.qa.platform.service.abstracts.model;
 
-import com.javamentor.qa.platform.models.entity.Comment;
+import com.javamentor.qa.platform.dao.abstracts.model.CommentQuestionDao;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
+import org.springframework.stereotype.Service;
 
-public interface CommentQuestionService extends ReadWriteService<Comment, Long> {
-    @Override
-    void persist(Comment comment);
+@Service
+public interface CommentQuestionService extends ReadWriteService<CommentQuestion, Long> {
 }
