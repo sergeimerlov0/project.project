@@ -20,6 +20,7 @@ public class GlobalSearchManagerImpl implements GlobalSearchManager {
        parserResult.add(new GlobalSearchParserByExactPhrase().parseString(parseStr));
        parserResult.add(new GlobalSearchParserByPrefix().parseString(parseStr));
        parserResult.add(new GlobalSearchParserByPostfix().parseString(parseStr));
+       parserResult.add(new GlobalSearchParserByAnswers().parseString(parseStr));
        //в parserResult добавляем результаты Parser'ов по разным условиям
         return parserResult;
 
