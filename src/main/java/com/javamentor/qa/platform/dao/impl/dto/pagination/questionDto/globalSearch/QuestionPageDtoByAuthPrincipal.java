@@ -3,7 +3,9 @@ package com.javamentor.qa.platform.dao.impl.dto.pagination.questionDto.globalSea
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import com.javamentor.qa.platform.models.entity.user.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Repository("QuestionPageDtoByAuthPrincipal")
+@RequiredArgsConstructor
 public class QuestionPageDtoByAuthPrincipal implements PaginationDtoAble<QuestionViewDto> {
     @PersistenceContext
     private EntityManager entityManager;
