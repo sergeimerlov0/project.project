@@ -39,7 +39,7 @@ import java.util.Optional;
 @Api(value = "Работа с ответами на вопросы", tags = {"Ответ на вопрос"})
 public class AnswerResourceController {
     private final AnswerService answerService;
-    private final CommentAnswerService CommentAnswerService;
+    private final CommentAnswerService commentAnswerService;
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
     private final QuestionService questionService;
@@ -144,7 +144,7 @@ public class AnswerResourceController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
         CommentAnswer commentAnswer = new CommentAnswer(answerComment, user, optionalAnswer.get());
-        CommentAnswerService.persist(commentAnswer);
+        commentAnswerService.persist(commentAnswer);
 
         return ResponseEntity.ok().body("Answer successfully add");
     }
