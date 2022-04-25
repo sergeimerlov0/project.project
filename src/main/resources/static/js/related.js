@@ -13,12 +13,16 @@ fetch(url,{
 }).then(res => res.json())
     .then(data => {
          data.forEach(tag => {
+             console.log(tag)
             output += `
+           
+            
             <div>
-         
             <a class="card-link btn-light" href="#"> ${tag.title}</a> × ${tag.countQuestion} 
             
             </div>
+            <br>
+           
             `
         })
         tagList.innerHTML = output;
