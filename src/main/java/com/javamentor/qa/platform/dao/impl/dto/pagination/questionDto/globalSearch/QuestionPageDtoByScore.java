@@ -24,14 +24,13 @@ public class QuestionPageDtoByScore implements PaginationDtoAble<QuestionViewDto
 
     @Override
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
-        String score = ((String) param.get("parseStr")).replace("score:", "");
-        score.trim();
+        String score = ((String) param.get("parseStr")).replace("score:", "").trim();
         int voteQuestion;
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
 
         ArrayList<Integer> countVote = new ArrayList<>();
-        Pattern integerPattern = Pattern.compile("(\\-?\\d+)");
+        Pattern integerPattern = Pattern.compile("(-?\\d+)");
         Matcher matched = integerPattern.matcher(score);
         while (matched.find()) {
             countVote.add(Integer.valueOf(matched.group()));
@@ -62,7 +61,7 @@ public class QuestionPageDtoByScore implements PaginationDtoAble<QuestionViewDto
                             "LEFT JOIN question.user WHERE question.voteQuestions.size <= :voteQuestion ORDER BY question.id", QuestionViewDto.class)
                     .setParameter("voteQuestion", voteQuestion)
                     .getResultStream()
-                    .skip((currentPageNumber - 1) * itemsOnPage)
+                    .skip((long)(currentPageNumber - 1) * itemsOnPage)
                     .limit(itemsOnPage)
                     .collect(Collectors.toList());
         } else if (countVote.size() == 2) {
@@ -93,7 +92,7 @@ public class QuestionPageDtoByScore implements PaginationDtoAble<QuestionViewDto
                     .setParameter("voteQuestion", voteQuestion)
                     .setParameter("voteQuestion1", voteQuestion1)
                     .getResultStream()
-                    .skip((currentPageNumber - 1) * itemsOnPage)
+                    .skip((long)(currentPageNumber - 1) * itemsOnPage)
                     .limit(itemsOnPage)
                     .collect(Collectors.toList());
 
@@ -122,7 +121,7 @@ public class QuestionPageDtoByScore implements PaginationDtoAble<QuestionViewDto
                             "LEFT JOIN question.user WHERE question.voteQuestions.size >= :voteQuestion ORDER BY question.id", QuestionViewDto.class)
                     .setParameter("voteQuestion", voteQuestion)
                     .getResultStream()
-                    .skip((currentPageNumber - 1) * itemsOnPage)
+                    .skip((long)(currentPageNumber - 1) * itemsOnPage)
                     .limit(itemsOnPage)
                     .collect(Collectors.toList());
         }
@@ -132,11 +131,10 @@ public class QuestionPageDtoByScore implements PaginationDtoAble<QuestionViewDto
 
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        String score = ((String) param.get("parseStr")).replace("score:", "");
-        score.trim();
+        String score = ((String) param.get("parseStr")).replace("score:", "").trim();
         int voteQuestion;
         ArrayList<Integer> countVote = new ArrayList<>();
-        Pattern integerPattern = Pattern.compile("(\\-?\\d+)");
+        Pattern integerPattern = Pattern.compile("(-?\\d+)");
         Matcher matched = integerPattern.matcher(score);
         while (matched.find()) {
             countVote.add(Integer.valueOf(matched.group()));

@@ -15,6 +15,3 @@ public class GlobalSearchParserByScore implements GlobalSearchParserString {
         return Optional.empty().toString();
     }
 }
-
-
-
