@@ -6,13 +6,13 @@ import com.javamentor.qa.platform.service.search.manager.abstrats.GlobalSearchPa
 import java.util.Optional;
 
 
-public class GlobalSearchParserByExactPhrase implements GlobalSearchParserString {
+public class GlobalSearchParserByTags implements GlobalSearchParserString {
 
 
     @Override
     public String parseString(String parseStr) {
-        if (parseStr.matches("\".*\"")) {
-           return "QuestionPageDtoByExactPhrase";
+        if (parseStr.matches("\\[.*\\]")) {
+           return ("QuestionPageDtoByTags");
        }
        return Optional.empty().toString();
 

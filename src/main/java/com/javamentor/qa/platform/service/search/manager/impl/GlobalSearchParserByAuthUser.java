@@ -6,20 +6,14 @@ import com.javamentor.qa.platform.service.search.manager.abstrats.GlobalSearchPa
 import java.util.Optional;
 
 
-public class GlobalSearchParserByExactPhrase implements GlobalSearchParserString {
+public class GlobalSearchParserByAuthUser implements GlobalSearchParserString {
 
 
     @Override
     public String parseString(String parseStr) {
-        if (parseStr.matches("\".*\"")) {
-           return "QuestionPageDtoByExactPhrase";
-       }
-       return Optional.empty().toString();
-
-
+        if (parseStr.startsWith("user:me")) {
+           return "QuestionPageDtoByAuthPrincipal";
+        }
+        return Optional.empty().toString();
     }
 }
-
-
-
-

@@ -10,7 +10,7 @@ public class GlobalSearchParserByUserId implements GlobalSearchParserString {
     @Override
     public String parseString(String parseStr) {
         if (parseStr.startsWith("user:id_")) {
-            return ( "QuestionPageDtoByUserId");
+            return "QuestionPageDtoByUserId";
         }
         return Optional.empty().toString();
     }
