@@ -30,9 +30,10 @@ public class CommentAnswer implements Serializable {
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
-    public CommentAnswer(String text, User user) {
+    public CommentAnswer(String text, User user, Answer answer) {
         comment.setText(text);
         comment.setUser(user);
+        this.answer = answer;
     }
 
     @PrePersist

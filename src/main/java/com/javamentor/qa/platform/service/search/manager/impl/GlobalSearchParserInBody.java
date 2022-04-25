@@ -12,7 +12,7 @@ public class GlobalSearchParserInBody implements GlobalSearchParserString {
     @Override
     public String parseString(String parseStr) {
         if (parseStr.startsWith("body:")) {
-            return ("QuestionPageDtoFromBody");
+            return "QuestionPageDtoFromBody";
         }
         return Optional.empty().toString();
     }
