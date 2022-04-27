@@ -6,7 +6,7 @@ import com.javamentor.qa.platform.service.search.manager.abstrats.GlobalSearchPa
 import java.util.Optional;
 
 
-public class GlobalSearchParserByData implements GlobalSearchParserString {
+public class GlobalSearchParserByDate implements GlobalSearchParserString {
 
 
     @Override
