@@ -9,10 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository("QuestionPageDtoByData")
@@ -139,19 +136,6 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
 
     private static String formatAbsoluteDate2 (String date){
         String dataResult = null;
-        HashMap <String, String> daysInMonth = new HashMap<>();
-        daysInMonth.put("01", "31");
-        daysInMonth.put("02", "28");
-        daysInMonth.put("03", "31");
-        daysInMonth.put("04", "30");
-        daysInMonth.put("05", "31");
-        daysInMonth.put("06", "30");
-        daysInMonth.put("07", "31");
-        daysInMonth.put("08", "31");
-        daysInMonth.put("09", "30");
-        daysInMonth.put("10", "31");
-        daysInMonth.put("11", "30");
-        daysInMonth.put("12", "31");
         String[] dateVar = date.split("-");
         if(dateVar.length == 1){
             dataResult = dateVar[0] + "1231";
@@ -182,19 +166,7 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
     }
 
     private static String[] formatRelativeDate1 (String date) {
-        HashMap <String, String> daysInMonth = new HashMap<>();
-        daysInMonth.put("01", "31");
-        daysInMonth.put("02", "28");
-        daysInMonth.put("03", "31");
-        daysInMonth.put("04", "30");
-        daysInMonth.put("05", "31");
-        daysInMonth.put("06", "30");
-        daysInMonth.put("07", "31");
-        daysInMonth.put("08", "31");
-        daysInMonth.put("09", "30");
-        daysInMonth.put("10", "31");
-        daysInMonth.put("11", "30");
-        daysInMonth.put("12", "31");
+
         StringBuilder dat = new StringBuilder(date);
         StringBuilder data1 = new StringBuilder();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -230,4 +202,18 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
         }
         return dates;
     }
+    private final static Map<String, String> daysInMonth = Map.ofEntries(
+            Map.entry("01", "31"),
+            Map.entry("02", "28"),
+            Map.entry("03", "31"),
+            Map.entry("04", "30"),
+            Map.entry("05", "31"),
+            Map.entry("06", "30"),
+            Map.entry("07", "31"),
+            Map.entry("08", "31"),
+            Map.entry("09", "30"),
+            Map.entry("10", "31"),
+            Map.entry("11", "30"),
+            Map.entry("12", "31")
+    );
 }
