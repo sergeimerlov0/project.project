@@ -218,7 +218,7 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
                 data1.append("01");
                 dates[0] = data1.toString();
                 data1.delete(6,8);
-                data1.append(daysInMonth.get(data1.charAt(4) + data1.charAt(5)));
+                data1.append(daysInMonth.get(String.valueOf(data1.charAt(4)) + String.valueOf(data1.charAt(5))));
                 dates[1] = data1.toString();
                 break;
             case ('d'):
