@@ -17,9 +17,10 @@ public class QuestionPageDtoByViews implements PaginationDtoAble<QuestionViewDto
 
     @PersistenceContext
     private EntityManager entityManager;
+
     @Override
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
-        String str = ((String) param.get("parseStr")).replace("views:", "");
+        String str = ((String) param.get("parseStr")).replace("views:", "").trim();
         String[] strings = str.split("[^?\\w+]");
         String min = strings[0];
         String max = strings[1];
@@ -46,15 +47,16 @@ public class QuestionPageDtoByViews implements PaginationDtoAble<QuestionViewDto
                         "FROM Question question " +
                         "LEFT OUTER JOIN question.user AS author ON (question.user.id = author.id) " +
                         "LEFT OUTER JOIN question.answers AS answer ON (question.id = answer.question.id) " +
-                        "LEFT JOIN QuestionViewed  questionViewed   ON" +
-                        "(SELECT COUNT(*) FROM QuestionViewed a WHERE a.question.id = :question.id AND a.user.id = :author.id AS countView " +
-                        "BETWEEN minView AND maxView) AND questionViewed.question.id = :question.id AND questionViewed.user.id = :author.id  ORDER BY question.id", QuestionViewDto.class)
+                        "LEFT JOIN QuestionViewed  q AS q  ON (q.question.id = question.id)" +
+                        "WHERE (SELECT COUNT(*) FROM QuestionViewed a WHERE a.question.id = question.id AND a.user.id = author.id " +
+                        "GROUP BY a.question.id HAVING :minView AND :maxView ) " +
+                        "ORDER BY question.id", QuestionViewDto.class)
                 .setParameter("minView", minView)
                 .setParameter("maxView", maxView)
                 .getResultStream()
                 .skip((currentPageNumber - 1) * itemsOnPage)
                 .limit(itemsOnPage)
-                .collect( Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -63,9 +65,9 @@ public class QuestionPageDtoByViews implements PaginationDtoAble<QuestionViewDto
         int minView = Integer.parseInt(str);
         int maxView = Integer.parseInt(str);
         return Math.toIntExact((Long) entityManager.createQuery("SELECT COUNT(DISTINCT question.id) FROM Question question" +
-                 " LEFT JOIN QuestionViewed QuestionViewed ON " +
-                  " (SELECT COUNT(*) FROM QuestionViewed a WHERE a.question.id = :question.id AND a.user.id = :author.id ) AS countView " +
-                "BETWEEN minView AND maxView) AND questionViewed.question.id = :question.id AND questionViewed.user.id = :author.id" )
+                        "LEFT JOIN QuestionViewed  q   ON (q.question.id = question.id)" +
+                        "WHERE (SELECT COUNT(*) FROM QuestionViewed a WHERE a.question.id = question.id AND a.user.id = author.id " +
+                        "GROUP BY a.question.id HAVING BETWEEN :minView AND :maxView  )")
                 .setParameter("minView", minView)
                 .setParameter("maxView", maxView)
                 .getSingleResult());
