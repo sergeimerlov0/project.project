@@ -20,7 +20,7 @@ public class QuestionPageDtoByViews implements PaginationDtoAble<QuestionViewDto
 
     @Override
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
-        String str = ((String) param.get("parseStr")).replace("views:", "").trim();
+        String str = ((String) param.get("parseStr")).replace("views:", "");
         String[] strings = str.split("[^?\\w+]");
         String min = strings[0];
         String max = strings[1];
