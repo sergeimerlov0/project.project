@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -103,11 +104,24 @@ public class QuestionPageDtoByData implements PaginationDtoAble<QuestionViewDto>
 
     private static String formatDate2 (String date){
         String dataResult = null;
+        HashMap <String, String> daysInMonth = new HashMap<>();
+        daysInMonth.put("01", "31");
+        daysInMonth.put("02", "28");
+        daysInMonth.put("03", "31");
+        daysInMonth.put("04", "30");
+        daysInMonth.put("05", "31");
+        daysInMonth.put("06", "30");
+        daysInMonth.put("07", "31");
+        daysInMonth.put("08", "31");
+        daysInMonth.put("09", "30");
+        daysInMonth.put("10", "31");
+        daysInMonth.put("11", "30");
+        daysInMonth.put("12", "31");
         String[] dateVar = date.split("-");
         if(dateVar.length == 1){
             dataResult = dateVar[0] + "1231";
         } else if (dateVar.length == 2){
-            dataResult = dateVar[0] + dateVar[1] + "31";
+            dataResult = dateVar[0] + dateVar[1] + daysInMonth.get(dateVar[1]);
         } else if (dateVar.length == 3){
             dataResult = dateVar[0] + dateVar[1] + dateVar[2];
         }
