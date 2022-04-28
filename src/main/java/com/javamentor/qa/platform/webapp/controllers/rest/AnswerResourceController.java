@@ -4,28 +4,30 @@ import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +39,7 @@ import java.util.Optional;
 @Api(value = "Работа с ответами на вопросы", tags = {"Ответ на вопрос"})
 public class AnswerResourceController {
     private final AnswerService answerService;
+    private final CommentAnswerService commentAnswerService;
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
     private final QuestionService questionService;
@@ -121,5 +124,28 @@ public class AnswerResourceController {
                 return answerDtoService.getAnswerDtoByAnswerId(answer.getId()).isPresent() ?
                         ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerId(answer.getId())) :
                         ResponseEntity.badRequest().body("Ошибка создания Dto");
+    }
+
+    @ApiOperation(value = "Добавление комментария к ответу", tags = {"Добавление комментария"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное добавление комментария к ответу"),
+            @ApiResponse(code = 400, message = "Ошибка добавления комментария к ответу")})
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<?> addNewCommentForAnswer(@PathVariable("id") Long answerId,
+                                                    @Valid @RequestBody String answerComment) {
+        Optional<Answer> optionalAnswer = answerService.getById(answerId);
+        if (optionalAnswer.isEmpty()) {
+            return ResponseEntity.badRequest().body("Answer with id " + answerId + " not found");
+        }
+        if (answerComment.isEmpty()) {
+            return ResponseEntity.badRequest().body("Can't add an empty comment");
+        }
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+
+        CommentAnswer commentAnswer = new CommentAnswer(answerComment, user, optionalAnswer.get());
+        commentAnswerService.persist(commentAnswer);
+
+        return ResponseEntity.ok().body("Answer successfully add");
     }
 }
