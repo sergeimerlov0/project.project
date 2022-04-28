@@ -513,7 +513,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].viewCount").value(0))
                 .andExpect(jsonPath("$.items.[0].countAnswer").value(1))
                 .andExpect(jsonPath("$.items.[0].countValuable").value(-1))
-                .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
+                .andExpect(jsonPath("$.items.[0].isUserBookmark").value(false))
 
                 //Проверяем, что нужные QuestionViewDto также выгрузили список всех tags, связанных с ними
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))

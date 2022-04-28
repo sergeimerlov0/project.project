@@ -4,8 +4,8 @@ bookmarks:
     question_id: 100
     persist_date: "[DAY,NOW]"
   - id: 101
-    user_id: 101
-    question_id: 101
+    user_id: 102
+    question_id: 103
     persist_date: "[DAY,NOW]"
   - id: 102
     user_id: 102
