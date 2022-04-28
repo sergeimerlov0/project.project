@@ -34,7 +34,8 @@ public class AllQuestionsByVoteAndAnswerAndViewByWeek implements PaginationDtoAb
                         "((SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'UP_VOTE' AND v.question.id = question.id) - " +
                         "(SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'DOWN_VOTE' AND v.question.id = question.id)) AS countVoite, " +
                         "q.persistDateTime, " +
-                        "q.lastUpdateDateTime) " +
+                        "q.lastUpdateDateTime, " +
+                        "(SELECT DISTINCT  CASE WHEN EXISTS (SELECT  b.id FROM BookMarks b WHERE b.user.id = q.user.id AND b.question.id = q.id) THEN true ELSE false END as isUserBookmark FROM BookMarks ) )" +
                         "FROM Question q " +
                         "LEFT JOIN q.user AS author ON (q.user.id = author.id) " +
                         "LEFT JOIN q.answers AS answer ON (q.id = answer.question.id) " +
