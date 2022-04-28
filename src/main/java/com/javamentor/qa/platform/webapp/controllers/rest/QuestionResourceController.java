@@ -323,15 +323,12 @@ public class QuestionResourceController {
     })
     public ResponseEntity<Integer> addQuestionToComment(@PathVariable Long id,
                                                         @RequestBody String commentString) {
-
-        if (questionService.getById(id).isPresent()) {
-            Optional<Question> questionOptional = questionService.getById(id);
-            List<CommentQuestion> commentQuestionList = new ArrayList<>();
+        Optional<Question> questionOptional = questionService.getById(id);
+        if (questionOptional.isPresent()) {
+            Question question = questionOptional.get();
             CommentQuestion commentQuestion = new CommentQuestion();
             commentQuestion.setText(commentString);
-            commentQuestionList.add(commentQuestion);
-            Question question = questionOptional.get();
-            question.setCommentQuestions(commentQuestionList);
+            commentQuestion.setQuestion(question);
             commentQuestionService.persist(commentQuestion);
         }
         return ResponseEntity.badRequest().build();

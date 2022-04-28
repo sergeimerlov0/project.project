@@ -20,13 +20,3 @@ answer:
     update_date: "[DAY,NOW]"
     date_accept_time: "[DAY,NOW]"
 
-
-  - id: 102
-    html_body: "test2"
-    user_id: 102
-    question_id: 100
-    is_deleted: false
-    is_deleted_by_moderator: false
-    is_helpful: true
-    update_date: "[DAY,NOW]"
-    date_accept_time: "[DAY,NOW]"

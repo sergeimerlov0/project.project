@@ -27,6 +27,6 @@ question:
     title: "test3"
     description: "test3"
     persist_date: "[DAY,NOW]"
-    user_id: 102
+    user_id: 100
     last_redaction_date: "[DAY,NOW]"
     is_deleted: false

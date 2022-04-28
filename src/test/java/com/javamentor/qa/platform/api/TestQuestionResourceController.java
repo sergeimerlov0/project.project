@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.api;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
+import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
@@ -1128,27 +1129,47 @@ class TestQuestionResourceController extends AbstractApiTest {
     }
 
 
-
     @Test
     @DataSet(value = {
-
-            "datasets/QuestionResourceController/testAddCommentToQuestion/user.yml",
             "datasets/QuestionResourceController/testAddCommentToQuestion/role.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/answer.yml",
             "datasets/QuestionResourceController/testAddCommentToQuestion/reputation.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/user.yml",
             "datasets/QuestionResourceController/testAddCommentToQuestion/question.yml",
             "datasets/QuestionResourceController/testAddCommentToQuestion/questionHasTag.yml",
             "datasets/QuestionResourceController/testAddCommentToQuestion/tag.yml",
             "datasets/QuestionResourceController/testAddCommentToQuestion/comment.yml",
             "datasets/QuestionResourceController/testAddCommentToQuestion/commentQuestion.yml",
-            "datasets/QuestionResourceController/testAddCommentToQuestion/answer.yml",
             "datasets/QuestionResourceController/testAddCommentToQuestion/voteQuestion.yml",
 
     }, cleanBefore = true, cleanAfter = true)
     void addCommentToQuestion() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/100/comment")
-                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+        //проверка статуса
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/comment")
+                        .content(objectMapper.writeValueAsString("CommentTest"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
-    }
 
+        //комментария не существует
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/555/comment")
+                        .content(objectMapper.writeValueAsString("CommentTest"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+        //новый комментарий к вопросу с id = 100
+        Assertions.assertTrue(em.createQuery("SELECT a FROM CommentQuestion a WHERE a.comment.id = :comment_id")
+                .setParameter("comment_id", 100L)
+                .getResultList().size() > 0);
+
+        //null
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/comment")
+                        .content(objectMapper.writeValueAsString(null))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+    }
 }

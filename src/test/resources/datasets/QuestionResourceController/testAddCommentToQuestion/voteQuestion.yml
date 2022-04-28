@@ -1,6 +1,6 @@
 votes_on_questions:
   - id: 100
-    user_id: 102
+    user_id: 100
     question_id: 100
     persist_date: "[DAY,NOW]"
     vote: "UP_VOTE"

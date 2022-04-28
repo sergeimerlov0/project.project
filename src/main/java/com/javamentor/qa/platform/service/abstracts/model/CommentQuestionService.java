@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.service.abstracts.model;
 
-import com.javamentor.qa.platform.dao.abstracts.model.CommentQuestionDao;
+
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import org.springframework.stereotype.Service;
 
