@@ -1,8 +1,9 @@
 user_entity:
   - id: 100
     email: "3user@mail.ru"
+    full_name: "User with id 100"
     password: "3111"
-    role_id: 100
+    role_id: 101
     last_redaction_date: "[DAY,NOW]"
     image_link: "image100"
     nickname: "user100"
@@ -11,7 +12,7 @@ user_entity:
   - id: 101
     email: "test2@test.ru"
     password: "123"
-    role_id: 100
+    role_id: 101
     last_redaction_date: "[DAY,NOW]"
     image_link: "image101"
     nickname: "user101"
@@ -25,4 +26,3 @@ user_entity:
     image_link: "image102"
     nickname: "user102"
     is_enabled: true
-

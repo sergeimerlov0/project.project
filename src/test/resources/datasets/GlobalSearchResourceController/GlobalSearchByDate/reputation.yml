@@ -1,24 +1,18 @@
 reputation:
   - id: 100
+    persist_date: "[DAY,NOW]"
     author_id: 100
-    count: 10
+    sender_id: 101
+    count: 4
+    type: 2
+    question_id: 100
     answer_id: 100
-    type: 1
 
   - id: 101
+    persist_date: "[DAY,NOW]"
     author_id: 100
-    count: 10
-    answer_id: 100
-    type: 1
-
-  - id: 102
-    author_id: 101
-    count: 53
+    sender_id: 101
+    count: 2
+    type: 2
+    question_id: 100
     answer_id: 101
-    type: 1
-
-  - id: 103
-    author_id: 101
-    count: 53
-    answer_id: 101
-    type: 1

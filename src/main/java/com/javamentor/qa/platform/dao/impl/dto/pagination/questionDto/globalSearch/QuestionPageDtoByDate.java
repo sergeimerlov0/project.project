@@ -9,6 +9,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,8 +23,9 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
 
     @Override
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
-        String date1 = (String) param.get("date1");
-        String date2 = (String) param.get("date2");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
+        LocalDateTime date1 = LocalDateTime.parse((String) param.get("date1"), dateFormat);
+        LocalDateTime date2 = LocalDateTime.parse((String) param.get("date2"), dateFormat);
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
 
@@ -44,7 +48,7 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
                         "FROM Question question " +
                         "LEFT OUTER JOIN question.user AS author ON (question.user.id = author.id) " +
                         "LEFT OUTER JOIN question.answers AS answer ON (question.id = answer.question.id) " +
-                        "LEFT JOIN question.user WHERE question.persistDateTime >= :date1 AND question.persistDateTime <= :date2 ORDER BY question.id", QuestionViewDto.class)
+                        "LEFT JOIN question.user WHERE question.persistDateTime > :date1 AND question.persistDateTime < :date2 ORDER BY question.id", QuestionViewDto.class)
                 .setParameter("date1", date1)
                 .setParameter("date2", date2)
                 .getResultStream()
@@ -55,8 +59,9 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
 
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        String date1 = (String) param.get("date1");
-        String date2 = (String) param.get("date2");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
+        LocalDateTime date1 = LocalDateTime.parse((String) param.get("date1"), dateFormat);
+        LocalDateTime date2 = LocalDateTime.parse((String) param.get("date2"), dateFormat);
 
         return Math.toIntExact((Long) entityManager.createQuery("SELECT COUNT(DISTINCT question.id) FROM Question question LEFT JOIN question.user " +
                         "WHERE question.persistDateTime >= :date1 AND question.persistDateTime <= :date2")

@@ -48,11 +48,11 @@ public class GlobalSearchByDateFilterConversion {
         String dataResult = null;
         String[] dateVar = date.split("-");
         if(dateVar.length == 1){
-            dataResult = dateVar[0] + "0101";
+            dataResult = dateVar[0] + "0101" + " 00:00:00";
         } else if (dateVar.length == 2){
-            dataResult = dateVar[0] + dateVar[1] + "01";
+            dataResult = dateVar[0] + dateVar[1] + "01" + " 00:00:00";
         } else if (dateVar.length == 3){
-            dataResult = dateVar[0] + dateVar[1] + dateVar[2];
+            dataResult = dateVar[0] + dateVar[1] + dateVar[2] + " 00:00:00";
         }
         return dataResult;
     }
@@ -61,18 +61,18 @@ public class GlobalSearchByDateFilterConversion {
         String dataResult = null;
         String[] dateVar = date.split("-");
         if(dateVar.length == 1){
-            dataResult = dateVar[0] + "1231";
+            dataResult = dateVar[0] + "1231" + " 23:59:59";
         } else if (dateVar.length == 2){
-            dataResult = dateVar[0] + dateVar[1] + daysInMonth.get(dateVar[1]);
+            dataResult = dateVar[0] + dateVar[1] + daysInMonth.get(dateVar[1])  + " 23:59:59";
         } else if (dateVar.length == 3){
-            dataResult = dateVar[0] + dateVar[1] + dateVar[2];
+            dataResult = dateVar[0] + dateVar[1] + dateVar[2]  + " 23:59:59";
         }
         return dataResult;
     }
 
     private static String formatRelativeDate (String date) {
         StringBuilder dat = new StringBuilder(date);
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
         switch (date.charAt(date.length() - 1)) {
             case ('y'):
@@ -100,27 +100,29 @@ public class GlobalSearchByDateFilterConversion {
                 cal.add(Calendar.YEAR, -Integer.parseInt(dat.deleteCharAt(dat.length() - 1).toString()));
                 data1.append(dateFormat.format(cal.getTime()));
                 data1.delete(4,8);
-                data1.append("0101");
+                data1.append("0101 00:00:00");
                 dates[0] = data1.toString();
-                data1.delete(4,8);
-                data1.append("1231");
+                data1.delete(4,17);
+                data1.append("1231 23:59:59");
                 dates[1] = data1.toString();
                 break;
             case ('m'):
                 cal.add(Calendar.MONTH, -Integer.parseInt(dat.deleteCharAt(dat.length() - 1).toString()));
                 data1.append(dateFormat.format(cal.getTime()));
                 data1.delete(6,8);
-                data1.append("01");
+                data1.append("01 00:00:00");
                 dates[0] = data1.toString();
-                data1.delete(6,8);
+                data1.delete(6,17);
                 data1.append(daysInMonth.get(String.valueOf(data1.charAt(4)) + String.valueOf(data1.charAt(5))));
+                data1.append(" 23:59:59");
                 dates[1] = data1.toString();
                 break;
             case ('d'):
                 cal.add(Calendar.DATE, -Integer.parseInt(dat.deleteCharAt(dat.length() - 1).toString()));
                 data1.append(dateFormat.format(cal.getTime()));
-                dates[0] = data1.toString();
-                dates[1] = data1.toString();
+                dates[0] = data1.append(" 00:00:00").toString();
+                data1.delete(8,17);
+                dates[1] = data1.append(" 23:59:59").toString();
                 break;
         }
         return dates;
