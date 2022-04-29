@@ -51,7 +51,6 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
                 .skip((long) (currentPageNumber - 1) * itemsOnPage)
                 .limit(itemsOnPage)
                 .collect(Collectors.toList());
-
     }
 
     @Override
@@ -64,8 +63,5 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
                 .setParameter("date1", date1)
                 .setParameter("date2", date2)
                 .getSingleResult());
-
     }
-
-
 }
