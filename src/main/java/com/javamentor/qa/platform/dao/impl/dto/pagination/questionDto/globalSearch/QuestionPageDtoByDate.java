@@ -20,35 +20,8 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
 
     @Override
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
-        String date = ((String) param.get("parseStr")).replace("created:", "").trim();
-        String date1 = null, date2 = null;
-
-        String[] dates = date.split("\\.+");
-        if (date.indexOf('y') > -1 || date.indexOf('m') > -1 || date.indexOf('d') > -1){
-            if(date.indexOf('.') > -1){
-                if (dates.length == 1) {
-                    date1 = formatRelativeDate(dates[0]);
-                    date2 = formatRelativeDate("0d");
-                } else if (dates.length == 2) {
-                    date1 = formatRelativeDate(dates[0]);
-                    date2 = formatRelativeDate(dates[1]);
-                }
-            } else {
-                String[] dates2 = formatRelativeDate1(dates[0]);
-                date1 = dates2[0];
-                date2 = dates2[1];
-            }
-        } else {
-            if (dates.length == 1) {
-                date1 = formatAbsoluteDate1(dates[0]);
-                date2 = formatAbsoluteDate2(dates[0]);
-
-            } else if (dates.length == 2) {
-                date1 = formatAbsoluteDate1(dates[0]);
-                date2 = formatAbsoluteDate2(dates[1]);
-            }
-        }
-
+        String date1 = (String) param.get("date1");
+        String date2 = (String) param.get("date2");
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
 
@@ -81,37 +54,10 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
 
     }
 
-
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        String date = ((String) param.get("parseStr")).replace("created:", "").trim();
-        String date1 = null, date2 = null;
-
-        String[] dates = date.split("\\.+");
-        if (date.indexOf('y') > -1 || date.indexOf('m') > -1 || date.indexOf('d') > -1){
-            if(date.indexOf('.') > -1){
-                if (dates.length == 1) {
-                    date1 = formatRelativeDate(dates[0]);
-                    date2 = formatRelativeDate("0d");
-                } else if (dates.length == 2) {
-                    date1 = formatRelativeDate(dates[0]);
-                    date2 = formatRelativeDate(dates[1]);
-                }
-            } else {
-                String[] dates2 = formatRelativeDate1(dates[0]);
-                date1 = dates2[0];
-                date2 = dates2[1];
-            }
-        } else {
-            if (dates.length == 1) {
-                date1 = formatAbsoluteDate1(dates[0]);
-                date2 = formatAbsoluteDate2(dates[0]);
-
-            } else if (dates.length == 2) {
-                date1 = formatAbsoluteDate1(dates[0]);
-                date2 = formatAbsoluteDate2(dates[1]);
-            }
-        }
+        String date1 = (String) param.get("date1");
+        String date2 = (String) param.get("date2");
 
         return Math.toIntExact((Long) entityManager.createQuery("SELECT COUNT(DISTINCT question.id) FROM Question question LEFT JOIN question.user " +
                         "WHERE question.persistDateTime >= :date1 AND question.persistDateTime <= :date2")
@@ -121,99 +67,5 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
 
     }
 
-    private static String formatAbsoluteDate1 (String date){
-        String dataResult = null;
-        String[] dateVar = date.split("-");
-        if(dateVar.length == 1){
-            dataResult = dateVar[0] + "0101";
-        } else if (dateVar.length == 2){
-            dataResult = dateVar[0] + dateVar[1] + "01";
-        } else if (dateVar.length == 3){
-            dataResult = dateVar[0] + dateVar[1] + dateVar[2];
-        }
-        return dataResult;
-    }
 
-    private static String formatAbsoluteDate2 (String date){
-        String dataResult = null;
-        String[] dateVar = date.split("-");
-        if(dateVar.length == 1){
-            dataResult = dateVar[0] + "1231";
-        } else if (dateVar.length == 2){
-            dataResult = dateVar[0] + dateVar[1] + daysInMonth.get(dateVar[1]);
-        } else if (dateVar.length == 3){
-            dataResult = dateVar[0] + dateVar[1] + dateVar[2];
-        }
-        return dataResult;
-    }
-
-    private static String formatRelativeDate (String date) {
-        StringBuilder dat = new StringBuilder(date);
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        Calendar cal = Calendar.getInstance();
-        switch (date.charAt(date.length() - 1)) {
-            case ('y'):
-                cal.add(Calendar.YEAR, -Integer.parseInt(dat.deleteCharAt(dat.length() - 1).toString()));
-                break;
-            case ('m'):
-                cal.add(Calendar.MONTH, -Integer.parseInt(dat.deleteCharAt(dat.length() - 1).toString()));
-                break;
-            case ('d'):
-                cal.add(Calendar.DATE, -Integer.parseInt(dat.deleteCharAt(dat.length() - 1).toString()));
-                break;
-        }
-        return dateFormat.format(cal.getTime());
-    }
-
-    private static String[] formatRelativeDate1 (String date) {
-
-        StringBuilder dat = new StringBuilder(date);
-        StringBuilder data1 = new StringBuilder();
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        Calendar cal = Calendar.getInstance();
-        String [] dates = new String[2];
-        switch (date.charAt(date.length() - 1)) {
-            case ('y'):
-                cal.add(Calendar.YEAR, -Integer.parseInt(dat.deleteCharAt(dat.length() - 1).toString()));
-                data1.append(dateFormat.format(cal.getTime()));
-                data1.delete(4,8);
-                data1.append("0101");
-                dates[0] = data1.toString();
-                data1.delete(4,8);
-                data1.append("1231");
-                dates[1] = data1.toString();
-                break;
-            case ('m'):
-                cal.add(Calendar.MONTH, -Integer.parseInt(dat.deleteCharAt(dat.length() - 1).toString()));
-                data1.append(dateFormat.format(cal.getTime()));
-                data1.delete(6,8);
-                data1.append("01");
-                dates[0] = data1.toString();
-                data1.delete(6,8);
-                data1.append(daysInMonth.get(String.valueOf(data1.charAt(4)) + String.valueOf(data1.charAt(5))));
-                dates[1] = data1.toString();
-                break;
-            case ('d'):
-                cal.add(Calendar.DATE, -Integer.parseInt(dat.deleteCharAt(dat.length() - 1).toString()));
-                data1.append(dateFormat.format(cal.getTime()));
-                dates[0] = data1.toString();
-                dates[1] = data1.toString();
-                break;
-        }
-        return dates;
-    }
-    private final static Map<String, String> daysInMonth = Map.ofEntries(
-            Map.entry("01", "31"),
-            Map.entry("02", "28"),
-            Map.entry("03", "31"),
-            Map.entry("04", "30"),
-            Map.entry("05", "31"),
-            Map.entry("06", "30"),
-            Map.entry("07", "31"),
-            Map.entry("08", "31"),
-            Map.entry("09", "30"),
-            Map.entry("10", "31"),
-            Map.entry("11", "30"),
-            Map.entry("12", "31")
-    );
 }
