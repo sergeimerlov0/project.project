@@ -11,15 +11,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Repository("QuestionPageDtoByPostfix")
+@Repository("QuestionPageDtoByViews")
 @RequiredArgsConstructor
-public class QuestionPageDtoByPostfix implements PaginationDtoAble<QuestionViewDto> {
+public class QuestionPageDtoByViews implements PaginationDtoAble<QuestionViewDto> {
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
-        String postfix = ((String) param.get("parseStr")).replace("*", "");
+        String str = ((String) param.get("parseStr")).replace("views:", "");
+        String[] strings = str.split("[^?\\w+]");
+        String min = strings[0];
+        String max = strings[1];
+        int minView = Integer.parseInt(min);
+        int maxView = Integer.parseInt(max);
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
         return entityManager.createQuery("SELECT DISTINCT new com.javamentor.qa.platform.models.dto.QuestionViewDto" +
@@ -37,14 +43,16 @@ public class QuestionPageDtoByPostfix implements PaginationDtoAble<QuestionViewD
                         "(SELECT COUNT(*) FROM VoteQuestion voteOnQuestion " +
                         "WHERE voteOnQuestion.vote = 'DOWN_VOTE' AND voteOnQuestion.question.id = question.id)), " +
                         "question.persistDateTime, " +
-                        "question.lastUpdateDateTime, " +
-                        "(SELECT DISTINCT  CASE WHEN EXISTS (SELECT  b.id FROM BookMarks b WHERE b.user.id = q.user.id AND b.question.id = q.id) THEN true ELSE false END as isUserBookmark FROM BookMarks ) )" +
+                        "question.lastUpdateDateTime) " +
                         "FROM Question question " +
                         "LEFT OUTER JOIN question.user AS author ON (question.user.id = author.id) " +
                         "LEFT OUTER JOIN question.answers AS answer ON (question.id = answer.question.id) " +
-                        "LEFT JOIN question.user WHERE LOWER (question.title) LiKE LOWER (CONCAT('%',:postfix)) OR " +
-                        "LOWER (question.description) LIKE LOWER (CONCAT('%',:postfix)) ORDER BY question.id", QuestionViewDto.class)
-                .setParameter("postfix", postfix)
+                        "LEFT JOIN QuestionViewed  q AS q  ON (q.question.id = question.id)" +
+                        "WHERE (SELECT COUNT(*) FROM QuestionViewed a WHERE a.question.id = question.id AND a.user.id = author.id " +
+                        "GROUP BY a.question.id HAVING :minView AND :maxView ) " +
+                        "ORDER BY question.id", QuestionViewDto.class)
+                .setParameter("minView", minView)
+                .setParameter("maxView", maxView)
                 .getResultStream()
                 .skip((currentPageNumber - 1) * itemsOnPage)
                 .limit(itemsOnPage)
@@ -53,13 +61,16 @@ public class QuestionPageDtoByPostfix implements PaginationDtoAble<QuestionViewD
 
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        String postfix = ((String) param.get("parseStr")).replace("*", "");
-        return Math.toIntExact((Long) entityManager.createQuery("SELECT COUNT(DISTINCT question.id) FROM Question question LEFT JOIN question.user  " +
-                        "WHERE LOWER (question.title) LiKE LOWER (CONCAT('%',:postfix)) " +
-                        "OR LOWER (question.description) LIKE LOWER (CONCAT('%',:postfix))")
-                .setParameter("postfix", postfix)
+        String str = ((String) param.get("parseStr")).replace("views:..", "");
+        int minView = Integer.parseInt(str);
+        int maxView = Integer.parseInt(str);
+        return Math.toIntExact((Long) entityManager.createQuery("SELECT COUNT(DISTINCT question.id) FROM Question question" +
+                        "LEFT JOIN QuestionViewed  q   ON (q.question.id = question.id)" +
+                        "WHERE (SELECT COUNT(*) FROM QuestionViewed a WHERE a.question.id = question.id AND a.user.id = author.id " +
+                        "GROUP BY a.question.id HAVING BETWEEN :minView AND :maxView  )")
+                .setParameter("minView", minView)
+                .setParameter("maxView", maxView)
                 .getSingleResult());
+
     }
 }
-
-

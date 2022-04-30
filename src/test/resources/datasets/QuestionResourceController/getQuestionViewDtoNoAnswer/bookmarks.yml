@@ -1,0 +1,13 @@
+bookmarks:
+  - id: 100
+    user_id: 100
+    question_id: 100
+    persist_date: "[DAY,NOW]"
+  - id: 101
+    user_id: 100
+    question_id: 102
+    persist_date: "[DAY,NOW]"
+  - id: 102
+    user_id: 101
+    question_id: 101
+    persist_date: "[DAY,NOW]"

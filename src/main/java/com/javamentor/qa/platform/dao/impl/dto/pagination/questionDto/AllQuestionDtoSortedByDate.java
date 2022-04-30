@@ -38,7 +38,8 @@ public class AllQuestionDtoSortedByDate implements PaginationDtoAble<QuestionVie
                         "((SELECT COUNT (*) FROM VoteQuestion v WHERE v.vote = 'UP_VOTE' AND v.question.id = question.id) - " +
                         "(SELECT COUNT (*) FROM VoteQuestion v WHERE v.vote = 'DOWN_VOTE' AND v.question.id = question.id)), " +
                         "q.persistDateTime, " +
-                        "q.lastUpdateDateTime) " +
+                        "q.lastUpdateDateTime, " +
+                        "(SELECT DISTINCT  CASE WHEN EXISTS (SELECT  b.id FROM BookMarks b WHERE b.user.id = q.user.id AND b.question.id = q.id) THEN true ELSE false END as isUserBookmark FROM BookMarks ) )" +
                         "FROM Question q  " +
                         "JOIN q.tags tgs " +
                         "WHERE q.id IN (SELECT q.id From Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
