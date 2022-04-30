@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.service.search.manager.abstrats.GlobalSearchMa
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.impl.dto.PaginationServiceDtoImpl;
 import com.javamentor.qa.platform.service.search.abstracts.GlobalSearchService;
+import com.javamentor.qa.platform.service.search.manager.impl.GlobalSearchByScoreFilterConversion;
 import com.javamentor.qa.platform.service.search.manager.impl.GlobalSearchManagerImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,10 @@ public class GlobalSearchServiceImpl extends PaginationServiceDtoImpl<QuestionVi
         for (String s : parserResult) {
             if (!s.equals(Optional.empty().toString())) {
                 map.put("class", s);
+                if (s.equals("QuestionPageDtoByScore")){
+                    GlobalSearchByScoreFilterConversion conv = new GlobalSearchByScoreFilterConversion();
+                    return questionDtoService.getPageDto(itemsOnPage, currentPageNumber, conv.filterConversion(map));
+                }
                 return questionDtoService.getPageDto(itemsOnPage, currentPageNumber, map);
             }
         }
