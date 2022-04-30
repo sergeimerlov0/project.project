@@ -7,14 +7,6 @@ question:
     last_redaction_date: "[DAY,NOW]"
     is_deleted: false
 
-  - id: 101
-    title: "test1"
-    description: "test1"
-    persist_date: "[DAY,NOW]"
-    user_id: 101
-    last_redaction_date: "[DAY,NOW]"
-    is_deleted: false
-
   - id: 102
     title: "test2"
     description: "test2"
@@ -26,7 +18,15 @@ question:
   - id: 103
     title: "test3"
     description: "test3"
-    persist_date: "[DAY,NOW]"
+    persist_date: "2020-01-30 14:24:51"
     user_id: 102
-    last_redaction_date: "[DAY,NOW]"
+    last_redaction_date: "2020-01-30 14:24:51"
+    is_deleted: false
+
+  - id: 104
+    title: "test3"
+    description: "test3"
+    persist_date: "2018-11-01 14:24:51"
+    user_id: 102
+    last_redaction_date: "2020-01-28 14:24:51"
     is_deleted: false
