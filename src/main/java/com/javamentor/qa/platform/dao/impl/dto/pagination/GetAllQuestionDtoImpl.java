@@ -37,13 +37,14 @@ public class GetAllQuestionDtoImpl implements PaginationDtoAble<QuestionViewDto>
                         "((SELECT COUNT (*) FROM VoteQuestion voteOnQuestion WHERE voteOnQuestion.vote = 'UP_VOTE' AND voteOnQuestion.question.id = question.id) - " +
                         "(SELECT COUNT (*) FROM VoteQuestion voteOnQuestion WHERE voteOnQuestion.vote = 'DOWN_VOTE' AND voteOnQuestion.question.id = question.id)), " +
                         "question.persistDateTime, " +
-                        "question.lastUpdateDateTime) " +
+                        "question.lastUpdateDateTime, " +
+                        "(SELECT DISTINCT  CASE WHEN EXISTS (SELECT  b.id FROM BookMarks b WHERE b.user.id = author.id AND b.question.id = question.id) THEN true ELSE false END as isUserBookmark FROM BookMarks ) )" +
                         "FROM Question question " +
                         "JOIN question.tags AS tags " +
                         "LEFT JOIN question.user AS author ON author.id = question.user.id " +
                         "LEFT JOIN question.answers AS answer ON answer.question.id = question.id " +
                         "WHERE question.id IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE :trackedTags IS NULL OR tags.id IN :trackedTags) " +
-                        "AND question.id NOT IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE tags.id IN :ignoredTags) " +
+                        "AND question.id NOT IN (SELECT q.id  FROM Question q JOIN q.tags AS tags WHERE tags.id IN :ignoredTags) " +
                         "AND question.isDeleted = false",
                         QuestionViewDto.class)
                 .setParameter("trackedTags", trackedTags)

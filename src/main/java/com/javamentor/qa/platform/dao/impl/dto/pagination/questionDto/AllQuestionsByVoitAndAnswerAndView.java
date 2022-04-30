@@ -36,7 +36,8 @@ public class AllQuestionsByVoitAndAnswerAndView implements PaginationDtoAble<Que
                                 "(SELECT COUNT (*) FROM VoteQuestion voteOnQuestion " +
                                 "WHERE voteOnQuestion.vote = 'DOWN_VOTE' AND voteOnQuestion.question.id = question.id)) AS countVoite, " +
                                 "question.persistDateTime, " +
-                                "question.lastUpdateDateTime)" +
+                                "question.lastUpdateDateTime," +
+                                "(SELECT DISTINCT  CASE WHEN EXISTS (SELECT  b.id FROM BookMarks b WHERE b.user.id = author.id AND b.question.id = question.id) THEN true ELSE false END as isUserBookmark FROM BookMarks ) )" +
                                 "FROM Question question " +
                                 "LEFT JOIN question.user AS author ON (question.user.id = author.id) " +
                                 "LEFT JOIN question.answers AS answer ON (question.id = answer.question.id) " +
