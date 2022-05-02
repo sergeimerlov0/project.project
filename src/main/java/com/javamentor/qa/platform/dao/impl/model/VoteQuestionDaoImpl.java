@@ -16,7 +16,6 @@ public class VoteQuestionDaoImpl extends ReadWriteDaoImpl<VoteQuestion, Long> im
     EntityManager entityManager;
 
     @Override
-    // тут не считает минусы и плюсы, наверное надо поправить отдельной таской
     public Integer getTotalVoteQuestionsByQuestionId(Long questionId) {
         List<VoteQuestion> voteQuestionList = entityManager.createQuery(
                 "FROM VoteQuestion a " +
