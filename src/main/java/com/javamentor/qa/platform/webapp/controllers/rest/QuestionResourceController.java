@@ -113,6 +113,22 @@ public class QuestionResourceController {
     public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
+        /*
+        * Проверка наличия голоса на вопросе от авторизированного юзера в соответствии с тз сущности
+        */
+        Optional<VoteQuestion> voteQuestionOptional = voteQuestionService.getByUserIdAndQuestionId(user.getId(), questionId);
+        if (voteQuestionOptional.isPresent()) {
+            VoteQuestion oldVoteQuestion = voteQuestionOptional.get();
+            if (oldVoteQuestion.getVote().equals(VoteType.UP_VOTE)) {
+                voteQuestionService.delete(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
+            } else if (oldVoteQuestion.getVote().equals(VoteType.DOWN_VOTE)) {
+                oldVoteQuestion.setVote(VoteType.UP_VOTE);
+                voteQuestionService.update(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
+            }
+        }
+
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
@@ -156,6 +172,23 @@ public class QuestionResourceController {
     public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
+
+        /*
+         * Проверка наличия голоса на вопросе от авторизированного юзера в соответствии с тз сущности
+         */
+        Optional<VoteQuestion> voteQuestionOptional = voteQuestionService.getByUserIdAndQuestionId(user.getId(), questionId);
+        if (voteQuestionOptional.isPresent()) {
+            VoteQuestion oldVoteQuestion = voteQuestionOptional.get();
+            if (oldVoteQuestion.getVote().equals(VoteType.DOWN_VOTE)) {
+                voteQuestionService.delete(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
+            } else if (oldVoteQuestion.getVote().equals(VoteType.UP_VOTE)) {
+                oldVoteQuestion.setVote(VoteType.DOWN_VOTE);
+                voteQuestionService.update(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
+            }
+        }
+
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {

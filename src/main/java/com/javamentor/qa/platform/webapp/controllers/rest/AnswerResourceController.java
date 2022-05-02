@@ -3,8 +3,11 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
@@ -75,6 +78,23 @@ public class AnswerResourceController {
     public ResponseEntity<?> setUpVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
+
+        /*
+         * Проверка наличия голоса на вопросе от авторизированного юзера в соответствии с тз сущности
+         */
+        Optional<VoteAnswer> voteAnswerOptional = voteAnswerService.getByUserIdAndAnswerId(user.getId(), answerId);
+        if (voteAnswerOptional.isPresent()) {
+            VoteAnswer oldVoteQuestion = voteAnswerOptional.get();
+            if (oldVoteQuestion.getVote().equals(VoteType.UP_VOTE)) {
+                voteAnswerService.delete(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteAnswerService.getTotalVotesByAnswerId(answerId));
+            } else if (oldVoteQuestion.getVote().equals(VoteType.DOWN_VOTE)) {
+                oldVoteQuestion.setVote(VoteType.UP_VOTE);
+                voteAnswerService.update(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteAnswerService.getTotalVotesByAnswerId(answerId));
+            }
+        }
+
         if (optionalAnswer.isEmpty()) {
             return ResponseEntity.badRequest().body("Answer with id " + answerId + " not found");
         }
@@ -93,6 +113,23 @@ public class AnswerResourceController {
     public ResponseEntity<?> setDownVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
+
+        /*
+         * Проверка наличия голоса на вопросе от авторизированного юзера в соответствии с тз сущности
+         */
+        Optional<VoteAnswer> voteAnswerOptional = voteAnswerService.getByUserIdAndAnswerId(user.getId(), answerId);
+        if (voteAnswerOptional.isPresent()) {
+            VoteAnswer oldVoteQuestion = voteAnswerOptional.get();
+            if (oldVoteQuestion.getVote().equals(VoteType.DOWN_VOTE)) {
+                voteAnswerService.delete(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteAnswerService.getTotalVotesByAnswerId(answerId));
+            } else if (oldVoteQuestion.getVote().equals(VoteType.UP_VOTE)) {
+                oldVoteQuestion.setVote(VoteType.DOWN_VOTE);
+                voteAnswerService.update(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteAnswerService.getTotalVotesByAnswerId(answerId));
+            }
+        }
+
         if (optionalAnswer.isEmpty()) {
             return ResponseEntity.badRequest().body("Answer with id " + answerId + " not found");
         }
