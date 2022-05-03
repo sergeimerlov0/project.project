@@ -22,7 +22,8 @@ class TestGlobalSearchResourceController extends AbstractApiTest {
             "datasets/GlobalSearchResourceController/GlobalSearchByDate/user.yml",
             "datasets/GlobalSearchResourceController/GlobalSearchByDate/voteQuestion.yml",
             "datasets/GlobalSearchResourceController/GlobalSearchByDate/comment.yml",
-            "datasets/GlobalSearchResourceController/GlobalSearchByDate/commentQuestion.yml"
+            "datasets/GlobalSearchResourceController/GlobalSearchByDate/commentQuestion.yml",
+            "datasets/GlobalSearchResourceController/GlobalSearchByDate/bookmarks.yml"
     })
     public void searchByData() throws Exception {
 

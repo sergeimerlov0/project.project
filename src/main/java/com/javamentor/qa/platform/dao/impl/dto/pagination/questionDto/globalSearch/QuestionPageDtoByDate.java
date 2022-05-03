@@ -44,7 +44,8 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
                         "(SELECT COUNT(*) FROM VoteQuestion voteOnQuestion " +
                         "WHERE voteOnQuestion.vote = 'DOWN_VOTE' AND voteOnQuestion.question.id = question.id)), " +
                         "question.persistDateTime, " +
-                        "question.lastUpdateDateTime) " +
+                        "question.lastUpdateDateTime, " +
+                        "(SELECT DISTINCT  CASE WHEN EXISTS (SELECT  b.id FROM BookMarks b WHERE b.user.id = author.id AND b.question.id = question.id) THEN true ELSE false END as isUserBookmark FROM BookMarks ) )" +
                         "FROM Question question " +
                         "LEFT OUTER JOIN question.user AS author ON (question.user.id = author.id) " +
                         "LEFT OUTER JOIN question.answers AS answer ON (question.id = answer.question.id) " +
