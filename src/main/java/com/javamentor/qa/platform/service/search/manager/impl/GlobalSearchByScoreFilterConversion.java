@@ -24,9 +24,12 @@ public class GlobalSearchByScoreFilterConversion {
         } else if (countVote.size() == 2) {
             score1 = countVote.get(0);
             score2 = countVote.get(1);
-        }  else if (countVote.size() == 1) {
+        } else if (score.charAt(score.length()-1) == '.') {
             score1 = countVote.get(0);
-            score2 = Integer.MIN_VALUE;
+            score2 = Integer.MAX_VALUE;
+        } else if (countVote.size() == 1) {
+            score1 = countVote.get(0);
+            score2 = countVote.get(0);
         }
         map.remove("parseStr");
         map.put("score1", score1);
