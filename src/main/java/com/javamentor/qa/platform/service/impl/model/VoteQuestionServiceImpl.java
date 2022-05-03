@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -39,5 +40,10 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
         Reputation reputation = new Reputation(LocalDateTime.now(), voteQuestion.getQuestion().getUser(), voteQuestion.getUser(), voteQuestion.getVote().getValue(), ReputationType.VoteQuestion, voteQuestion.getQuestion());
         reputationDao.persist(reputation);
         super.persist(voteQuestion);
+    }
+
+    @Override
+    public Optional<VoteQuestion> getByUserIdAndQuestionId(Long userId, Long questionId) {
+        return voteQuestionDao.getByUserIdAndQuestionId(userId, questionId);
     }
 }
