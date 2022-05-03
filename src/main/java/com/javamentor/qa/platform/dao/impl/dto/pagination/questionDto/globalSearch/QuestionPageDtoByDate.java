@@ -7,12 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository("QuestionPageDtoByData")
@@ -23,9 +20,8 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
 
     @Override
     public List<QuestionViewDto> getItems(Map<String, Object> param) {
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
-        LocalDateTime date1 = LocalDateTime.parse((String) param.get("date1"), dateFormat);
-        LocalDateTime date2 = LocalDateTime.parse((String) param.get("date2"), dateFormat);
+        LocalDateTime date1 = (LocalDateTime) param.get("date1");
+        LocalDateTime date2 = (LocalDateTime) param.get("date2");
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
 
@@ -60,9 +56,8 @@ public class QuestionPageDtoByDate implements PaginationDtoAble<QuestionViewDto>
 
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
-        LocalDateTime date1 = LocalDateTime.parse((String) param.get("date1"), dateFormat);
-        LocalDateTime date2 = LocalDateTime.parse((String) param.get("date2"), dateFormat);
+        LocalDateTime date1 = (LocalDateTime) param.get("date1");
+        LocalDateTime date2 = (LocalDateTime) param.get("date2");
 
         return Math.toIntExact((Long) entityManager.createQuery("SELECT COUNT(DISTINCT question.id) FROM Question question LEFT JOIN question.user " +
                         "WHERE question.persistDateTime >= :date1 AND question.persistDateTime <= :date2 AND question.isDeleted = false ")

@@ -3,6 +3,8 @@ package com.javamentor.qa.platform.service.search.manager.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -39,8 +41,11 @@ public class GlobalSearchByDateFilterConversion {
             }
         }
         map.remove("parseStr");
-        map.put("date1", date1);
-        map.put("date2", date2);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
+        LocalDateTime data1 = LocalDateTime.parse(date1, dateFormat);
+        LocalDateTime data2 = LocalDateTime.parse(date2, dateFormat);
+        map.put("date1", data1);
+        map.put("date2", data2);
         return map;
     }
 
