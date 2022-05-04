@@ -10,7 +10,7 @@ public class GlobalSearchByScoreFilterConversion {
 
     public Map<String, Object> filterConversion (Map<String, Object> map){
         String score = ((String) map.get("parseStr")).replace("score:", "").trim();
-        int score1 = 0, score2 = 0;
+        long score1 = 0, score2 = 0;
 
         ArrayList<Integer> countVote = new ArrayList<>();
         Pattern integerPattern = Pattern.compile("(-?\\d+)");

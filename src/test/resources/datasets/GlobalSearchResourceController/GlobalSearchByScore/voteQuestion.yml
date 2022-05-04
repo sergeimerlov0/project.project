@@ -15,17 +15,17 @@ votes_on_questions:
     user_id: 100
     question_id: 102
     persist_date: "[DAY,NOW]"
-    vote: "UP_VOTE"
+    vote: "DOWN_VOTE"
 
   - id: 103
     user_id: 100
     question_id: 102
     persist_date: "[DAY,NOW]"
-    vote: "UP_VOTE"
+    vote: "DOWN_VOTE"
 
   - id: 104
-    user_id: 100
-    question_id: 102
+    user_id: 101
+    question_id: 103
     persist_date: "[DAY,NOW]"
     vote: "UP_VOTE"
 
@@ -40,22 +40,3 @@ votes_on_questions:
     question_id: 103
     persist_date: "[DAY,NOW]"
     vote: "UP_VOTE"
-
-  - id: 107
-    user_id: 101
-    question_id: 103
-    persist_date: "[DAY,NOW]"
-    vote: "UP_VOTE"
-
-  - id: 108
-    user_id: 101
-    question_id: 103
-    persist_date: "[DAY,NOW]"
-    vote: "UP_VOTE"
-
-  - id: 109
-    user_id: 101
-    question_id: 103
-    persist_date: "[DAY,NOW]"
-    vote: "UP_VOTE"
-

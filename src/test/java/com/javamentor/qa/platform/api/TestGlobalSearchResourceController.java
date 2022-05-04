@@ -33,20 +33,20 @@ class TestGlobalSearchResourceController extends AbstractApiTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.items[*].id").value(100));
 
-//  Проверяем запись score: ..2
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/search/?q=score: ..2&page=1&items=10")
+//  Проверяем запись score: ..0
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/search/?q=score: ..0&page=1&items=10")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.items[*].id").value(100));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.items[*].id").value(102));
 
-//  Проверяем запись score:4...
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/search/?q=score: 4...&page=1&items=10")
+//  Проверяем запись score:2...
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/search/?q=score: 2...&page=1&items=10")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.items[*].id").value(103));
 
-//  Проверяем запись score:2...4
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/search/?q=score:2...4&page=1&items=10")
+//  Проверяем запись score:-3...0
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/search/?q=score:-3...0 &page=1&items=10")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.items[*].id").value(102));
