@@ -26,23 +26,23 @@ public class AllQuestionsByVoteAndAnswerAndViewByWeek implements PaginationDtoAb
         List<Long> trackedTags = ((List<Long>) param.get("tracked"));
         List<Long> ignoredTags = ((List<Long>) param.get("ignored"));
         return entityManager.createQuery(
-                "SELECT DISTINCT NEW com.javamentor.qa.platform.models.dto.QuestionViewDto" +
-                        "(q.id, q.title, q.user.id, " +
-                        "(SELECT COALESCE(SUM(reputation.count), 0L) FROM Reputation reputation WHERE q.user.id = reputation.author.id), " +
-                        "q.user.fullName, q.user.imageLink, q.description, 0L," +
-                        "(SELECT COUNT(*) FROM Answer a WHERE a.question.id = q.id) AS countAnswer, " +
-                        "((SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'UP_VOTE' AND v.question.id = question.id) - " +
-                        "(SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'DOWN_VOTE' AND v.question.id = question.id)) AS countVoite, " +
-                        "q.persistDateTime, " +
-                        "q.lastUpdateDateTime) " +
-                        "FROM Question q " +
-                        "JOIN q.tags tgs " +
-                        "WHERE q.id IN (SELECT q.id From Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
-                        "AND q.id NOT IN (SELECT q.id From Question q JOIN q.tags tgs WHERE tgs.id IN :ignored) " +
-                        "AND q.persistDateTime BETWEEN :week AND current_date " +
-                        "AND q.isDeleted = false " +
-                        "ORDER BY countAnswer, countVoite ASC"
-                        , QuestionViewDto.class)
+        "SELECT DISTINCT NEW com.javamentor.qa.platform.models.dto.QuestionViewDto" +
+                "(q.id, q.title, q.user.id, " +
+                "0L, " +
+                "q.user.fullName, q.user.imageLink, q.description, 0L," +
+                "(SELECT COUNT(*) FROM Answer a WHERE a.question.id = q.id) AS countAnswer, " +
+                "((SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'UP_VOTE' AND v.question.id = question.id) - " +
+                "(SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'DOWN_VOTE' AND v.question.id = question.id)) AS countVote, " +
+                "q.persistDateTime, " +
+                "q.lastUpdateDateTime) " +
+                "FROM Question q " +
+                "JOIN q.tags tgs " +
+                "WHERE q.id IN (SELECT q.id FROM Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked)" +
+                "AND q.id NOT IN (SELECT q.id FROM Question q JOIN q.tags tgs WHERE tgs.id IN :ignored) " +
+                "AND q.persistDateTime BETWEEN :week AND LOCALTIMESTAMP " +
+                "AND q.isDeleted = false " +
+                "ORDER BY countAnswer, countVote ASC",
+                        QuestionViewDto.class)
                 .setParameter("ignored", ignoredTags)
                 .setParameter("tracked", trackedTags)
                 .setParameter("week", LocalDateTime.now().minusDays(7L))
