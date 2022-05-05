@@ -9,6 +9,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class TestGlobalSearchResourceController extends AbstractApiTest {
+
+//    Проверяем фильтр поиска по оценке вопроса
     @Test
     @DataSet(value = {
             "datasets/GlobalSearchResourceController/GlobalSearchByScore/answer.yml",
@@ -51,6 +53,7 @@ class TestGlobalSearchResourceController extends AbstractApiTest {
 
     }
 
+//    Проверяем фильтр поиска по дате создания
     @Test
     @DataSet(value = {
             "datasets/GlobalSearchResourceController/GlobalSearchByDate/answer.yml",
