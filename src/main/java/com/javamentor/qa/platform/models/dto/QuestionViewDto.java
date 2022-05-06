@@ -23,10 +23,11 @@ public class QuestionViewDto {
     private LocalDateTime persistDateTime;
     private LocalDateTime lastUpdateDateTime;
     private List<TagDto> listTagDto;
+    private Boolean isUserBookmark;
 
     public QuestionViewDto(Long id, String title, Long authorId, Long authorReputation, String authorName,
                            String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable,
-                           LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime) {
+                           LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime,Boolean isUserBookmark) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;
@@ -39,5 +40,6 @@ public class QuestionViewDto {
         this.countValuable = countValuable;
         this.persistDateTime = persistDateTime;
         this.lastUpdateDateTime = lastUpdateDateTime;
+        this.isUserBookmark = isUserBookmark;
     }
 }
