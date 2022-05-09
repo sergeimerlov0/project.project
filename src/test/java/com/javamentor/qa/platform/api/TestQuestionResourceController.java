@@ -11,6 +11,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.jayway.jsonpath.JsonPath;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1162,9 +1163,7 @@ class TestQuestionResourceController extends AbstractApiTest {
     void addCommentToQuestion() throws Exception {
 
         //проверка статуса
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/comment")
-                        .content(objectMapper.writeValueAsString("CommentTest"))
-                        .contentType(MediaType.APPLICATION_JSON)
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/100/comment")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
 
@@ -1175,10 +1174,19 @@ class TestQuestionResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
 
+
         //новый комментарий к вопросу с id = 100
         Assertions.assertTrue(em.createQuery("SELECT a FROM CommentQuestion a WHERE a.comment.id = :comment_id")
                 .setParameter("comment_id", 100L)
                 .getResultList().size() > 0);
+
+        //комментарий - пустая строка
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/555/comment")
+                        .content(objectMapper.writeValueAsString(""))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
 
         //null
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/comment")
@@ -1186,6 +1194,5 @@ class TestQuestionResourceController extends AbstractApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
-
     }
 }
