@@ -17,13 +17,17 @@ public class VoteQuestionDaoImpl extends ReadWriteDaoImpl<VoteQuestion, Long> im
 
     @Override
     public Integer getTotalVoteQuestionsByQuestionId(Long questionId) {
-        List<VoteQuestion> voteQuestionList = entityManager.createQuery(
-                "FROM VoteQuestion a " +
-                        "WHERE a.question.id = :questionId",
-                        VoteQuestion.class)
+
+        Integer upVotes = entityManager.createQuery(
+                "(SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'UP_VOTE' AND v.question.id = q.id)")
                 .setParameter("questionId", questionId)
-                .getResultList();
-        return voteQuestionList.size();
+                .getResultList().size();
+
+        Integer downVotes = entityManager.createQuery(
+                "(SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'DOWN_VOTE' AND v.question.id = q.id)")
+                .setParameter("questionId", questionId)
+                .getResultList().size();
+        return upVotes - downVotes;
     }
 
     @Override
