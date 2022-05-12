@@ -2,31 +2,31 @@ question:
   - id: 100
     title: "title by question 100"
     description: "description by question 100"
-    persist_date: 2022-03-10 00:00:00
+    persist_date: "[NOW-3d]"
     user_id: 100
-    last_redaction_date: 2022-03-10 00:00:00
+    last_redaction_date: "[NOW-3d]"
     is_deleted: false
 
   - id: 101
     title: "test1"
     description: "test1"
-    persist_date: 2022-03-24 00:00:00
+    persist_date: "[DAY,NOW]"
     user_id: 101
-    last_redaction_date: 2022-03-24 00:00:00
+    last_redaction_date: "[DAY,NOW]"
     is_deleted: false
 
   - id: 102
     title: "test2"
     description: "test2"
-    persist_date: 2022-03-26 00:00:00
+    persist_date: "[NOW-5d]"
     user_id: 101
-    last_redaction_date: 2022-03-26 00:00:00
+    last_redaction_date: "[NOW-5d]"
     is_deleted: false
 
   - id: 103
     title: "test3"
     description: "test3"
-    persist_date: 2022-03-28 00:00:00
+    persist_date: "[NOW-6d]"
     user_id: 102
-    last_redaction_date: 2022-03-28 00:00:00
+    last_redaction_date: "[NOW-6d]"
     is_deleted: false

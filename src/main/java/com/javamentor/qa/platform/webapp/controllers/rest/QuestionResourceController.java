@@ -1,8 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.exception.ApiRequestException;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
@@ -13,6 +15,7 @@ import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +43,7 @@ public class QuestionResourceController {
     private final TagService tagService;
     private final QuestionConverter questionConverter;
     private final QuestionViewedService questionViewedService;
+    private final BookmarkService bookmarkService;
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -109,6 +113,22 @@ public class QuestionResourceController {
     public ResponseEntity<Integer> upVote(@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
+        /*
+        * Проверка наличия голоса на вопросе от авторизированного юзера в соответствии с тз сущности
+        */
+        Optional<VoteQuestion> voteQuestionOptional = voteQuestionService.getByUserIdAndQuestionId(user.getId(), questionId);
+        if (voteQuestionOptional.isPresent()) {
+            VoteQuestion oldVoteQuestion = voteQuestionOptional.get();
+            if (oldVoteQuestion.getVote().equals(VoteType.UP_VOTE)) {
+                voteQuestionService.delete(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
+            } else if (oldVoteQuestion.getVote().equals(VoteType.DOWN_VOTE)) {
+                oldVoteQuestion.setVote(VoteType.UP_VOTE);
+                voteQuestionService.update(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
+            }
+        }
+
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
@@ -152,6 +172,23 @@ public class QuestionResourceController {
     public ResponseEntity<Integer> downVote(@PathVariable Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Question> optionalQuestion = questionService.getById(questionId);
+
+        /*
+         * Проверка наличия голоса на вопросе от авторизированного юзера в соответствии с тз сущности
+         */
+        Optional<VoteQuestion> voteQuestionOptional = voteQuestionService.getByUserIdAndQuestionId(user.getId(), questionId);
+        if (voteQuestionOptional.isPresent()) {
+            VoteQuestion oldVoteQuestion = voteQuestionOptional.get();
+            if (oldVoteQuestion.getVote().equals(VoteType.DOWN_VOTE)) {
+                voteQuestionService.delete(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
+            } else if (oldVoteQuestion.getVote().equals(VoteType.UP_VOTE)) {
+                oldVoteQuestion.setVote(VoteType.DOWN_VOTE);
+                voteQuestionService.update(oldVoteQuestion);
+                return ResponseEntity.ok().body(voteQuestionService.getTotalVoteQuestionsByQuestionId(questionId));
+            }
+        }
+
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
             if (voteQuestionService.userVoteCheck(questionId, user.getId())) {
@@ -269,5 +306,48 @@ public class QuestionResourceController {
         paginationMap.put("ignored", ignoredTags);
 
         return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
+
+
+    @GetMapping("/sortedByMonth")
+    @ApiOperation(value = "Получение QuestionDto с пагинацией и сортировкой по голосам, ответам и просмотрам за месяц",
+            tags = {"Get Month Sorted QuestionDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "QuestionDto получены"),
+            @ApiResponse(code = 400, message = "QuestionDto не найдены")
+    })
+    public ResponseEntity<PageDto<QuestionViewDto>> getMonthSortedQuestionDto(@RequestParam int currentPageNumber,
+                                                                              @RequestParam(defaultValue = "10") int itemsOnPage,
+                                                                              @RequestParam(required = false) List<Long> trackedTags,
+                                                                              @RequestParam(required = false, defaultValue = "0") List<Long> ignoredTags) {
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "AllQuestionsDtoByVoteAndAnswerAndViewByMonth");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+        paginationMap.put("trackedTags", trackedTags);
+        paginationMap.put("ignoredTags", ignoredTags);
+
+        return ResponseEntity.ok(questionDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+    }
+
+    @PostMapping("/{questionId}/bookmark")
+    @ApiOperation(value = "Add a new bookmark for authorized user", tags = {"Bookmarks"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Закладка успешно создана"),
+            @ApiResponse(code = 400, message = "При добавлении закладки что-то пошло не так")
+
+    })
+    public ResponseEntity<?> createBookmark(@PathVariable Long questionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Optional<Question> optionalQuestion = questionService.getById(questionId);
+        BookMarks bookmark = new BookMarks();
+        if (optionalQuestion.isPresent()) {
+            bookmark.setQuestion(optionalQuestion.orElseThrow());
+            bookmark.setUser(user);
+            bookmarkService.persist(bookmark);
+            return ResponseEntity.ok().body("Вопрос с Id:" + questionId + " для пользователя с Id:" +
+                    user.getId() + " добавлен в закладки");
+        }
+        return ResponseEntity.badRequest().body("Закладка не добавлена, вопроса ID " + questionId + " не существует");
     }
 }

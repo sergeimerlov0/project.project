@@ -3,12 +3,15 @@ package com.javamentor.qa.platform.api;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
+import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.jayway.jsonpath.JsonPath;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +19,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import java.util.HashMap;
 import java.util.List;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -316,7 +321,8 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionViewDtoByTagId/role.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoByTagId/tag.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoByTagId/user.yml",
-            "datasets/QuestionResourceController/getQuestionViewDtoByTagId/voteQuestion.yml"
+            "datasets/QuestionResourceController/getQuestionViewDtoByTagId/voteQuestion.yml",
+            "datasets/QuestionResourceController/getAllQuestionViewDto/bookmarks.yml"
     }, cleanBefore = true, cleanAfter = true)
     void getQuestionViewDtoByTagId() throws Exception {
         //проверяем возвращаемый Response. В датасетах 3 вопроса c id 100, 101, 102, имеющих связь с TagId 100,
@@ -345,6 +351,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].viewCount").value(0))
                 .andExpect(jsonPath("$.items.[0].countAnswer").value(3))
                 .andExpect(jsonPath("$.items.[0].countValuable").value(2))
+                .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
 
                 //Проверяем, что нужные QuestionViewDto также выгрузили список всех tags, связанныех с ними
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
@@ -365,7 +372,8 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionViewDtoNoAnswer/user.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoNoAnswer/reputation.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoNoAnswer/comment.yml",
-            "datasets/QuestionResourceController/getQuestionViewDtoNoAnswer/commentQuestion.yml"
+            "datasets/QuestionResourceController/getQuestionViewDtoNoAnswer/commentQuestion.yml",
+            "datasets/QuestionResourceController/getQuestionViewDtoNoAnswer/bookmarks.yml"
     }, cleanBefore = true, cleanAfter = true)
     void getQuestionViewDtoNoAnswer() throws Exception {
         //В датасетах 4 вопроса c id 100, 102, 103 и 104 на которые нет ответа,
@@ -394,6 +402,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].viewCount").value(0))
                 .andExpect(jsonPath("$.items.[0].countAnswer").value(0))
                 .andExpect(jsonPath("$.items.[0].countValuable").value(1))
+                .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
 
                 //Проверяем, что нужное QuestionDto также выгрузила список всех tags, связанных с ним
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
@@ -469,7 +478,8 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getAllQuestionViewDto/user.yml",
             "datasets/QuestionResourceController/getAllQuestionViewDto/voteQuestion.yml",
             "datasets/QuestionResourceController/getAllQuestionViewDto/comment.yml",
-            "datasets/QuestionResourceController/getAllQuestionViewDto/commentQuestion.yml"
+            "datasets/QuestionResourceController/getAllQuestionViewDto/commentQuestion.yml",
+            "datasets/QuestionResourceController/getAllQuestionViewDto/bookmarks.yml"
     }, cleanBefore = true, cleanAfter = true)
     void getAllQuestionViewDto() throws Exception {
         // Проверяем возвращаемый Response.
@@ -481,7 +491,7 @@ class TestQuestionResourceController extends AbstractApiTest {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/?currentPageNumber=1&itemsOnPage=2&trackedTags=100,103&ignoredTags=101")
                         .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
                 .andExpect(status().isOk())
-
+                .andDo(print())
                 //Проверяем собранный PageDto
                 .andExpect(jsonPath("$.currentPageNumber").value(1))
                 .andExpect(jsonPath("$.totalPageCount").value(2))
@@ -494,6 +504,7 @@ class TestQuestionResourceController extends AbstractApiTest {
 
                 //Проверяем, что значения полей QuestionViewDto, например, с id 101 заполнены
                 .andExpect(jsonPath("$.items.[0].title").value("test title by question 101"))
+                .andDo(print())
                 .andExpect(jsonPath("$.items.[0].authorId").value(101))
                 .andExpect(jsonPath("$.items.[0].authorReputation").value(2))
                 .andExpect(jsonPath("$.items.[0].authorName").value("User with id 101"))
@@ -502,6 +513,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].viewCount").value(0))
                 .andExpect(jsonPath("$.items.[0].countAnswer").value(1))
                 .andExpect(jsonPath("$.items.[0].countValuable").value(-1))
+                .andExpect(jsonPath("$.items.[0].isUserBookmark").value(false))
 
                 //Проверяем, что нужные QuestionViewDto также выгрузили список всех tags, связанных с ними
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
@@ -522,7 +534,8 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getAllSortedQuestionViewDto/user.yml",
             "datasets/QuestionResourceController/getAllSortedQuestionViewDto/voteQuestion.yml",
             "datasets/QuestionResourceController/getAllSortedQuestionViewDto/comment.yml",
-            "datasets/QuestionResourceController/getAllSortedQuestionViewDto/commentQuestion.yml"
+            "datasets/QuestionResourceController/getAllSortedQuestionViewDto/commentQuestion.yml",
+            "datasets/QuestionResourceController/getAllSortedQuestionViewDto/bookmarks.yml"
     }, cleanBefore = true, cleanAfter = true)
     void getAllSortedQuestionViewDto() throws Exception {
         // Проверяем возвращаемый Response.
@@ -555,6 +568,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].viewCount").value(0))
                 .andExpect(jsonPath("$.items.[0].countAnswer").value(1))
                 .andExpect(jsonPath("$.items.[0].countValuable").value(-1))
+                .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
 
                 //Проверяем, что нужные QuestionViewDto также выгрузили список всех tags, связанных с ними
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
@@ -575,7 +589,8 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getAllQuestionViewDtoWithDefaultValuesFromFront/user.yml",
             "datasets/QuestionResourceController/getAllQuestionViewDtoWithDefaultValuesFromFront/voteQuestion.yml",
             "datasets/QuestionResourceController/getAllQuestionViewDtoWithDefaultValuesFromFront/comment.yml",
-            "datasets/QuestionResourceController/getAllQuestionViewDtoWithDefaultValuesFromFront/commentQuestion.yml"
+            "datasets/QuestionResourceController/getAllQuestionViewDtoWithDefaultValuesFromFront/commentQuestion.yml",
+            "datasets/QuestionResourceController/getAllQuestionViewDtoWithDefaultValuesFromFront/bookmarks.yml"
     }, cleanBefore = true, cleanAfter = true)
         // Тест для QuestionResourceController::getAllQuestionViewDto, только без tracked и ignored тегов с фронта и
         // с дефолтным количеством результатов на странице (10)
@@ -607,6 +622,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].viewCount").value(0))
                 .andExpect(jsonPath("$.items.[0].countAnswer").value(3))
                 .andExpect(jsonPath("$.items.[0].countValuable").value(1))
+                .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
 
                 //Проверяем, что нужные QuestionViewDto также выгрузили список всех tags, связанных с ними
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
@@ -649,7 +665,8 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionViewDtoSortedByDate/role.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoSortedByDate/tag.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoSortedByDate/voteQuestion.yml",
-            "datasets/QuestionResourceController/getQuestionViewDtoSortedByDate/user.yml"
+            "datasets/QuestionResourceController/getQuestionViewDtoSortedByDate/user.yml",
+            "datasets/QuestionResourceController/getQuestionViewDtoSortedByDate/bookmarks.yml"
     }, cleanBefore = true, cleanAfter = true)
     public void getQuestionViewDtoSortedByDate() throws Exception {
         //Проверка без tags, чтобы вывелись все 4 вопроса
@@ -678,6 +695,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].viewCount").value(0))
                 .andExpect(jsonPath("$.items.[0].countAnswer").value(0))
                 .andExpect(jsonPath("$.items.[0].countValuable").value(1))
+                .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
 
                 //Проверяем, что нужное QuestionDto также выгрузила список всех tags, связанных с ним
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
@@ -993,7 +1011,8 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/user.yml",
             "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/voteQuestion.yml",
             "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/comment.yml",
-            "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/commentQuestion.yml"
+            "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/commentQuestion.yml",
+            "datasets/QuestionResourceController/getAllQuestionsByVoteAndAnswerAndViewByWeek/bookmarks.yml"
     }, cleanBefore = true, cleanAfter = true)
     void getAllQuestionsByVoteAndAnswerByWeek() throws Exception {
 
@@ -1037,7 +1056,93 @@ class TestQuestionResourceController extends AbstractApiTest {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByWeek/?itemsOnPage=2&trackedTags=100")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/testCreateBookmark/user.yml",
+            "datasets/QuestionResourceController/testCreateBookmark/question.yml",
+            "datasets/QuestionResourceController/testCreateBookmark/role.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void testCreateBookmark() throws Exception {
+        //Создание закладки для 100 юзера на 100 вопрос
+        mvc.perform(post("/api/user/question/100/bookmark")
+                        .header("Authorization", getJwtToken("user1@gmail.com", "123")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Вопрос с Id:100 для пользователя с Id:100 добавлен в закладки")))
+                .andReturn();
+
+        //Проверяем закладку из БД
+        BookMarks bookMarks = em.createQuery("FROM BookMarks a " +
+                                                     "WHERE a.question.id = :questionId " +
+                                                     "AND a.user.id = :userId", BookMarks.class)
+                .setParameter("questionId" , 100L)
+                .setParameter("userId", 100L)
+                .getSingleResult();
+        Assertions.assertNotNull(bookMarks);
+
+        //Создание закладки для 100 юзера на несуществующий вопрос
+        mvc.perform(post("/api/user/question/99/bookmark")
+                        .header("Authorization", getJwtToken("user1@gmail.com", "123")))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Закладка не добавлена, вопроса ID 99 не существует")));
 
     }
 
+    @Test
+    @DataSet(value = {"datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/answer.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/question.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/questionHasTag.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/reputation.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/role.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/tag.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/user.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/voteQuestion.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/comment.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/commentQuestion.yml",
+            "datasets/QuestionResourceController/getAllQuestionsDtoByVoteAndAnswerAndViewByMonth/bookmarks.yml"
+    }, cleanBefore = true, cleanAfter = true)
+    void getAllQuestionsByVoteAndAnswerAndViewByMonth() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2")
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto, в него не попадают удаленные и с датой больше 30 дней
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(2))
+                .andExpect(jsonPath("$.totalResultCount").value(4))
+                .andExpect(jsonPath("$.itemsOnPage").value(2))
+                //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
+                .andExpect(jsonPath("$.items.[0].id").value(101))
+                .andExpect(jsonPath("$.items.[1].id").value(105))
+                //Проверяем, что значения полей QuestionViewDto, например, с id 101 заполнены
+                .andExpect(jsonPath("$.items.[0].title").value("test title by question 101"))
+                .andExpect(jsonPath("$.items.[0].authorId").value(101))
+                .andExpect(jsonPath("$.items.[0].authorReputation").value(2))
+                .andExpect(jsonPath("$.items.[0].authorName").value("User with id 101"))
+                .andExpect(jsonPath("$.items.[0].authorImage").value("image101"))
+                .andExpect(jsonPath("$.items.[0].description").value("test description by question 101"))
+                .andExpect(jsonPath("$.items.[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items.[0].countAnswer").value(1))
+                .andExpect(jsonPath("$.items.[0].countValuable").value(-1))
+                .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
+                //Проверяем, что нужные QuestionViewDto также выгрузили список всех tags, связанных с ними
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].name").value("test tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].description").value("description for tag 100"))
+                .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
+                .andExpect(jsonPath("$.items.[1].listTagDto.[0].id").value(103));
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/sortedByMonth/?currentPageNumber=1&itemsOnPage=2&trackedTags=100&ignoredTags=102")
+                        .header("Authorization", getJwtToken("test_user100@mail.ru", "123")))
+                .andExpect(status().isOk())
+                //Проверяем собранный PageDto, в него попадают искомые теги и не попадают игнорируемые
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(2))
+                .andExpect(jsonPath("$.itemsOnPage").value(2))
+                //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
+                .andExpect(jsonPath("$.items.[0].id").value(101))
+                .andExpect(jsonPath("$.items.[1].id").value(100));
+    }
 }

@@ -34,10 +34,13 @@ public class AllQuestionsByVoteAndAnswerAndViewByWeek implements PaginationDtoAb
                         "((SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'UP_VOTE' AND v.question.id = question.id) - " +
                         "(SELECT COUNT(*) FROM VoteQuestion v WHERE v.vote = 'DOWN_VOTE' AND v.question.id = question.id)) AS countVote, " +
                         "q.persistDateTime, " +
-                        "q.lastUpdateDateTime) " +
+                        "q.lastUpdateDateTime, " +
+                        "(SELECT DISTINCT  CASE WHEN EXISTS (SELECT  b.id FROM BookMarks b WHERE b.user.id = q.user.id AND b.question.id = q.id) THEN true ELSE false END as isUserBookmark FROM BookMarks ) )" +
                         "FROM Question q " +
-                        "JOIN q.tags tgs " +
-                        "WHERE q.id IN (SELECT q.id From Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
+                        "LEFT JOIN q.user AS author ON (q.user.id = author.id) " +
+                        "LEFT JOIN q.answers AS answer ON (q.id = answer.question.id) " +
+                        "WHERE q.isDeleted = false " +
+                        "AND q.id IN (SELECT q.id From Question q JOIN q.tags tgs WHERE :tracked IS NULL OR tgs.id IN :tracked) " +
                         "AND q.id NOT IN (SELECT q.id From Question q JOIN q.tags tgs WHERE tgs.id IN :ignored) " +
                         "AND q.persistDateTime BETWEEN :week AND LOCALTIMESTAMP " +
                         "AND q.isDeleted = false " +
@@ -45,7 +48,6 @@ public class AllQuestionsByVoteAndAnswerAndViewByWeek implements PaginationDtoAb
                         , QuestionViewDto.class)
                 .setParameter("ignored", ignoredTags)
                 .setParameter("tracked", trackedTags)
-                .setParameter("week", LocalDateTime.now().minusDays(7L))
                 .setFirstResult((currentPageNumber - 1) * itemsOnPage)
                 .setMaxResults(itemsOnPage)
                 .getResultList();

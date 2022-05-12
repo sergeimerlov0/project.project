@@ -21,12 +21,12 @@ public class TestAdminResourceController extends AbstractApiTest {
 
         //В датасетах User c id 101 имеет поле IsEnabled=true
         this.mvc.perform(post("/api/admin/delete/1user@mail.ru")
-                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("4user@mail.ru", "3111")))
                 .andExpect(status().isOk());
 
         //Проверяем повторную попытку удалить
         this.mvc.perform(post("/api/admin/delete/1user@mail.ru")
-                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                        .header("Authorization", getJwtToken("4user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest());
 
         //Проверяем, что User c id 101 отключен

@@ -4,10 +4,14 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -276,6 +280,63 @@ class TestAnswerResourceController extends AbstractApiTest {
 
         //проверяем на null
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/add")
+                        .content(objectMapper.writeValueAsString(answerBodyDtoNull))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/AnswerResourceController/addNewCommentAnswer/answer.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/question.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/questionHasTag.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/tag.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/reputation.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/role.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/user.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/voteAnswer.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/comment.yml",
+            "datasets/AnswerResourceController/addNewCommentAnswer/commentAnswer.yml"
+    })
+    @Transactional
+    public void addNewCommentForAnswer() throws Exception {
+        AnswerBodyDto answerBodyDto = new AnswerBodyDto("test");
+        AnswerBodyDto answerBodyDtoNull = null;
+
+        //Проверяем возвращаемый статус
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/comment")
+                        .content(objectMapper.writeValueAsString(answerBodyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+
+        //проверяем на пустой комментарий
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/105/comment")
+                        .content(objectMapper.writeValueAsString(answerBodyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+        //Проверяем, что в БД появилась запись с новым комментарием "test"
+        User user = em.find(User.class, 100L);
+        Answer answer = em.find(Answer.class, 100L);
+        CommentAnswer commentAnswer = new CommentAnswer("test", user, answer);
+        em.persist(commentAnswer);
+
+        Assertions.assertTrue(em. createQuery("SELECT a FROM CommentAnswer a WHERE a.comment.text = :comment_text")
+                .setParameter("comment_text", "test")
+                .getResultList().size() > 0);
+
+        //проверяем на несуществующий комментарий
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/1/comment")
+                        .content(objectMapper.writeValueAsString(answerBodyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+        //проверяем на null
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/1/comment")
                         .content(objectMapper.writeValueAsString(answerBodyDtoNull))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))

@@ -1,6 +1,6 @@
 user_entity:
   - id: 100
-    email: "3user@mail.ru"
+    email: "4user@mail.ru"
     password: "3111"
     role_id: 101
     last_redaction_date: "[DAY,NOW]"
