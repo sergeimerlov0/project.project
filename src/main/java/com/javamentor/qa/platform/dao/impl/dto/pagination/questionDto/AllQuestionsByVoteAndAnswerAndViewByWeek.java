@@ -48,6 +48,7 @@ public class AllQuestionsByVoteAndAnswerAndViewByWeek implements PaginationDtoAb
                         , QuestionViewDto.class)
                 .setParameter("ignored", ignoredTags)
                 .setParameter("tracked", trackedTags)
+                .setParameter("week", LocalDateTime.now().minusDays(7L))
                 .setFirstResult((currentPageNumber - 1) * itemsOnPage)
                 .setMaxResults(itemsOnPage)
                 .getResultList();
