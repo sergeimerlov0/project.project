@@ -11,7 +11,7 @@ user_entity:
     link_github: "github@link"
     link_site: "site@link"
     link_vk: "vk@link"
-    nickname: "NickName"
+    nickname: "c"
     password: "password"
     persist_date: 2022-01-01 00:00:00
     role_id: 101
