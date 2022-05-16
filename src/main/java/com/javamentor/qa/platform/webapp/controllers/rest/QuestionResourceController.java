@@ -5,16 +5,19 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import com.javamentor.qa.platform.models.entity.BookMarks;
+import com.javamentor.qa.platform.models.entity.Comment;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
@@ -26,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +48,7 @@ public class QuestionResourceController {
     private final QuestionConverter questionConverter;
     private final QuestionViewedService questionViewedService;
     private final BookmarkService bookmarkService;
+    private final CommentQuestionService commentQuestionService;
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Получение QuestionDto по Question id", tags = {"Получение QuestionDto"})
@@ -350,4 +355,24 @@ public class QuestionResourceController {
         }
         return ResponseEntity.badRequest().body("Закладка не добавлена, вопроса ID " + questionId + " не существует");
     }
+
+    @PostMapping("/{id}/comment")
+    @ApiOperation(value = "Добавление комментария в вопрос", tags = {"Add comment to question"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Комментарий успешно добавлен"),
+            @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
+    })
+    public ResponseEntity<?> addQuestionToComment(@PathVariable Long id,
+                                                        @RequestBody String commentString) {
+        Optional<Question> questionOptional = questionService.getById(id);
+        if (questionOptional.isPresent()) {
+            Question question = questionOptional.get();
+            CommentQuestion commentQuestion = new CommentQuestion();
+            commentQuestion.setText(commentString);
+            commentQuestion.setQuestion(question);
+            commentQuestionService.persist(commentQuestion);
+        }
+        return ResponseEntity.badRequest().body("Комментарий не был добавлен к вопросу так как вопрос с Id:" + id + "был не найден");
+    }
+
 }

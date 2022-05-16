@@ -1,0 +1,32 @@
+question:
+  - id: 100
+    title: "title by question 100"
+    description: "description by question 100"
+    persist_date: "[DAY,NOW]"
+    user_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+  - id: 101
+    title: "test1"
+    description: "test1"
+    persist_date: "[DAY,NOW]"
+    user_id: 101
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
+
+  - id: 102
+    title: "test2"
+    description: "test2"
+    persist_date: "[DAY,NOW]"
+    user_id: 101
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: true
+
+  - id: 103
+    title: "test3"
+    description: "test3"
+    persist_date: "[DAY,NOW]"
+    user_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
