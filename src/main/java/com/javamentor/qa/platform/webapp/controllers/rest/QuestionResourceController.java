@@ -13,7 +13,12 @@ import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
+import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -369,4 +374,5 @@ public class QuestionResourceController {
         }
         return ResponseEntity.badRequest().body("Комментарий не был добавлен к вопросу так как вопрос с Id:" + id + "был не найден");
     }
+
 }
