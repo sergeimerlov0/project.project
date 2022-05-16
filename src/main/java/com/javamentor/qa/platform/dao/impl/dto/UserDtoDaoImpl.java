@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,4 +64,40 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .setParameter("id", id)
                 .getResultList();
     }
+
+    @Override
+    public List<UserDto> getTop10(Long id) {
+        List<UserDto> listId =
+                entityManager.createQuery(
+                                "SELECT DISTINCT new com.javamentor.qa.platform.models.dto.UserDto " +
+                                        "(user.id, " +
+                                        "user.email, " +
+                                        "user.fullName, " +
+                                        "user.imageLink, " +
+                                        "user.city, " +
+                                        "(SELECT COALESCE(SUM(reputation.count), 0L) FROM Reputation reputation WHERE reputation.author.id = user.id), " +
+                                        "user.persistDateTime) " +
+                                        "FROM User user " +
+                                        "WHERE user.isEnabled = true " +
+                                        "AND user.id IN (SELECT a.user.id FROM Answer a) " +
+                                        "AND (SELECT a.persistDateTime FROM Answer a WHERE a.id = user.id) BETWEEN :week AND LOCALTIMESTAMP " +
+                                        "AND false IN (SELECT a.isDeleted FROM Answer a) " +
+                                        "GROUP BY user.id " +
+                                        "ORDER BY user.id DESC "
+//                                        "((SELECT COUNT (*) FROM Answer a WHERE a.answer.id = user.id AND a.persistDateTime BETWEEN :week AND LOCALTIMESTAMP " +
+//                                        "AND a.isDeleted = false)) ASC "
+//                                        "((SELECT COUNT (*) FROM VoteQuestion vq WHERE vq.vote = 'UP_VOTE' AND vq.user.id = user.id) - " +
+//                                        "(SELECT COUNT (*) FROM VoteQuestion vq WHERE vq.vote = 'DOWN_VOTE' AND vq.user.id = user.id) + " +
+//                                        "(SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'UP_VOTE' AND va.user.id = user.id) - " +
+//                                        "(SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'DOWN_VOTE' AND va.user.id = user.id)) DESC "
+
+
+                               , UserDto.class)
+                        .setMaxResults(10)
+                        .setParameter("week", LocalDateTime.now().minusDays(7L))
+                        .getResultList();
+        return listId;
+    }
+
+
 }

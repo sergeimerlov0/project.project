@@ -72,4 +72,9 @@ public class UserDtoServiceImpl extends PaginationServiceDtoImpl<UserDto> implem
         return listQuestions;
 
     }
+
+    public List<UserDto> getTop10(Long id){
+        return userDtoDao.getTop10(id);
+    }
+
 }

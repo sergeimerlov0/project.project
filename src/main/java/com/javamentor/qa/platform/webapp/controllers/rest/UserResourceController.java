@@ -177,4 +177,14 @@ public class UserResourceController {
     public ResponseEntity<List<BookmarksDto>> getBookmarksDtoByUserId(@PathVariable("userId") long userId) {
         return ResponseEntity.ok(bookmarksDtoService.getBookmarksDtoByUserId(userId));
     }
+
+    @GetMapping(value = "/top_10")
+    @ApiOperation(value = "Получение топ 10 пользователей по ответам за неделю", tags = {"Получение пользователей"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное получение пользователей"),
+            @ApiResponse(code = 400, message = "Ошибка получения пользователей")})
+    public ResponseEntity<?> t (Long id){
+        return ResponseEntity.ok(userDtoService.getTop10(id));
+    }
+
 }

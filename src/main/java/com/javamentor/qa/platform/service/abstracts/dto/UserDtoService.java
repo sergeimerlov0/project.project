@@ -9,4 +9,5 @@ public interface UserDtoService extends PaginationServiceDto<UserDto> {
     Optional<UserDto> getUserById(Long id);
     List<UserProfileQuestionDto> getAllDeletedQuestionsByUserId(Long userId);
     List<UserProfileQuestionDto> getUserProfileQuestionDtoAddByUserId(Long userId);
+    List<UserDto> getTop10(Long id);
 }
