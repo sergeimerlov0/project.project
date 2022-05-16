@@ -354,7 +354,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Комментарий успешно добавлен"),
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден")
     })
-    public ResponseEntity<Integer> addQuestionToComment(@PathVariable Long id,
+    public ResponseEntity<?> addQuestionToComment(@PathVariable Long id,
                                                         @RequestBody String commentString) {
         Optional<Question> questionOptional = questionService.getById(id);
         if (questionOptional.isPresent()) {
@@ -364,6 +364,6 @@ public class QuestionResourceController {
             commentQuestion.setQuestion(question);
             commentQuestionService.persist(commentQuestion);
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.badRequest().body("Комментарий не был добавлен к вопросу так как вопрос с Id:" + id + "был не найден");
     }
 }
