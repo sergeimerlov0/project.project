@@ -54,7 +54,7 @@ public class TestAdminResourceController extends AbstractApiTest {
     })
     void deleteAnswerById() throws Exception {
 
-        //Проверка, что ответ существует и удален
+        //Проверка, что ответ существует и удален методом
         this.mvc.perform(MockMvcRequestBuilders.delete("/api/admin/answer/100/delete")
                         .header("Authorization", getJwtToken("test2@test.ru", "123")))
                 .andExpect(status().isOk())
@@ -69,7 +69,7 @@ public class TestAdminResourceController extends AbstractApiTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Answer is not exist"));
 
-        //Проверка, что ответа не пользователь не обладает правами
+        //Проверка, что  пользователь не обладает правами
         this.mvc.perform(MockMvcRequestBuilders.delete("/api/admin/answer/103/delete")
                         .header("Authorization", getJwtToken("test3@test.ru", "123")))
                 .andExpect(status().isForbidden());
