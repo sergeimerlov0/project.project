@@ -2,12 +2,12 @@ package com.javamentor.qa.platform.api;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
+import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
-import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.jayway.jsonpath.JsonPath;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +53,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/postQuestionView/user.yml",
             "datasets/QuestionResourceController/postQuestionView/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
-    void postQuestionView () throws Exception {
+    void postQuestionView() throws Exception {
         //проверка на несуществующий вопрос
         this.mvc.perform(post("/api/user/question/1/view")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
@@ -66,9 +65,9 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(status().isOk());
 
         QuestionViewed questionViewed = em.createQuery(
-                "FROM QuestionViewed a " +
-                        "WHERE a.question.id = :questionId " +
-                        "AND a.user.email = :useremail",
+                        "FROM QuestionViewed a " +
+                                "WHERE a.question.id = :questionId " +
+                                "AND a.user.email = :useremail",
                         QuestionViewed.class)
                 .setParameter("questionId", 100L)
                 .setParameter("useremail", "3user@mail.ru")
@@ -80,9 +79,9 @@ class TestQuestionResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
         List<QuestionViewed> questionViewed2 = em.createQuery(
-                "FROM QuestionViewed a " +
-                        "WHERE a.question.id = :questionId " +
-                        "AND a.user.email = :useremail",
+                        "FROM QuestionViewed a " +
+                                "WHERE a.question.id = :questionId " +
+                                "AND a.user.email = :useremail",
                         QuestionViewed.class)
                 .setParameter("questionId", 100L)
                 .setParameter("useremail", "3user@mail.ru")
@@ -158,9 +157,9 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(content().string("1"));
 
         VoteQuestion vq = em.createQuery(
-                "FROM VoteQuestion a " +
-                        "WHERE a.question.id = :questionId " +
-                        "AND a.user.id = :userId",
+                        "FROM VoteQuestion a " +
+                                "WHERE a.question.id = :questionId " +
+                                "AND a.user.id = :userId",
                         VoteQuestion.class)
                 .setParameter("questionId", 103L)
                 .setParameter("userId", 100L)
@@ -189,9 +188,9 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(content().string("1"));
 
         VoteQuestion vq = em.createQuery(
-                "FROM VoteQuestion a " +
-                        "WHERE a.question.id = :questionId " +
-                        "AND a.user.id = :userId",
+                        "FROM VoteQuestion a " +
+                                "WHERE a.question.id = :questionId " +
+                                "AND a.user.id = :userId",
                         VoteQuestion.class)
                 .setParameter("questionId", 102L)
                 .setParameter("userId", 100L)
@@ -1074,9 +1073,9 @@ class TestQuestionResourceController extends AbstractApiTest {
 
         //Проверяем закладку из БД
         BookMarks bookMarks = em.createQuery("FROM BookMarks a " +
-                                                     "WHERE a.question.id = :questionId " +
-                                                     "AND a.user.id = :userId", BookMarks.class)
-                .setParameter("questionId" , 100L)
+                        "WHERE a.question.id = :questionId " +
+                        "AND a.user.id = :userId", BookMarks.class)
+                .setParameter("questionId", 100L)
                 .setParameter("userId", 100L)
                 .getSingleResult();
         Assertions.assertNotNull(bookMarks);
@@ -1144,5 +1143,56 @@ class TestQuestionResourceController extends AbstractApiTest {
                 //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
                 .andExpect(jsonPath("$.items.[0].id").value(101))
                 .andExpect(jsonPath("$.items.[1].id").value(100));
+    }
+
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/testAddCommentToQuestion/role.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/answer.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/reputation.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/user.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/question.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/questionHasTag.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/tag.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/comment.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/commentQuestion.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/voteQuestion.yml",
+
+    }, cleanBefore = true, cleanAfter = true)
+    void addCommentToQuestion() throws Exception {
+
+        //проверка статуса
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/100/comment")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+
+        //комментария не существует
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/555/comment")
+                        .content(objectMapper.writeValueAsString("CommentTest"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+
+        //новый комментарий к вопросу с id = 100
+        Assertions.assertTrue(em.createQuery("SELECT a FROM CommentQuestion a WHERE a.comment.id = :comment_id")
+                .setParameter("comment_id", 100L)
+                .getResultList().size() > 0);
+
+        //комментарий - пустая строка
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/555/comment")
+                        .content(objectMapper.writeValueAsString(""))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+
+        //null
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/comment")
+                        .content(objectMapper.writeValueAsString(null))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
     }
 }
