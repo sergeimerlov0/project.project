@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
+import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -10,6 +11,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.AnswerUserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -46,6 +48,7 @@ public class AnswerResourceController {
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
     private final QuestionService questionService;
+    private final AnswerUserDtoService answerUserDtoService;
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {
@@ -68,6 +71,11 @@ public class AnswerResourceController {
     @GetMapping()
     public ResponseEntity<List<AnswerDto>> getAnswerByQuestionId(@PathVariable Long questionId) {
         return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(questionId));
+    }
+
+    @GetMapping("/lastWeek")
+    public ResponseEntity<List<AnswerUserDto>> getAnswerByQuestionIdForLastWeek() {
+        return ResponseEntity.ok().body(answerUserDtoService.getAnswerByQuestionIdForLastWeek());
     }
 
     @ApiOperation(value = "Голосование за ответ", tags = {"Получение общего количества голосов"})
