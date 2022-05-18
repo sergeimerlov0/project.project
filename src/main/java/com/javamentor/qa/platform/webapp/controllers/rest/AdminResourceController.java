@@ -44,17 +44,14 @@ public class AdminResourceController {
             @ApiResponse(code = 404, message = "Ответ с указанным ID не найден")})
     @DeleteMapping("/answer/{id}/delete")
     public ResponseEntity<String> deleteAnswerById(@PathVariable("id") Long id){
-        System.out.println(id);
         Optional<Answer> optionalAnswer = answerService.getById(id);
         if(optionalAnswer.isEmpty()) {
             return new ResponseEntity<>("Answer is not exist", HttpStatus.NOT_FOUND);
-        } else {
-            Answer answer = optionalAnswer.get();
-            answer.setIsDeleted(true);
-            answer.setIsDeletedByModerator(true);
-            answerService.update(answer);
-            return new ResponseEntity<>("Answer is successfully deleted", HttpStatus.OK);
         }
-
+        Answer answer = optionalAnswer.get();
+        answer.setIsDeleted(true);
+        answer.setIsDeletedByModerator(true);
+        answerService.update(answer);
+        return new ResponseEntity<>("Answer is successfully deleted", HttpStatus.OK);
     }
 }
