@@ -84,6 +84,8 @@ class TestAnswerResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/comment.yml",
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/commentAnswer.yml",
             "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/answer.yml",
             "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/question.yml",
             "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/questionHasTag.yml",
