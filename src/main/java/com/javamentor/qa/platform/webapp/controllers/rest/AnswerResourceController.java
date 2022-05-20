@@ -73,9 +73,12 @@ public class AnswerResourceController {
         return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(questionId));
     }
 
+    @ApiOperation(value = "Получение списка ответов за неделю", tags = {"Получение списка ответов"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное получение")})
     @GetMapping("/lastWeek")
-    public ResponseEntity<List<AnswerUserDto>> getAnswerByQuestionIdForLastWeek() {
-        return ResponseEntity.ok().body(answerUserDtoService.getAnswerByQuestionIdForLastWeek());
+    public ResponseEntity<List<AnswerUserDto>> getAnswerForLastWeek() {
+        return ResponseEntity.ok().body(answerUserDtoService.getAnswerForLastWeek());
     }
 
     @ApiOperation(value = "Голосование за ответ", tags = {"Получение общего количества голосов"})

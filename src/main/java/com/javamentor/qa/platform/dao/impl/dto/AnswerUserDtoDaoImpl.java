@@ -21,7 +21,7 @@ public class AnswerUserDtoDaoImpl implements AnswerUserDtoDao {
     private EntityManager entityManager;
 
     @Override
-    public List<AnswerUserDto> getAnswerByQuestionIdForLastWeek() {
+    public List<AnswerUserDto> getAnswerForLastWeek() {
 
         List<Tuple> ansLastWeek = entityManager.createQuery(
                 "SELECT a.id AS answer_id, " +

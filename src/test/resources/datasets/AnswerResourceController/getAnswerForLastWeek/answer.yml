@@ -1,0 +1,12 @@
+answer:
+  - id: 100
+    user_id: 100
+    question_id: 114
+    html_body: "test100"
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    persist_date: "2022-05-20 15:59:08"
+    date_accept_time: "[DAY,NOW]"
+    update_date: "[DAY,NOW]"
+

@@ -1,0 +1,11 @@
+votes_on_answers:
+  - id: 100
+    user_id: 100
+    answer_id: 100
+    vote: "UP_VOTE"
+
+  - id: 103
+    user_id: 101
+    answer_id: 100
+    vote: "DOWN_VOTE"
+

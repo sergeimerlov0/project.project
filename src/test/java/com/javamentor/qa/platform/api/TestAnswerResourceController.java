@@ -84,6 +84,32 @@ class TestAnswerResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
+            "datasets/AnswerResourceController/getAnswerForLastWeek/answer.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/question.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/questionHasTag.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/tag.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/reputation.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/role.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/user.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/voteAnswer.yml"
+    })
+    public void getAnswerForLastWeek() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/question/100/answer/lastWeek")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].answerId", is(100)))
+                .andExpect(jsonPath("$[0].questionId", is(114)))
+                .andExpect(jsonPath("$[0].countAnswerVote", is(0)))
+                .andExpect(jsonPath("$[0].persistDate", is("2022-05-20T15:59:08")))
+                .andExpect(jsonPath("$[0].htmlBody", is("test100")));
+
+    }
+
+    @Test
+    @DataSet(value = {
             "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/comment.yml",
             "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/commentAnswer.yml",
             "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/answer.yml",

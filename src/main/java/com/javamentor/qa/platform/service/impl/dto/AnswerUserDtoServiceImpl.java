@@ -21,8 +21,8 @@ public class AnswerUserDtoServiceImpl implements AnswerUserDtoService {
     private final AnswerUserDtoDao answerUserDtoDao;
 
     @Override
-    public List<AnswerUserDto> getAnswerByQuestionIdForLastWeek() {
-        return answerUserDtoDao.getAnswerByQuestionIdForLastWeek();
+    public List<AnswerUserDto> getAnswerForLastWeek() {
+        return answerUserDtoDao.getAnswerForLastWeek();
     }
 
 }
