@@ -16,4 +16,6 @@ public class UserDto {
     private String city;
     private Long reputation;
     private LocalDateTime dateRegister;
+    private Long totalAnswers;
+    private Long totalVotesOnAnswers;
 }

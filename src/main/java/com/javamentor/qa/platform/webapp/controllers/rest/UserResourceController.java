@@ -183,8 +183,8 @@ public class UserResourceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение пользователей"),
             @ApiResponse(code = 400, message = "Ошибка получения пользователей")})
-    public ResponseEntity<?> t (Long id){
-        return ResponseEntity.ok(userDtoService.getTop10(id));
+    public ResponseEntity<?> getTop10 (){
+        return ResponseEntity.ok(userDtoService.getTop10());
     }
 
 }

@@ -66,7 +66,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDto> getTop10(Long id) {
+    public List<UserDto> getTop10() {
         List<UserDto> listId =
                 entityManager.createQuery(
                                 "SELECT DISTINCT new com.javamentor.qa.platform.models.dto.UserDto " +
@@ -76,22 +76,21 @@ public class UserDtoDaoImpl implements UserDtoDao {
                                         "user.imageLink, " +
                                         "user.city, " +
                                         "(SELECT COALESCE(SUM(reputation.count), 0L) FROM Reputation reputation WHERE reputation.author.id = user.id), " +
-                                        "user.persistDateTime) " +
+                                        "user.persistDateTime, " +
+                                        "(SELECT COUNT(a.persistDateTime) FROM Answer a WHERE a.user.id = user.id " +
+                                        "AND a.persistDateTime BETWEEN :week AND LOCALTIMESTAMP " +
+                                        "AND a.isDeleted = false) " +
+                                        "AS totalAnswers, " +
+                                        "((SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'UP_VOTE' AND va.answer.user.id = user.id) - " +
+                                        "(SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'DOWN_VOTE' AND va.answer.user.id = user.id)) " +
+                                        "AS totalVotesOnAnswers) " +
                                         "FROM User user " +
                                         "WHERE user.isEnabled = true " +
-                                        "AND user.id IN (SELECT a.user.id FROM Answer a) " +
-                                        "AND (SELECT a.persistDateTime FROM Answer a WHERE a.id = user.id) BETWEEN :week AND LOCALTIMESTAMP " +
-                                        "AND false IN (SELECT a.isDeleted FROM Answer a) " +
-                                        "GROUP BY user.id " +
-                                        "ORDER BY user.id DESC "
-//                                        "((SELECT COUNT (*) FROM Answer a WHERE a.answer.id = user.id AND a.persistDateTime BETWEEN :week AND LOCALTIMESTAMP " +
-//                                        "AND a.isDeleted = false)) ASC "
-//                                        "((SELECT COUNT (*) FROM VoteQuestion vq WHERE vq.vote = 'UP_VOTE' AND vq.user.id = user.id) - " +
-//                                        "(SELECT COUNT (*) FROM VoteQuestion vq WHERE vq.vote = 'DOWN_VOTE' AND vq.user.id = user.id) + " +
-//                                        "(SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'UP_VOTE' AND va.user.id = user.id) - " +
-//                                        "(SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'DOWN_VOTE' AND va.user.id = user.id)) DESC "
-
-
+                                        "AND (SELECT COUNT(a.persistDateTime) FROM Answer a WHERE a.user.id = user.id " +
+                                        "AND a.persistDateTime BETWEEN :week AND LOCALTIMESTAMP " +
+                                        "AND a.isDeleted = false) > 0 " +
+                                        "GROUP BY totalAnswers, totalVotesOnAnswers, user.id " +
+                                        "ORDER BY totalAnswers DESC, totalVotesOnAnswers DESC "
                                , UserDto.class)
                         .setMaxResults(10)
                         .setParameter("week", LocalDateTime.now().minusDays(7L))
