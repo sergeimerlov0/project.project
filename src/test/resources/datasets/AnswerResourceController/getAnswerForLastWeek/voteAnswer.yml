@@ -1,6 +1,11 @@
 votes_on_answers:
   - id: 100
     user_id: 100
+    answer_id: 101
+    vote: "UP_VOTE"
+
+  - id: 101
+    user_id: 102
     answer_id: 100
     vote: "UP_VOTE"
 
