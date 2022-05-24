@@ -125,6 +125,14 @@ public class TestDataInitService {
             answer.setIsDeletedByModerator(random.nextBoolean());
             answer.setQuestion(questionService.getById((long) (1 + (int) (Math.random() * 49))).get());
             answer.setUser(userService.getById((long) (1 + (int) (Math.random() * 49))).get());
+            //добавдение модератора к рамдомной части ответов
+            for (int y = 1 + (int) (Math.random() * 49); y <= x; y = y + 2) {
+                if (y == x) {
+                    answer.setEditModerator(userService.getAll().stream()
+                            .filter(user -> user.getRole().getName().equals("ADMIN")).findAny().get());
+                    break;
+                }
+            }
             answerService.persist(answer);
         }
     }
