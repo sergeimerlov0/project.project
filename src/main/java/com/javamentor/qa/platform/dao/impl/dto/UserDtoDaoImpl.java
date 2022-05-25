@@ -66,7 +66,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDto> getTop10() {
+    public List<UserDto> getTop10ByAnswerPerWeek() {
         List<UserDto> listId =
                 entityManager.createQuery(
                                 "SELECT DISTINCT new com.javamentor.qa.platform.models.dto.UserDto " +
