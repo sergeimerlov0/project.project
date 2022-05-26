@@ -73,9 +73,6 @@ public class UserDtoServiceImpl extends PaginationServiceDtoImpl<UserDto> implem
 
     }
 
-    @Transactional
-    public List<UserDto> getTop10ByAnswerPerWeek(){
-        return userDtoDao.getTop10ByAnswerPerWeek();
-    }
+
 
 }
