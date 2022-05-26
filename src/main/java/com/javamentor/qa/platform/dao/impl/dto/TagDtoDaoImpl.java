@@ -33,8 +33,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @Override
     public List<TagDto> getTagsTop10WithString(String partTag) {
         return entityManager.createQuery(
-                "SELECT new com.javamentor.qa.platform.models.dto.TagDto" +
-                        "(tag.id, tag.name, tag.description) " +
+                "SELECT new com.javamentor.qa.platform.models.dto.TagDto (tag.id, tag.name, tag.description) " +
                         "FROM Tag tag " +
                         "WHERE LOWER(tag.name) LIKE LOWER(CONCAT('%', :partTag, '%'))  " +
                         "ORDER BY tag.questions.size DESC",

@@ -185,7 +185,7 @@ class TestQuestionResourceController extends AbstractApiTest {
         this.mvc.perform(post("/api/user/question/102/downVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
-                .andExpect(content().string("1"));
+                .andExpect(content().string("-1"));
 
         VoteQuestion vq = em.createQuery(
                         "FROM VoteQuestion a " +
