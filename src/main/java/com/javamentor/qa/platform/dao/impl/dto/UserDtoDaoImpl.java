@@ -63,4 +63,13 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .setParameter("id", id)
                 .getResultList();
     }
+
+    @Override
+    public Long getUserIdByEmail(String email) {
+        return (Long) entityManager.createQuery(
+                        "SELECT id FROM User WHERE email = :email "
+                ).setParameter("email", email)
+                .getSingleResult();
+    }
+
 }

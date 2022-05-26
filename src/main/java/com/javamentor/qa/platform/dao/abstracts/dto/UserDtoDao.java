@@ -10,4 +10,5 @@ public interface UserDtoDao {
     Optional<UserDto> getUserById(Long id);
     List<UserProfileQuestionDto> getUserProfileQuestionDtoAddByUserId(Long userId);
     List<UserProfileQuestionDto> getAllDeletedQuestionsByUserId(Long id);
+    Long getUserIdByEmail(String email);
 }

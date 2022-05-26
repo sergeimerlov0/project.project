@@ -95,4 +95,13 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 .getResultStream()
                 .findAny();
     }
+
+    @Override
+    public Integer getCountOfAnswersByUser(long userId) {
+        return ((Long) entityManager.createQuery(
+                        "SELECT COUNT (*) FROM Answer a " +
+                                "WHERE a.user.id = :userId AND a.persistDateTime >= CURRENT_DATE() - 7")
+                .setParameter("userId", userId)
+                .getSingleResult()).intValue();
+    }
 }

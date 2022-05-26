@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface AnswerDtoDao {
     List<AnswerDto> getAnswerByQuestionId(Long id);
     Optional<AnswerDto> getAnswerDtoById(Long answerId);
+    Integer getCountOfAnswersByUser(long userId);
 }

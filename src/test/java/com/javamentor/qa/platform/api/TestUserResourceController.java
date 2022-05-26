@@ -439,4 +439,24 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getCountOfAnswersByUser/answer.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUser/question.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUser/questionHasTag.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUser/reputation.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUser/role.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUser/tag.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUser/user.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUser/voteAnswer.yml",
+    })
+    void getCountOfAnswersByUser() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/profile/question/week")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(1));
+    }
 }

@@ -1,0 +1,8 @@
+question:
+  - id: 114
+    title: "test"
+    description: "test"
+    persist_date: "[DAY,NOW]"
+    user_id: 100
+    last_redaction_date: "[DAY,NOW]"
+    is_deleted: false
