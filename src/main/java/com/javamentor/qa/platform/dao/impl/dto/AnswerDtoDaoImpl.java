@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 import org.hibernate.transform.ResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -122,5 +123,31 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 tuple.get("html_body", String.class))));
 
         return ansLastWeekList;
+    }
+
+    @Override
+    public List<AnswerDto> getDeletedAnswersByUserId(Long userId) {
+        return entityManager.createQuery(
+                "SELECT new com.javamentor.qa.platform.models.dto.AnswerDto " +
+                        "(a.id, " +
+                        "u.id, " +
+                        "(SELECT COALESCE(SUM(reputation.count), 0L) FROM Reputation reputation WHERE reputation.author.id = a.user.id), " +
+                        "u.imageLink, " +
+                        "u.nickname, " +
+                        "a.user.id, " +
+                        "a.htmlBody, " +
+                        "a.persistDateTime, " +
+                        "a.isHelpful, " +
+                        "a.dateAcceptTime, " +
+                        "((SELECT COUNT(*) FROM VoteAnswer v WHERE v.vote = 'UP_VOTE' AND v.answer.id = a.id) + " +
+                        "(SELECT COUNT(*) FROM VoteAnswer v WHERE v.vote = 'DOWN_VOTE' AND v.answer.id = a.id))) " +
+                        "FROM Answer a " +
+                        "INNER JOIN User u ON u.id = a.user.id " +
+                        "WHERE u.id = :id " +
+                        "AND (a.isDeleted = true OR a.isDeletedByModerator = true) " +
+                        "GROUP BY a.id, u.id, u.imageLink, u.nickname",
+                        AnswerDto.class)
+                .setParameter("id", userId)
+                .getResultList();
     }
 }

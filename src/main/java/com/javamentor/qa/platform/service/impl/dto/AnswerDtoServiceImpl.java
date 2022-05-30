@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
-import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +33,10 @@ public class AnswerDtoServiceImpl implements AnswerDtoService {
     @Override
     public List<AnswerUserDto> getAnswerForLastWeek() {
         return answerDtoDao.getAnswerForLastWeek();
+    }
+
+    @Override
+    public List<AnswerDto> getDeletedAnswersByUserId(Long userId) {
+        return answerDtoDao.getDeletedAnswersByUserId(userId);
     }
 }
