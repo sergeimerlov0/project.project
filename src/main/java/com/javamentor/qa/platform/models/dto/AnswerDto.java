@@ -26,7 +26,6 @@ public class AnswerDto {
     private String body;
     private LocalDateTime persistDate;
     private Boolean isHelpful;
-    private VoteType isUserVote; // голосовал ли пользователь за ответ на вопрос
     private LocalDateTime dateAccept;
     private Long countValuable;
 }

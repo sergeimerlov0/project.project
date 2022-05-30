@@ -254,6 +254,8 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.countValuable").value(0))
                 .andExpect(jsonPath("$.body").value("test"));
 
+
+
         //Проверяем, что в БД появилась запись о новом ответе с id 1
         Assertions.assertTrue(em.createQuery("SELECT a FROM Answer a WHERE a.user.id = :user AND a.id = :answer")
                 .setParameter("user", 100L)

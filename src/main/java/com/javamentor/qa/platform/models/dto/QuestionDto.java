@@ -21,6 +21,7 @@ public class QuestionDto {
     private String authorImage;
     private String description;
     private Long viewCount;                      //пока не считай это поле, как оно будет считаться решим позже, пусть пока будет 0
+    private Boolean isUserAnswerVote;
     private Long countAnswer;
     private Long countValuable;                  //Это голоса за ответ QuestionVote
     private LocalDateTime persistDateTime;
@@ -30,7 +31,7 @@ public class QuestionDto {
     private VoteType isUserVote;
 
     public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName,
-                       String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable,
+                       String authorImage, String description, Long viewCount, Boolean isUserAnswerVote, Long countAnswer, Long countValuable,
                        LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime,VoteType isUserVote) {
         this.id = id;
         this.title = title;
@@ -40,6 +41,7 @@ public class QuestionDto {
         this.authorImage = authorImage;
         this.description = description;
         this.viewCount = viewCount;
+        this.isUserAnswerVote = isUserAnswerVote;
         this.countAnswer = countAnswer;
         this.countValuable = countValuable;
         this.persistDateTime = persistDateTime;

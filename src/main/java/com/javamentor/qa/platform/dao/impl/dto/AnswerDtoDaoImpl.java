@@ -33,7 +33,6 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                                 "a.htmlBody, " +
                                 "a.persistDateTime, " +
                                 "a.isHelpful, " +
-                                "a.isUserVote, " +
                                 "a.dateAcceptTime, " +
                                 "((SELECT COUNT(*) FROM VoteAnswer v WHERE v.vote = 'UP_VOTE' AND v.answer.id = a.id) - " +
                                 "(SELECT COUNT(*) FROM VoteAnswer v WHERE v.vote = 'DOWN_VOTE' AND v.answer.id = a.id)) " +
@@ -58,9 +57,8 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                                 answerDto.setBody((String) tuple[6]);
                                 answerDto.setPersistDate((LocalDateTime) tuple[7]);
                                 answerDto.setIsHelpful((Boolean) tuple[8]);
-                                answerDto.setIsUserVote((VoteType) tuple[9]);
-                                answerDto.setPersistDate((LocalDateTime) tuple[10]);
-                                answerDto.setCountValuable((Long) tuple[11]);
+                                answerDto.setPersistDate((LocalDateTime) tuple[9]);
+                                answerDto.setCountValuable((Long) tuple[10]);
 
                                 return answerDto;
                             }
@@ -86,7 +84,6 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         "a.htmlBody, " +
                         "a.persistDateTime, " +
                         "a.isHelpful, " +
-                        "a.isUserVote, " +
                         "a.dateAcceptTime, " +
                         "((SELECT COUNT(*) FROM VoteAnswer v WHERE v.vote = 'UP_VOTE' AND v.answer.id = a.id) + " +
                         "(SELECT COUNT(*) FROM VoteAnswer v WHERE v.vote = 'DOWN_VOTE' AND v.answer.id = a.id))) " +
