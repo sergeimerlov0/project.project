@@ -11,7 +11,6 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.AnswerUserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -48,7 +47,6 @@ public class AnswerResourceController {
     private final AnswerDtoService answerDtoService;
     private final VoteAnswerService voteAnswerService;
     private final QuestionService questionService;
-    private final AnswerUserDtoService answerUserDtoService;
 
     @ApiOperation(value = "Удаление ответа на вопрос", tags = {"Удаление ответа"})
     @ApiResponses(value = {
@@ -78,7 +76,7 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Успешное получение")})
     @GetMapping("/lastWeek")
     public ResponseEntity<List<AnswerUserDto>> getAnswerForLastWeek() {
-        return ResponseEntity.ok().body(answerUserDtoService.getAnswerForLastWeek());
+        return ResponseEntity.ok().body(answerDtoService.getAnswerForLastWeek());
     }
 
     @ApiOperation(value = "Голосование за ответ", tags = {"Получение общего количества голосов"})

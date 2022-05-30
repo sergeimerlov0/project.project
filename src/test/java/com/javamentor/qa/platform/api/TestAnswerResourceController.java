@@ -99,12 +99,23 @@ class TestAnswerResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].answerId", is(100)))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].answerId", is(103)))
                 .andExpect(jsonPath("$[0].questionId", is(114)))
-                .andExpect(jsonPath("$[0].countAnswerVote", is(0)))
-                .andExpect(jsonPath("$[0].persistDate", is("2022-05-20T15:59:08")))
-                .andExpect(jsonPath("$[0].htmlBody", is("test100")));
+                .andExpect(jsonPath("$[0].countAnswerVote", is(1)))
+                .andExpect(jsonPath("$[0].persistDate", is("2022-05-29T15:59:08")))
+                .andExpect(jsonPath("$[0].htmlBody", is("test103")))
+                .andExpect(jsonPath("$[1].answerId", is(102)))
+                .andExpect(jsonPath("$[1].questionId", is(114)))
+                .andExpect(jsonPath("$[1].countAnswerVote", is(-1)))
+                .andExpect(jsonPath("$[1].persistDate", is("2022-05-29T15:59:08")))
+                .andExpect(jsonPath("$[1].htmlBody", is("test102")))
+                .andExpect(jsonPath("$[2].answerId", is(100)))
+                .andExpect(jsonPath("$[2].questionId", is(114)))
+                .andExpect(jsonPath("$[2].countAnswerVote", is(0)))
+                .andExpect(jsonPath("$[2].persistDate", is("2022-05-29T15:59:08")))
+                .andExpect(jsonPath("$[2].htmlBody", is("test100")))
+        ;
 
     }
 

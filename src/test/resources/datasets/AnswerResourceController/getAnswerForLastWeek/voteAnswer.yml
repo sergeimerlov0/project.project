@@ -9,8 +9,18 @@ votes_on_answers:
     answer_id: 100
     vote: "UP_VOTE"
 
+  - id: 102
+    user_id: 102
+    answer_id: 102
+    vote: "DOWN_VOTE"
+
   - id: 103
     user_id: 101
     answer_id: 100
     vote: "DOWN_VOTE"
+
+  - id: 104
+    user_id: 101
+    answer_id: 103
+    vote: "UP_VOTE"
 
