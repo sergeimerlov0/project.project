@@ -445,23 +445,46 @@ public class TestUserResourceController extends AbstractApiTest {
             "datasets/UserResourceController/getTop10ByAnswerPerWeek/answers.yml",
             "datasets/UserResourceController/getTop10ByAnswerPerWeek/questions.yml",
             "datasets/UserResourceController/getTop10ByAnswerPerWeek/role.yml",
-            "datasets/UserResourceController/getTop10ByAnswerPerWeek/users.yml",
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/usersTest1.yml",
             "datasets/UserResourceController/getTop10ByAnswerPerWeek/voteAnswer.yml",
     }, cleanBefore = true, cleanAfter = true)
-    void getTop10ByAnswerPerWeek() throws Exception{
+    void getTop10ByAnswerPerWeekTest1() throws Exception{
         email = "3user@mail.com";
         password = "3111";
 
-        mvc.perform(get("/api/user/top10ByAnswerPerWeek")
+        mvc.perform(get("/api/user/top/answer/week")
                         .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(4))
                 .andExpect(jsonPath("$[0].id").value(100))
-                .andExpect(jsonPath("$[0].totalAnswers").value(1))
+                .andExpect(jsonPath("$[0].totalAnswers").value(2))
                 .andExpect(jsonPath("$[0].totalVotesOnAnswers").value(2))
                 .andExpect(jsonPath("$[1].id").value(101))
-                .andExpect(jsonPath("$[1].totalAnswers").value(1))
-                .andExpect(jsonPath("$[1].totalVotesOnAnswers").value(1));
+                .andExpect(jsonPath("$[1].totalAnswers").value(2))
+                .andExpect(jsonPath("$[1].totalVotesOnAnswers").value(1))
+                .andExpect(jsonPath("$[2].id").value(104))
+                .andExpect(jsonPath("$[2].totalAnswers").value(1))
+                .andExpect(jsonPath("$[2].totalVotesOnAnswers").value(2))
+                .andExpect(jsonPath("$[3].id").value(105))
+                .andExpect(jsonPath("$[3].totalAnswers").value(1))
+                .andExpect(jsonPath("$[3].totalVotesOnAnswers").value(1));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/usersTest2.yml",
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/role.yml",
+    }, cleanBefore = true, cleanAfter = true)
+    void getTop10ByAnswerPerWeekTest2() throws Exception{
+        email = "3user@mail.com";
+        password = "3111";
+
+        mvc.perform(get("/api/user/top/answer/week")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
     }
 
 }
