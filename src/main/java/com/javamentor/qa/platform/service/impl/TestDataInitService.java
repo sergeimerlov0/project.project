@@ -166,7 +166,6 @@ public class TestDataInitService {
             } catch (Exception i) {
             }
         }
-
     }
 
     private void addUser() {
