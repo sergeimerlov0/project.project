@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
+import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -69,6 +70,14 @@ public class AnswerResourceController {
     @GetMapping()
     public ResponseEntity<List<AnswerDto>> getAnswerByQuestionId(@PathVariable Long questionId) {
         return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(questionId));
+    }
+
+    @ApiOperation(value = "Получение списка ответов за неделю", tags = {"Получение списка ответов"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное получение")})
+    @GetMapping("/lastWeek")
+    public ResponseEntity<List<AnswerUserDto>> getAnswerForLastWeek() {
+        return ResponseEntity.ok().body(answerDtoService.getAnswerForLastWeek());
     }
 
     @ApiOperation(value = "Голосование за ответ", tags = {"Получение общего количества голосов"})
