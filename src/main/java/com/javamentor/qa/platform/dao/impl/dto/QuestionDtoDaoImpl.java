@@ -31,12 +31,12 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                                 "user.imageLink, " +
                                 "question.description, " +
                                 "0L, " +
-                                "false, " +
                                 "(SELECT COUNT(*) FROM Answer answer WHERE answer.question.id = :id AND answer.isDeleted = false), " +
                                 "((SELECT COUNT(*) FROM VoteQuestion voteOnQuestion WHERE voteOnQuestion.vote = 'UP_VOTE' AND voteOnQuestion.question.id = :id) + " +
                                 "(SELECT COUNT(*) FROM VoteQuestion voteOnQuestion WHERE voteOnQuestion.vote = 'DOWN_VOTE' AND voteOnQuestion.question.id = :id)), " +
                                 "question.persistDateTime, " +
-                                "(SELECT v.vote FROM VoteQuestion v WHERE v.user.id = user.id AND v.question.id = :id)) " +
+                                "(SELECT v.vote FROM VoteQuestion v WHERE v.user.id = user.id AND v.question.id = :id), " +
+                                "(SELECT (v.vote <> null) FROM VoteAnswer v LEFT JOIN Answer a ON v.answer.id = :id LEFT JOIN Question q ON v.user.id = user.id)) " +
                                 "FROM Question question " +
                                 "LEFT JOIN User user ON user.id = question.user.id " +
                                 "LEFT JOIN Answer answer ON answer.question.id = :id " +

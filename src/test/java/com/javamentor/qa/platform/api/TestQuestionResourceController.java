@@ -696,6 +696,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].countValuable").value(1))
                 .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
 
+
                 //Проверяем, что нужное QuestionDto также выгрузила список всех tags, связанных с ним
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
                 .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(101));
