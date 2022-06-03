@@ -189,7 +189,8 @@ public class UserResourceController {
             @ApiResponse(code = 400, message = "Ответы не найдены"),
             @ApiResponse(code = 404, message = "Неверный ID пользователя")
     })
-    public ResponseEntity<?> getCountOfAnswersByUser() {
-        return ResponseEntity.ok(answerDtoService.getCountOfAnswersByUser());
+    public ResponseEntity<?> getCountOfAnswersByUserToWeek() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        return ResponseEntity.ok(answerDtoService.getCountOfAnswersByUserToWeek(user.getId()));
     }
 }

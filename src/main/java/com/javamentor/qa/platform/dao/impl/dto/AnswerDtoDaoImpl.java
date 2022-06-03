@@ -97,7 +97,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     }
 
     @Override
-    public Integer getCountOfAnswersByUser(long userId) {
+    public Integer getCountOfAnswersByUserToWeek(long userId) {
         return ((Long) entityManager.createQuery(
                         "SELECT COUNT (*) FROM Answer a " +
                                 "WHERE a.user.id = :userId AND a.persistDateTime >= CURRENT_DATE() - 7")

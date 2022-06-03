@@ -20,3 +20,25 @@ answer:
     persist_date: "2022-05-10 15:59:08"
     date_accept_time: "[DAY,NOW]"
     update_date: "[DAY,NOW]"
+
+  - id: 102
+    user_id: 100
+    question_id: 115
+    html_body: "test103"
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    persist_date: "[DAY,NOW]"
+    date_accept_time: "[DAY,NOW]"
+    update_date: "[DAY,NOW]"
+
+  - id: 103
+    user_id: 100
+    question_id: 116
+    html_body: "test1033"
+    is_deleted: false
+    is_deleted_by_moderator: false
+    is_helpful: true
+    persist_date: "[DAY,NOW]"
+    date_accept_time: "[DAY,NOW]"
+    update_date: "[DAY,NOW]"
