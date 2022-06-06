@@ -6,6 +6,8 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
@@ -17,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -33,12 +34,15 @@ public class TestDataInitService {
     private final TagService tagService;
     private final TrackedTagService trackedTagService;
     private final IgnoredTagService ignoredTagService;
+    private final VoteAnswerService voteAnswerService;
 
     @Autowired
-    public TestDataInitService(RoleService roleService, UserService userService, ReputationService reputationService, Flyway flyway,
+    public TestDataInitService(RoleService roleService, UserService userService,
+                               ReputationService reputationService, Flyway flyway,
                                AnswerService answerService, QuestionService questionService,
                                TagService tagService, TrackedTagService trackedTagService,
-                               IgnoredTagService ignoredTagService, BookmarkService bookmarkService) {
+                               IgnoredTagService ignoredTagService, BookmarkService bookmarkService,
+                               VoteAnswerService voteAnswerService) {
         this.roleService = roleService;
         this.userService = userService;
         this.reputationService = reputationService;
@@ -49,6 +53,7 @@ public class TestDataInitService {
         this.trackedTagService = trackedTagService;
         this.ignoredTagService = ignoredTagService;
         this.bookmarkService = bookmarkService;
+        this.voteAnswerService = voteAnswerService;
     }
 
     public void init() {
@@ -57,6 +62,7 @@ public class TestDataInitService {
         addTag();
         addQuestion();
         addAnswer();
+        addVoteAnswer();
         addTrackedAndIgnoredTag();
         addBookmark();
         addReputation();
@@ -134,6 +140,31 @@ public class TestDataInitService {
                 }
             }
             answerService.persist(answer);
+        }
+    }
+
+    private void addVoteAnswer() {
+        Random random = new Random();
+        List<Answer> listAnswer = new ArrayList<>(answerService.getAll());
+
+        for (int x = 1 + (int) (Math.random() * 49); x <= 50; x++) {
+            VoteAnswer voteAnswer = new VoteAnswer();
+
+                //К случайному ответу добавляем пользователя, оставившего случайный голос
+                voteAnswer.setUser(userService.getById((long) (1 + (Math.random() * 49))).get());
+                voteAnswer.setAnswer(answerService.getById(listAnswer.get((int) (Math.random() * listAnswer.size())).getId()).get());
+
+                if (random.nextBoolean()) {
+                    voteAnswer.setVote(VoteType.UP_VOTE);
+                } else {
+                    voteAnswer.setVote(VoteType.DOWN_VOTE);
+                }
+
+                //Иногда пользователь голосует два раза за один и тот же ответ
+            try {
+                voteAnswerService.persist(voteAnswer);
+            } catch (Exception i) {
+            }
         }
     }
 
@@ -252,7 +283,6 @@ public class TestDataInitService {
         }
     }
 
-
     private void addTrackedAndIgnoredTag() {
         List<Tag> tags = new ArrayList<>();
 
@@ -280,4 +310,5 @@ public class TestDataInitService {
             }
         }
     }
+
 }
