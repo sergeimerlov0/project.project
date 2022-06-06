@@ -18,7 +18,7 @@ public class JwtTokenTest extends AbstractApiTest {
     @DataSet(value = {
             "datasets/JwtTokenTest/role.yml",
             "datasets/JwtTokenTest/user.yml",
-    })
+    }, cleanBefore = true)
     public void checkCorrectWork() throws Exception {
         String email = "3user@mail.ru";
         String password = "3111";

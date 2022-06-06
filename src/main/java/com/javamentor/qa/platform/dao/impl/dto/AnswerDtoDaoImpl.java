@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
