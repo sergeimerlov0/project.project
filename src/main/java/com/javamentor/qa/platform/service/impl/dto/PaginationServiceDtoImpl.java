@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
+import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.service.abstracts.dto.PaginationServiceDto;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,10 @@ public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
         int totalResultCount = dtoAble.getTotalResultCount(param);
         int totalPageCount = totalResultCount%itemsOnPage == 0 ? totalResultCount/itemsOnPage : totalResultCount/itemsOnPage + 1;
         return new PageDto<> (currentPageNumber, totalPageCount, totalResultCount, dtoAble.getItems(param), itemsOnPage);
+    }
+
+    @Override
+    public MessageDto getMessageDto(int itemsOnPage, int currentPageNumber, Map<String, Object> par) {
+        return null;
     }
 }
