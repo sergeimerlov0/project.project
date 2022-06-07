@@ -159,12 +159,13 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andExpect(content().string("3"));
 
         //Проверяем, что в БД появилась запись о голосовании от пользователя с id 100 (наш авторизованный юзер) по ответу с id 100
-        Assertions.assertTrue(em.createQuery("SELECT (v.vote <> null) FROM VoteAnswer v LEFT JOIN Answer a ON v.answer.id = :answer LEFT JOIN Question q ON v.user.id = :user")
+        Assertions.assertTrue(em.createQuery("SELECT v.vote FROM VoteAnswer v WHERE v.user.id = :user AND v.answer.id = :answer")
                 .setParameter("user", 100L)
                 .setParameter("answer", 100L)
-               .getSingleResult()
+                .getSingleResult()
                 .toString()
-                .contentEquals("true"));
+                .contentEquals("UP_VOTE"));
+
 
         //Проверяем, что в БД изменилась репутация пользователя с id 101 (автор) по ответу с id 100. В датасетах изначальная репутация была 106
         Assertions.assertTrue(em.createQuery("SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = :author")
@@ -246,12 +247,13 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andExpect(content().string("1"));
 
         //Проверяем, что в БД появилась запись о голосовании от пользователя с id 100 (наш авторизованный юзер) по ответу с id 100
-        Assertions.assertTrue(em.createQuery("SELECT (v.vote <> null) FROM VoteAnswer v LEFT JOIN Answer a ON v.answer.id = :answer LEFT JOIN Question q ON v.user.id = :user")
+        Assertions.assertTrue(em.createQuery("SELECT v.vote FROM VoteAnswer v WHERE v.user.id = :user AND v.answer.id = :answer")
                 .setParameter("user", 100L)
                 .setParameter("answer", 100L)
                 .getSingleResult()
                 .toString()
-                .contentEquals("true"));
+                .contentEquals("DOWN_VOTE"));
+
 
         //Проверяем, что в БД изменилась репутация пользователя с id 101 (автор) по ответу с id 100. В датасетах изначальная репутация была 106
         Assertions.assertTrue(em.createQuery("SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = :author")
