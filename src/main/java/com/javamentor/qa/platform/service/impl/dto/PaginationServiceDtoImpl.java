@@ -17,15 +17,12 @@ import java.util.Map;
 @Service
 public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
 
-    private HashMap<String, PaginationDtoAble<T>> map;
-    private ChatDtoService chatDtoService;
+    private Map<String, PaginationDtoAble<T>> map;
 
     @Autowired
-    public void setMap(HashMap<String, PaginationDtoAble<T>> map) {
+    public void setMap(Map<String, PaginationDtoAble<T>> map) {
         this.map = map;
     }
-
-
 
     @Override
     @Transactional
