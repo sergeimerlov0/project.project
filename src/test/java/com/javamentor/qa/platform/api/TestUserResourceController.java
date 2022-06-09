@@ -4,6 +4,9 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -438,6 +441,33 @@ public class TestUserResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken(email, password)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/answer.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/question.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/questionHasTag.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/reputation.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/role.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/tag.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/user.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/voteAnswer.yml",
+    })
+    void getCountOfAnswersByUserToWeek() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/profile/question/week")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(3));
+
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/profile/question/week")
+                        .header("Authorization", getJwtToken("test2@test.ru", "123")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(0));
     }
 
     @Test

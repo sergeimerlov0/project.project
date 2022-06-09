@@ -32,6 +32,11 @@ public class AnswerDtoServiceImpl implements AnswerDtoService {
     }
 
     @Override
+    public Integer getCountOfAnswersByUserToWeek(Long userId) {
+        return answerDtoDao.getCountOfAnswersByUserToWeek(userId);
+    }
+
+    @Override
     public List<AnswerUserDto> getAnswerForLastWeek() {
         return answerDtoDao.getAnswerForLastWeek();
     }
