@@ -1,16 +1,12 @@
 package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
-import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.PaginationServiceDto;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.Map;
 
 //Сервис для конструирования страницы PageDTO<T>
@@ -19,10 +15,18 @@ public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
 
     private Map<String, PaginationDtoAble<T>> map;
 
+//    private final ChatDtoService chatDtoService;
+
+//    public PaginationServiceDtoImpl(ChatDtoService chatDtoService) {
+//        this.chatDtoService = chatDtoService;
+//    }
+
     @Autowired
     public void setMap(Map<String, PaginationDtoAble<T>> map) {
         this.map = map;
     }
+
+
 
     @Override
     @Transactional

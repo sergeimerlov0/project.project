@@ -1,9 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.PaginationServiceDto;
 import com.javamentor.qa.platform.service.impl.dto.PaginationServiceDtoImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,14 @@ import java.util.Map;
 @RequestMapping("api/user/chat")
 public class ChatResourceController {
 
-    private final ChatDtoService chatDtoService;
+//    private final MessageDtoService messageDtoService;
+
+    private final MessageDtoService p;
+//
+//    @Autowired
+//    public ChatResourceController(MessageDtoService p) {
+//        this.p = p;
+//    }
 
     @GetMapping("{id}/single/message")
     public ResponseEntity<?> getPaginationMessagesSortedDate
@@ -27,6 +35,7 @@ public class ChatResourceController {
         paginationMap.put("userId", id);
         paginationMap.put("itemsOnPage", itemsOnPage);
         paginationMap.put("currentPageNumber", currentPageNumber);
-        return ResponseEntity.ok(chatDtoService.getPageDto(itemsOnPage, currentPageNumber, paginationMap));
+        return ResponseEntity.ok(p.getPageDto(itemsOnPage, currentPageNumber, paginationMap));
     }
 }
+//(itemsOnPage, currentPageNumber, paginationMap)

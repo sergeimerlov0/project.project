@@ -1,7 +1,9 @@
 package com.javamentor.qa.platform.dao.impl.dto.pagination;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
+//import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.MessageDto;
+import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +14,7 @@ import java.util.Map;
 
 @Repository("MessageDtoSortedByDate")
 @RequiredArgsConstructor
-public class GetMessageSortDate implements ChatDtoDao {
+public class MessageSortDate implements PaginationDtoAble<MessageDto> {
 @PersistenceContext
     private EntityManager entityManager;
 
