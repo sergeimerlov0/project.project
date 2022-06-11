@@ -4,7 +4,7 @@ user_entity:
     full_name: "User with id 100"
     city: "city100"
     password: "3111"
-    role_id: 100
+    role_id: 200
     last_redaction_date: "[DAY,NOW]"
     image_link: "image100"
     nickname: "user100"
@@ -15,7 +15,7 @@ user_entity:
     full_name: "User with id 101"
     city: "city101"
     password: "123"
-    role_id: 100
+    role_id: 200
     last_redaction_date: "[DAY,NOW]"
     image_link: "image101"
     nickname: "user101"
@@ -26,20 +26,8 @@ user_entity:
     full_name: "User with id 102"
     city: "city102"
     password: "123"
-    role_id: 100
+    role_id: 200
     last_redaction_date: "[DAY,NOW]"
     image_link: "image102"
     nickname: "user102"
-    is_enabled: true
-    persist_date: 2021-01-04 00:00:00
-
-  - id: 103
-    email: "test_user103@mail.ru"
-    full_name: "User with id 103"
-    city: "city103"
-    password: "123"
-    role_id: 100
-    last_redaction_date: "[DAY,NOW]"
-    image_link: "image103"
-    nickname: "user103"
     is_enabled: true

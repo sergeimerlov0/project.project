@@ -15,18 +15,10 @@ public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
 
     private Map<String, PaginationDtoAble<T>> map;
 
-//    private final ChatDtoService chatDtoService;
-
-//    public PaginationServiceDtoImpl(ChatDtoService chatDtoService) {
-//        this.chatDtoService = chatDtoService;
-//    }
-
     @Autowired
     public void setMap(Map<String, PaginationDtoAble<T>> map) {
         this.map = map;
     }
-
-
 
     @Override
     @Transactional

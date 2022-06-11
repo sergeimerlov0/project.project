@@ -1,9 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.dto.pagination;
 
-//import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDtoAble;
 import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -23,18 +21,20 @@ public class MessageSortDate implements PaginationDtoAble<MessageDto> {
 
         int currentPageNumber = (int) param.get("currentPageNumber");
         int itemsOnPage = (int) param.get("itemsOnPage");
-        long userId = (long) param.get("userId");
+        long chatId = (long) param.get("chatId");
 
         return entityManager.createQuery(
-                "SELECT m.id, m.message, " +
+                "SELECT  new com.javamentor.qa.platform.models.dto.MessageDto" +
+                        "(m.id, " +
+                        "m.message, " +
                         "u.nickname, " +
-                        "m.userSender, " +
+                        "u.id, " +
                         "u.imageLink, " +
-                        "m.persistDate " +
+                        "m.persistDate) " +
                         "FROM Message m LEFT JOIN User u ON m.userSender = u.id " +
-                        "WHERE u.id = :id " +
+                        "WHERE m.chat.id = :chatId " +
                         "ORDER BY m.persistDate DESC", MessageDto.class)
-                .setParameter("id", userId)
+                .setParameter("chatId", chatId)
                 .setFirstResult((currentPageNumber - 1) * itemsOnPage)
                 .setMaxResults(itemsOnPage)
                 .getResultList();
