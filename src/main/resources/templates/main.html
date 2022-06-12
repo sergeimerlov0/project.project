@@ -5,6 +5,7 @@
     <title>Main</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" th:href="@{../static/css/chat.css}" href="/../static/css/chat.css" />
 </head>
 <body>
 <header id="header"></header>
@@ -288,6 +289,30 @@
             <a href="questions.html" class="btn btn-primary float-right">Просмотреть другие вопросы</a>
         </div>
     </div>
+
+    <div id="chat-page">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h3>Kata chat</h3>
+            </div>
+            <div class="connecting">Connecting...</div>
+            <ul id="messageArea">
+
+            </ul>
+            <form id="messageForm" name="messageForm" nameForm="messageForm">
+                <div class="form-group">
+                    <div class="input-group clearfix">
+                        <input type="text" id="message" placeholder="Type a message..."
+                               autocomplete="off" class="form-control" />
+
+                        <button type="submit" class="primary" id="btnSend">Send</button>
+                        <button type="button" class="btn btn-danger btn-sm" style="max-height: 5%; width: 100%;"  onclick="closeForm()">Закрыть</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+<!--    <button class="btn btn-warning float-right d-block mr-3 mb-3" style="width: 15%;" onclick="openForm()">ЧАТ</button>-->
 </div>
 <footer id="footer"></footer>
 <script type="module" src="../static/js/user_auth_check.js"></script>
@@ -295,5 +320,10 @@
 <script src="../static/js/sidebar.js"></script>
 <script src="../static/js/footer.js"></script>
 <script src="../static/js/logout.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="../static/js/chat.js" defer="defer"></script>
 </body>
 </html>

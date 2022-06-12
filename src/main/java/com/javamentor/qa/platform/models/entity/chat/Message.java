@@ -66,4 +66,16 @@ public class Message {
     public int hashCode() {
         return Objects.hash(id, message, lastRedactionDate, persistDate, userSender);
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", message='" + message + '\'' +
+                ", lastRedactionDate=" + lastRedactionDate +
+                ", persistDate=" + persistDate +
+                ", userSender=" + userSender +
+                ", chat=" + chat +
+                '}';
+    }
 }
