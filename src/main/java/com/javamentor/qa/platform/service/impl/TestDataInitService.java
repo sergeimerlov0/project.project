@@ -74,6 +74,7 @@ public class TestDataInitService {
         addTrackedAndIgnoredTag();
         addBookmark();
         addReputation();
+        addGroupChat();
         addChat();
     }
 
@@ -320,8 +321,23 @@ public class TestDataInitService {
         }
     }
 
+    private void addGroupChat() {
+        GroupChat groupChat = new GroupChat();
+        Set<User> listOfUsers = new HashSet<>();
+        for (long i = 1; i <= 13; i++) {
+            Optional<User> optionalUser = userService.getById(i);
+            if (optionalUser.isPresent()) {
+                listOfUsers.add(optionalUser.get());
+            }
+        }
+
+        groupChatService.persist(groupChat);
+    }
+
+
+
+
     private void addChat() {
-        System.out.println("В методе инииализации чата");
         Chat chat = new Chat(ChatType.GROUP);
         Set<User> listOfUsers = new HashSet<>();
         for (long i = 1; i <= 13; i++) {
@@ -330,7 +346,7 @@ public class TestDataInitService {
                 listOfUsers.add(optionalUser.get());
             }
         }
-        chat.setTitle("First chat");
+        chat.setTitle("First group chat");
 
         chatService.persist(chat);
     }

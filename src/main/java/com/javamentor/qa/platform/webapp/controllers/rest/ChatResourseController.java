@@ -28,9 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ChatResourseController {
 
-//    @Autowired
     private final UserService userService;
-//    private GroupChatService groupChatService;
     private final ChatService chatService;
     private final MessageService messageService;
     private final MessageConverter messageConverter;
