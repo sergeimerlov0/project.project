@@ -11,6 +11,7 @@ public interface AnswerDtoService {
     List<AnswerDto> getAnswerByQuestionId(Long id);
 
     Optional<AnswerDto> getAnswerDtoByAnswerId(Long answerId);
+    Integer getCountOfAnswersByUserToWeek(Long userId);
     List<AnswerUserDto> getAnswerForLastWeek();
 
     List<AnswerDto> getDeletedAnswersByUserId(Long userId);
