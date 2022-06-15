@@ -1,9 +1,6 @@
 package com.javamentor.qa.platform.models.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +13,7 @@ public class MessageDto {
     private String message;
     private String nickName;
     private Long userId;
+    private Long chatId;
     private String image;
     private LocalDateTime persistDateTime;
 }

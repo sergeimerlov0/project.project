@@ -1,7 +1,12 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +21,7 @@ import java.util.Map;
 public class ChatResourceController {
 
     private final MessageDtoService messageDtoService;
+    private final ChatDtoService chatDtoService;
 
     @GetMapping("/{id}/single/message")
     public ResponseEntity<?> getPaginationMessagesSortedDate
@@ -32,5 +38,30 @@ public class ChatResourceController {
         paginationMap.put("userId", user.getId());
 
         return ResponseEntity.ok(messageDtoService.getPageDto(itemsOnPage, currentPageNumber, paginationMap).getItems());
+    }
+
+    @GetMapping("/group")
+    @ApiOperation(value = "Получение всех MessageDto с пагинацией и сортировкой по времени оправки",
+            tags = {"Get Sorted by time MessageDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Все MessageDto получены"),
+            @ApiResponse(code = 400, message = "MessageDto не найдены")
+    })
+    public ResponseEntity<?> getAllSortedByDateMessageDto(@RequestParam(defaultValue = "30") int itemsOnPage,
+                                                          @RequestParam int currentPageNumber,
+                                                          @RequestParam Long chatId) {
+
+        Map<String, Object> paginationMap = new HashMap<>();
+        paginationMap.put("class", "SortedByDateMessageDto");
+        paginationMap.put("currentPageNumber", currentPageNumber);
+        paginationMap.put("itemsOnPage", itemsOnPage);
+        paginationMap.put("chatId", chatId);
+
+        if (chatDtoService.getGroupChatByChatId(chatId).isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        GroupChatDto group = chatDtoService.getGroupChatByChatId(chatId).get();
+        group.setPageOfMessageDto(messageDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
+        return ResponseEntity.ok(group);
     }
 }

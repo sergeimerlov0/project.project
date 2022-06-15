@@ -1,0 +1,9 @@
+groupchat_has_users:
+  - chat_id: 100
+    user_id: 100
+  - chat_id: 100
+    user_id: 101
+  - chat_id: 100
+    user_id: 102
+  - chat_id: 100
+    user_id: 103
