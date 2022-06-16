@@ -1,9 +1,7 @@
 package com.javamentor.qa.platform.service.impl;
 
 import com.javamentor.qa.platform.models.entity.BookMarks;
-import com.javamentor.qa.platform.models.entity.chat.Chat;
-import com.javamentor.qa.platform.models.entity.chat.ChatType;
-import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
@@ -37,7 +35,9 @@ public class TestDataInitService {
     private final IgnoredTagService ignoredTagService;
     private final VoteAnswerService voteAnswerService;
     private final GroupChatService groupChatService;
+    private final SingleChatService singleChatService;
     private final ChatService chatService;
+    private final MessageService messageService;
 
 
 
@@ -48,7 +48,8 @@ public class TestDataInitService {
                                TagService tagService, TrackedTagService trackedTagService,
                                IgnoredTagService ignoredTagService, BookmarkService bookmarkService,
                                VoteAnswerService voteAnswerService, GroupChatService groupChatService,
-                               ChatService chatService) {
+                               SingleChatService singleChatService, ChatService chatService,
+                               MessageService messageService) {
         this.roleService = roleService;
         this.userService = userService;
         this.reputationService = reputationService;
@@ -61,7 +62,9 @@ public class TestDataInitService {
         this.bookmarkService = bookmarkService;
         this.voteAnswerService = voteAnswerService;
         this.groupChatService = groupChatService;
+        this.singleChatService = singleChatService;
         this.chatService = chatService;
+        this.messageService = messageService;
     }
 
     public void init() {
@@ -74,8 +77,10 @@ public class TestDataInitService {
         addTrackedAndIgnoredTag();
         addBookmark();
         addReputation();
-        addGroupChat();
+        addGroupChat(50);
+        addSingleChat(50);
         addChat();
+        addMessage(50);
     }
 
     private void addRole() {
@@ -321,21 +326,53 @@ public class TestDataInitService {
         }
     }
 
-    private void addGroupChat() {
-        GroupChat groupChat = new GroupChat();
-        Set<User> listOfUsers = new HashSet<>();
-        for (long i = 1; i <= 13; i++) {
-            Optional<User> optionalUser = userService.getById(i);
-            if (optionalUser.isPresent()) {
-                listOfUsers.add(optionalUser.get());
+    public void addGroupChat(long count) {
+        for (long i = 1; i <= count; i++) {
+            GroupChat groupChat = new GroupChat();
+            Chat chat = new Chat(ChatType.GROUP);
+            chat.setTitle("Some group chat " + i);
+            Set<User> groupChatUsers = new HashSet<>();
+            List<Message> messages = new ArrayList<>();
+            for (long k = 1; k < 5; k++) {
+                User user = userService.getById(k + i).get();
+                groupChatUsers.add(user);
+                messages.add(new Message("Some message in group chat " + k, user, chat));
             }
+            groupChat.setChat(chat);
+            groupChat.setUsers(groupChatUsers);
+            groupChatService.persist(groupChat);
+            messageService.persistAll(messages);
         }
-
-        groupChatService.persist(groupChat);
     }
 
+    public void addSingleChat(long count) {
+        for (long i = 1; i <= count; i++) {
+            SingleChat singleChat = new SingleChat();
+            Chat chat = new Chat(ChatType.SINGLE);
+            chat.setTitle("Some single chat " + i);
+            singleChat.setChat(chat);
+            User userOne = userService.getById(i).get();
+            User userTwo = userService.getById(i + i).get();
+            singleChat.setUserOne(userOne);
+            singleChat.setUseTwo(userTwo);
+            singleChatService.persist(singleChat);
+            Message messageUserOne = new Message("Some message in single chat " + i, userOne, chat);
+            Message messageUserTwo = new Message("Some message in single chat " + (i + i), userTwo, chat);
+            List<Message> saveMessages = new ArrayList<>();
+            saveMessages.add(messageUserOne);
+            saveMessages.add(messageUserTwo);
+            messageService.persistAll(saveMessages);
+        }
+    }
 
-
+    public void addMessage(long count) {
+        for (long i = 1; i <= count; i++) {
+            Message message = new Message();
+            message.setMessage("Some message " + i);
+            message.getChat();
+            messageService.persist(message);
+        }
+    }
 
     private void addChat() {
         Chat chat = new Chat(ChatType.GROUP);
@@ -350,5 +387,4 @@ public class TestDataInitService {
 
         chatService.persist(chat);
     }
-
 }
