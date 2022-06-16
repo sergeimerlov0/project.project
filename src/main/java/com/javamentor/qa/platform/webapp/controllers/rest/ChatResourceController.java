@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,17 +52,12 @@ public class ChatResourceController {
                                                           @RequestParam int currentPageNumber,
                                                           @RequestParam Long chatId) {
 
-        Map<String, Object> paginationMap = new HashMap<>();
-        paginationMap.put("class", "SortedByDateMessageDto");
-        paginationMap.put("currentPageNumber", currentPageNumber);
-        paginationMap.put("itemsOnPage", itemsOnPage);
-        paginationMap.put("chatId", chatId);
-
-        if (chatDtoService.getGroupChatByChatId(chatId).isEmpty()) {
+        Optional<GroupChatDto> o = chatDtoService.getGroupChatByIdWithPaginationMessage(itemsOnPage, currentPageNumber, chatId);
+        if (o.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        GroupChatDto group = chatDtoService.getGroupChatByChatId(chatId).get();
-        group.setPageOfMessageDto(messageDtoService.getPageDto(currentPageNumber, itemsOnPage, paginationMap));
-        return ResponseEntity.ok(group);
+        return ResponseEntity.ok(o.get());
     }
 }
+//
+
