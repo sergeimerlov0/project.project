@@ -61,4 +61,13 @@ public class GroupChat{
     public int hashCode() {
         return Objects.hash(id, chat, users);
     }
+
+    @Override
+    public String toString() {
+        return "GroupChat{" +
+                "id=" + id +
+                ", chat=" + chat +
+                ", users=" + users +
+                '}';
+    }
 }
