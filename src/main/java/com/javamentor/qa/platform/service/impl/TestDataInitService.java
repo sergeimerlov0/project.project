@@ -1,6 +1,9 @@
 package com.javamentor.qa.platform.service.impl;
 
 import com.javamentor.qa.platform.models.entity.BookMarks;
+import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
@@ -18,9 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class TestDataInitService {
@@ -35,6 +36,10 @@ public class TestDataInitService {
     private final TrackedTagService trackedTagService;
     private final IgnoredTagService ignoredTagService;
     private final VoteAnswerService voteAnswerService;
+    private final GroupChatService groupChatService;
+    private final ChatService chatService;
+
+
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService,
@@ -42,7 +47,8 @@ public class TestDataInitService {
                                AnswerService answerService, QuestionService questionService,
                                TagService tagService, TrackedTagService trackedTagService,
                                IgnoredTagService ignoredTagService, BookmarkService bookmarkService,
-                               VoteAnswerService voteAnswerService) {
+                               VoteAnswerService voteAnswerService, GroupChatService groupChatService,
+                               ChatService chatService) {
         this.roleService = roleService;
         this.userService = userService;
         this.reputationService = reputationService;
@@ -54,6 +60,8 @@ public class TestDataInitService {
         this.ignoredTagService = ignoredTagService;
         this.bookmarkService = bookmarkService;
         this.voteAnswerService = voteAnswerService;
+        this.groupChatService = groupChatService;
+        this.chatService = chatService;
     }
 
     public void init() {
@@ -66,6 +74,8 @@ public class TestDataInitService {
         addTrackedAndIgnoredTag();
         addBookmark();
         addReputation();
+        addGroupChat();
+        addChat();
     }
 
     private void addRole() {
@@ -309,6 +319,36 @@ public class TestDataInitService {
                 }
             }
         }
+    }
+
+    private void addGroupChat() {
+        GroupChat groupChat = new GroupChat();
+        Set<User> listOfUsers = new HashSet<>();
+        for (long i = 1; i <= 13; i++) {
+            Optional<User> optionalUser = userService.getById(i);
+            if (optionalUser.isPresent()) {
+                listOfUsers.add(optionalUser.get());
+            }
+        }
+
+        groupChatService.persist(groupChat);
+    }
+
+
+
+
+    private void addChat() {
+        Chat chat = new Chat(ChatType.GROUP);
+        Set<User> listOfUsers = new HashSet<>();
+        for (long i = 1; i <= 13; i++) {
+            Optional<User> optionalUser = userService.getById(i);
+            if (optionalUser.isPresent()) {
+                listOfUsers.add(optionalUser.get());
+            }
+        }
+        chat.setTitle("First group chat");
+
+        chatService.persist(chat);
     }
 
 }
