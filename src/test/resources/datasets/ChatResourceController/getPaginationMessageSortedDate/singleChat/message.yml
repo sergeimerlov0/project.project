@@ -1,0 +1,14 @@
+message:
+  - id: 100
+    message: "test100"
+    last_redaction_date: "[DAY,NOW]"
+    persist_date: "[DAY,NOW]"
+    user_sender_id: 100
+    chat_id: 100
+
+  - id: 101
+    message: "test101"
+    last_redaction_date: "[DAY,NOW]"
+    persist_date: "[DAY,NOW]"
+    user_sender_id: 101
+    chat_id: 100
