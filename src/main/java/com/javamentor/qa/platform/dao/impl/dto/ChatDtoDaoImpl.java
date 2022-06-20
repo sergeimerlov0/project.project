@@ -14,15 +14,18 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
     EntityManager entityManager;
 
     @Override
-    public List<SingleChatDto> getAllSingleChatDto() {
+    public List<SingleChatDto> getAllSingleChatDto(Long userId) {
        return entityManager.createQuery(
                "SELECT new com.javamentor.qa.platform.models.dto.SingleChatDto" +
                        "(c.id, " +
-                       "c.userOne, " +
-                       "c.useTwo) " +
-                       "FROM SingleChat c JOIN User u ON c.userOne = u.id " +
-                       "JOIN User u1 ON c.useTwo = u1.id" +
-                       "WHERE c.chat.id = :chatId ", SingleChatDto.class)
+                       "CASE WHEN c.userOne <> :userId THEN u.fullName WHEN c.useTwo <> :userID THEN  u.fullName END, " +
+                       "CASE WHEN c.userOne <> :userId THEN u.imageLink WHEN c.useTwo <> :userID THEN  u.imageLink END, " +
+                       "m.message, " +
+                       "m.persistDate) " +
+                       "FROM SingleChat c LEFT JOIN User u ON c.useTwo = u.id " +
+                       "LEFT JOIN Message m ON c.chat.id = m.chat.id " +
+                       "WHERE c.userOne = :user ", SingleChatDto.class)
+               .setParameter("userId", userId)
                .getResultList();
     }
 

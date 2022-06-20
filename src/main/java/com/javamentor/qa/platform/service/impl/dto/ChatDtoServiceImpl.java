@@ -14,7 +14,7 @@ public class ChatDtoServiceImpl implements ChatDtoService {
     private final ChatDtoDao chatDtoDao;
 
     @Override
-    public List<SingleChatDto> getAllSingleChatDto() {
-        return chatDtoDao.getAllSingleChatDto();
+    public List<SingleChatDto> getAllSingleChatDto(Long id) {
+        return chatDtoDao.getAllSingleChatDto(id);
     }
 }

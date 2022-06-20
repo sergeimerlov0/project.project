@@ -23,9 +23,9 @@ public class ChatResourceController {
 
 
     @GetMapping("/single")
-    public ResponseEntity<List<SingleChatDto>> getAllOfSingleChatDto() {
+    public ResponseEntity<List<SingleChatDto>> getAllOfSingleChatDto(Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        return  ResponseEntity.ok().body(chatDtoService.getAllSingleChatDto());
+        return  ResponseEntity.ok().body(chatDtoService.getAllSingleChatDto(id));
     }
 
     @GetMapping("/{id}/single/message")
