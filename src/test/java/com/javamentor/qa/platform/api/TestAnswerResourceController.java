@@ -209,22 +209,6 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .getContentAsString()
                 .contains("Answer with id " + 104 + " not found")));
 
-        //Проверяем,что пользователь с id 100 голосовал  за ответ
-        Assertions.assertTrue(em.createQuery("SELECT (v.vote <> null) FROM VoteAnswer v LEFT JOIN Answer a ON v.answer.id = :answer LEFT JOIN Question q ON v.user.id = :user")
-                .setParameter("user", 100L)
-                .setParameter("answer", 100L)
-                .getSingleResult()
-                .toString()
-                .contentEquals("true"));
-
-        //Проверяем,что пользователь с id 100 не голосовал  за ответ
-        Assertions.assertFalse(em.createQuery("SELECT (v.vote <> null) FROM VoteAnswer v LEFT JOIN Answer a ON v.answer.id = :answer LEFT JOIN Question q ON v.user.id = :user")
-                .setParameter("user", 100L)
-                .setParameter("answer", 100L)
-                .getSingleResult()
-                .toString()
-                .contentEquals("false"));
-
     }
 
     @Test
@@ -296,22 +280,6 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .getResponse()
                 .getContentAsString()
                 .contains("Answer with id " + 104 + " not found")));
-
-        //Проверяем,что пользователь с id 100 голосовал  за ответ
-        Assertions.assertTrue(em.createQuery("SELECT (v.vote <> null) FROM VoteAnswer v LEFT JOIN Answer a ON v.answer.id = :answer LEFT JOIN Question q ON v.user.id = :user")
-                .setParameter("user", 100L)
-                .setParameter("answer", 100L)
-                .getSingleResult()
-                .toString()
-                .contentEquals("true"));
-
-        //Проверяем,что пользователь с id 100 не голосовал  за ответ
-        Assertions.assertFalse(em.createQuery("SELECT (v.vote <> null) FROM VoteAnswer v LEFT JOIN Answer a ON v.answer.id = :answer LEFT JOIN Question q ON v.user.id = :user")
-                .setParameter("user", 100L)
-                .setParameter("answer", 100L)
-                .getSingleResult()
-                .toString()
-                .contentEquals("false"));
 
     }
 
