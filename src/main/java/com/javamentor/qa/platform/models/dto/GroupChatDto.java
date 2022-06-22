@@ -11,12 +11,15 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDto {
+public class GroupChatDto {
     private Long id;
-    private String message;
-    private String nickName;
-    private Long userId;
-    private Long chatId;
-    private String image;
+    private String chatName;
+    private PageDto<MessageDto> pageOfMessageDto;
     private LocalDateTime persistDateTime;
+
+    public GroupChatDto(Long id, String chatName, LocalDateTime persistDateTime) {
+        this.id = id;
+        this.chatName = chatName;
+        this.persistDateTime = persistDateTime;
+    }
 }
