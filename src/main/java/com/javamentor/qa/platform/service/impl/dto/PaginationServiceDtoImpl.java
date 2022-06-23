@@ -6,11 +6,13 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Map;
 
 //Сервис для конструирования страницы PageDTO<T>
 @Service
 public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
+
     private Map<String, PaginationDtoAble<T>> map;
 
     @Autowired
@@ -27,4 +29,6 @@ public class PaginationServiceDtoImpl<T> implements PaginationServiceDto<T> {
         int totalPageCount = totalResultCount%itemsOnPage == 0 ? totalResultCount/itemsOnPage : totalResultCount/itemsOnPage + 1;
         return new PageDto<> (currentPageNumber, totalPageCount, totalResultCount, dtoAble.getItems(param), itemsOnPage);
     }
+
+
 }

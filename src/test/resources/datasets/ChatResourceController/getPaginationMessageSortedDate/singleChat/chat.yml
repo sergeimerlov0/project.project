@@ -1,0 +1,5 @@
+chat:
+  - id: 100
+    title: "some title 100"
+    persist_date: "[DAY,NOW]"
+    chat_type: 100
