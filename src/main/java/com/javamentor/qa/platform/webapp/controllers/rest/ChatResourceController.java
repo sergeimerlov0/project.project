@@ -1,9 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
+import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
+import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,9 +22,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/user/chat")
 public class ChatResourceController {
-
-    private final MessageDtoService messageDtoService;
     private final ChatDtoService chatDtoService;
+    private final MessageDtoService messageDtoService;
+
+    @GetMapping("/single")
+    public ResponseEntity<List<SingleChatDto>> getAllOfSingleChatDto(Long id) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        return  ResponseEntity.ok().body(chatDtoService.getAllSingleChatDto(id));
+    }
 
     @GetMapping("/{id}/single/message")
     public ResponseEntity<?> getPaginationMessagesSortedDate
@@ -40,7 +47,6 @@ public class ChatResourceController {
 
         return ResponseEntity.ok(messageDtoService.getPageDto(itemsOnPage, currentPageNumber, paginationMap).getItems());
     }
-
     @GetMapping("/group")
     @ApiOperation(value = "Получение всех MessageDto с пагинацией и сортировкой по времени оправки",
             tags = {"Get Sorted by time MessageDto"})
@@ -59,5 +65,3 @@ public class ChatResourceController {
         return ResponseEntity.ok(o.get());
     }
 }
-//
-

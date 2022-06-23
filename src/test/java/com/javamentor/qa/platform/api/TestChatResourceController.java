@@ -52,7 +52,32 @@ public class TestChatResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$[2].userId", is(102)))
                 .andExpect(jsonPath("$[2].image", is("image102")));
     }
+    @Test
+    @DataSet(value = {
+            "datasets/ChatResourceController/getPaginationMessageSortedDate/singleChat/chat.yml",
+            "datasets/ChatResourceController/getPaginationMessageSortedDate/singleChat/message.yml",
+            "datasets/ChatResourceController/getPaginationMessageSortedDate/singleChat/user.yml",
+            "datasets/ChatResourceController/getPaginationMessageSortedDate/singleChat/role.yml"}
+            , cleanBefore = true, cleanAfter = true)
+    void getAllOfSingleChatDto() throws Exception{
 
+        email = "3user@mail.ru";
+        password = "3111";
+
+        mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(100)))
+                .andExpect(jsonPath("$[0].name", is("user100")))
+                .andExpect(jsonPath("$[0].image", is("image100")))
+                .andExpect(jsonPath("$[0].lastMessage", is("test100")))
+                .andExpect(jsonPath("$[1].id", is(101)))
+                .andExpect(jsonPath("$[1].name", is("user101")))
+                .andExpect(jsonPath("$[1].image", is("image101")))
+                .andExpect(jsonPath("$[1].lastMessage", is("test101")));
+    }
     @Test
     @DataSet(value = {
             "datasets/ChatResourceController/groupChat/user_entity.yml",

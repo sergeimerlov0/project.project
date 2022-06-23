@@ -98,6 +98,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 .setParameter("id", answerId)
                 .getResultStream()
                 .findAny();
+        
     }
 
     @Override
