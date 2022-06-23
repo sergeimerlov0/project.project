@@ -111,14 +111,15 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.countAnswer").value(3L))
                 .andExpect(jsonPath("$.authorReputation").value(6L))
                 .andExpect(jsonPath("$.countValuable").value(2L))
+                .andDo(print())
 
-                .andExpect(jsonPath("$.isUserAnswerVote").value("true"))
-                .andExpect(jsonPath("$.isUserAnswerVote").value("false"))
+                .andExpect(jsonPath("$.isUserAnswerVote").value(false))
 
                 //Проверяем, что к вопросу с id=100 подгрузились комментарии (2 шт.)
                 .andExpect(jsonPath("$.comments.length()").value(2L))
                 .andExpect(jsonPath("$.comments.[0].id").value(100L))
                 .andExpect(jsonPath("$.comments.[1].id").value(101L));
+
     }
 
     @Test

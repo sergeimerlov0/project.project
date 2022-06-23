@@ -131,14 +131,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
 
         return ansLastWeekList;
     }
-    @Override
-    public Integer getCountOfAnswersByUserToWeek(long userId) {
-        return ((Long) entityManager.createQuery(
-                        "SELECT COUNT (*) FROM Answer a " +
-                                "WHERE a.user.id = :userId AND a.persistDateTime >= CURRENT_DATE() - 7")
-                .setParameter("userId", userId)
-                .getSingleResult()).intValue();
-    }
+
     @Override
     public List<AnswerDto> getDeletedAnswersByUserId(Long userId) {
         return entityManager.createQuery(

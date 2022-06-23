@@ -32,22 +32,6 @@ public class QuestionDto {
     public QuestionDto() {
     }
 
-    public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName, String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable, LocalDateTime persistDateTime, VoteType isUserVote, Boolean isUserAnswerVote) {
-        this.id = id;
-        this.title = title;
-        this.authorId = authorId;
-        this.authorReputation = authorReputation;
-        this.authorName = authorName;
-        this.authorImage = authorImage;
-        this.description = description;
-        this.viewCount = viewCount;
-        this.countAnswer = countAnswer;
-        this.countValuable = countValuable;
-        this.persistDateTime = persistDateTime;
-        this.isUserVote = isUserVote;
-        this.isUserAnswerVote = isUserAnswerVote;
-    }
-
     public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName,
                        String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable,
                        LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime, VoteType isUserVote, Boolean isUserAnswerVote) {
