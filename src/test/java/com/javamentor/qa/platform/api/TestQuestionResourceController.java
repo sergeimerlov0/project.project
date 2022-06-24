@@ -120,6 +120,13 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.comments.[0].id").value(100L))
                 .andExpect(jsonPath("$.comments.[1].id").value(101L));
 
+        this.mvc.perform(get("/api/user/question/103")
+                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(103L))
+                .andExpect(jsonPath("$.isUserAnswerVote").value(true))
+                .andDo(print());
+
     }
 
     @Test
