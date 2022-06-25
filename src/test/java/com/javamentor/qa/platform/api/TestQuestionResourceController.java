@@ -100,6 +100,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionViewDtoById/role.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoById/tag.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoById/user.yml",
+            "datasets/QuestionResourceController/getQuestionViewDtoById/voteAnswer.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoById/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
     void getQuestionViewDtoById() throws Exception {
@@ -113,7 +114,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.countValuable").value(2L))
                 .andDo(print())
 
-                .andExpect(jsonPath("$.isUserAnswerVote").value(false))
+                .andExpect(jsonPath("$.isUserAnswerVote").value(true))
 
                 //Проверяем, что к вопросу с id=100 подгрузились комментарии (2 шт.)
                 .andExpect(jsonPath("$.comments.length()").value(2L))
@@ -124,7 +125,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(103L))
-                .andExpect(jsonPath("$.isUserAnswerVote").value(true))
+                .andExpect(jsonPath("$.isUserAnswerVote").value(false))
                 .andDo(print());
 
     }
