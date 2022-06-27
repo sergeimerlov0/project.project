@@ -36,7 +36,8 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                                 "(SELECT COUNT(*) FROM VoteQuestion voteOnQuestion WHERE voteOnQuestion.vote = 'DOWN_VOTE' AND voteOnQuestion.question.id = :id)), " +
                                 "question.persistDateTime, " +
                                 "question.lastUpdateDateTime," +
-                                "(SELECT v.vote FROM VoteQuestion v WHERE v.user.id = user.id AND v.question.id = :id)) " +
+                                "(SELECT v.vote FROM VoteQuestion v WHERE v.user.id = user.id AND v.question.id = :id), " +
+                                "(EXISTS (SELECT v.id FROM VoteAnswer v JOIN Question q ON v.user.id = user.id WHERE v.user.id = user.id AND q.id = :id))) " +
                                 "FROM Question question " +
                                 "LEFT JOIN User user ON user.id = question.user.id " +
                                 "LEFT JOIN Answer answer ON answer.question.id = :id " +
