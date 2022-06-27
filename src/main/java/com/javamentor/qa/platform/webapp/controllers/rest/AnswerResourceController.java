@@ -2,9 +2,13 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
+import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
@@ -17,6 +21,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -67,14 +72,31 @@ public class AnswerResourceController {
         return ResponseEntity.ok().body(answerDtoService.getAnswerByQuestionId(questionId));
     }
 
+    @ApiOperation(value = "Получение списка ответов за неделю", tags = {"Получение списка ответов"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное получение")})
+    @GetMapping("/lastWeek")
+    public ResponseEntity<List<AnswerUserDto>> getAnswerForLastWeek() {
+        return ResponseEntity.ok().body(answerDtoService.getAnswerForLastWeek());
+    }
+
     @ApiOperation(value = "Голосование за ответ", tags = {"Получение общего количества голосов"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное голосование"),
-            @ApiResponse(code = 400, message = "Ошибка голосования")})
+            @ApiResponse(code = 400, message = "Ответ с таким ID не найден или Вы уже голосовали за этот ответ")})
     @PostMapping("/{id}/upVote")
     public ResponseEntity<?> setUpVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
+
+        /*
+         * Проверка наличия голоса на вопросе от авторизированного юзера в соответствии с тз сущности
+         */
+        Optional<VoteAnswer> voteAnswerOptional = voteAnswerService.getByUserIdAndAnswerId(user.getId(), answerId);
+        if(voteAnswerOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).
+                    body("You allready voted for the answer with id " + answerId);
+        }
         if (optionalAnswer.isEmpty()) {
             return ResponseEntity.badRequest().body("Answer with id " + answerId + " not found");
         }
@@ -88,11 +110,21 @@ public class AnswerResourceController {
     @ApiOperation(value = "Голосование против ответа", tags = {"Получение общего количества голосов"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное голосование"),
-            @ApiResponse(code = 400, message = "Ошибка голосования")})
+            @ApiResponse(code = 400, message = "Ответ с таким ID не найден или Вы уже голосовали за этот ответ")})
     @PostMapping("/{id}/downVote")
     public ResponseEntity<?> setDownVoteAnswerByAnswerId(@PathVariable("id") Long answerId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Optional<Answer> optionalAnswer = answerService.getById(answerId);
+
+        /*
+         * Проверка наличия голоса на вопросе от авторизированного юзера в соответствии с тз сущности
+         */
+        Optional<VoteAnswer> voteAnswerOptional = voteAnswerService.getByUserIdAndAnswerId(user.getId(), answerId);
+        if(voteAnswerOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).
+                    body("You allready voted for the answer with id " + answerId);
+        }
+
         if (optionalAnswer.isEmpty()) {
             return ResponseEntity.badRequest().body("Answer with id " + answerId + " not found");
         }
@@ -120,10 +152,10 @@ public class AnswerResourceController {
         if (answerService.checkAnswerByQuestionIdAndUserId(questionId, user.getId())){
             return ResponseEntity.badRequest().body("Ответ уже был добавлен");
         }Answer answer = new Answer(question, user, answerBodyDto.getHtmlBody());
-                answerService.persist(answer);
-                return answerDtoService.getAnswerDtoByAnswerId(answer.getId()).isPresent() ?
-                        ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerId(answer.getId())) :
-                        ResponseEntity.badRequest().body("Ошибка создания Dto");
+        answerService.persist(answer);
+        return answerDtoService.getAnswerDtoByAnswerId(answer.getId()).isPresent() ?
+                ResponseEntity.ok().body(answerDtoService.getAnswerDtoByAnswerId(answer.getId())) :
+                ResponseEntity.badRequest().body("Ошибка создания Dto");
     }
 
     @ApiOperation(value = "Добавление комментария к ответу", tags = {"Добавление комментария"})

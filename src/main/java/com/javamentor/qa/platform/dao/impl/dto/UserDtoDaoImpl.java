@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,4 +64,36 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .setParameter("id", id)
                 .getResultList();
     }
+
+    @Override
+    public List<UserDto> getTop10ByAnswerPerWeek() {
+        return entityManager.createQuery(
+                        "SELECT DISTINCT new com.javamentor.qa.platform.models.dto.UserDto " +
+                                "(user.id, " +
+                                "user.email, " +
+                                "user.fullName, " +
+                                "user.imageLink, " +
+                                "user.city, " +
+                                "(SELECT COALESCE(SUM(reputation.count), 0L) FROM Reputation reputation WHERE reputation.author.id = user.id), " +
+                                "user.persistDateTime, " +
+                                "(SELECT COUNT(a.persistDateTime) FROM Answer a WHERE a.user.id = user.id " +
+                                "AND a.persistDateTime BETWEEN :week AND LOCALTIMESTAMP " +
+                                "AND a.isDeleted = false) " +
+                                "AS totalAnswers, " +
+                                "((SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'UP_VOTE' AND va.answer.user.id = user.id) - " +
+                                "(SELECT COUNT (*) FROM VoteAnswer va WHERE va.vote = 'DOWN_VOTE' AND va.answer.user.id = user.id)) " +
+                                "AS totalVotesOnAnswers) " +
+                                "FROM User user " +
+                                "WHERE user.isEnabled = true " +
+                                "AND (SELECT COUNT(a.persistDateTime) FROM Answer a WHERE a.user.id = user.id " +
+                                "AND a.persistDateTime BETWEEN :week AND LOCALTIMESTAMP " +
+                                "AND a.isDeleted = false) > 0 " +
+                                "GROUP BY totalAnswers, totalVotesOnAnswers, user.id " +
+                                "ORDER BY totalAnswers DESC, totalVotesOnAnswers DESC "
+                        , UserDto.class)
+                .setMaxResults(10)
+                .setParameter("week", LocalDateTime.now().minusDays(7L))
+                .getResultList();
+    }
+
 }

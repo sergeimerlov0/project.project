@@ -2,11 +2,15 @@ package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
+import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 import org.hibernate.transform.ResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,5 +98,64 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 .setParameter("id", answerId)
                 .getResultStream()
                 .findAny();
+        
+    }
+ @Override
+    public Integer getCountOfAnswersByUserToWeek(long userId) {
+        return ((Long) entityManager.createQuery(
+                        "SELECT COUNT (*) FROM Answer a " +
+                                "WHERE a.user.id = :userId AND a.persistDateTime >= CURRENT_DATE() - 7")
+                .setParameter("userId", userId)
+                .getSingleResult()).intValue();
+    }
+    @Override
+    public List<AnswerUserDto> getAnswerForLastWeek() {
+        List<Tuple> ansLastWeek = entityManager.createQuery(
+                        "SELECT a.id AS answer_id, " +
+                                "a.question.id AS question_id, " +
+                                "a.persistDateTime AS persist_date, " +
+                                "a.htmlBody AS html_body, " +
+                                "(SELECT COUNT(*) FROM VoteAnswer v WHERE v.answer.id = a.id AND v.vote = 'UP_VOTE') " +
+                                " - (SELECT COUNT(*) FROM VoteAnswer v WHERE v.answer.id = a.id AND v.vote = 'DOWN_VOTE') " +
+                                "AS count_answer_vote " +
+                                "FROM Answer a LEFT JOIN VoteAnswer v ON v.answer.id = a.id WHERE a.persistDateTime >= current_date() - 7 " +
+                                "GROUP BY a.id", Tuple.class)
+                .getResultList();
+
+        List<AnswerUserDto> ansLastWeekList = new ArrayList<>();
+        ansLastWeek.forEach(tuple -> ansLastWeekList.add(new AnswerUserDto(
+                tuple.get("answer_id", Long.class),
+                tuple.get("question_id", Long.class),
+                tuple.get("count_answer_vote", Long.class),
+                tuple.get("persist_date", LocalDateTime.class),
+                tuple.get("html_body", String.class))));
+
+        return ansLastWeekList;
+    }
+
+    @Override
+    public List<AnswerDto> getDeletedAnswersByUserId(Long userId) {
+        return entityManager.createQuery(
+                "SELECT new com.javamentor.qa.platform.models.dto.AnswerDto " +
+                        "(a.id, " +
+                        "u.id, " +
+                        "(SELECT COALESCE(SUM(reputation.count), 0L) FROM Reputation reputation WHERE reputation.author.id = a.user.id), " +
+                        "u.imageLink, " +
+                        "u.nickname, " +
+                        "a.user.id, " +
+                        "a.htmlBody, " +
+                        "a.persistDateTime, " +
+                        "a.isHelpful, " +
+                        "a.dateAcceptTime, " +
+                        "((SELECT COUNT(*) FROM VoteAnswer v WHERE v.vote = 'UP_VOTE' AND v.answer.id = a.id) + " +
+                        "(SELECT COUNT(*) FROM VoteAnswer v WHERE v.vote = 'DOWN_VOTE' AND v.answer.id = a.id))) " +
+                        "FROM Answer a " +
+                        "INNER JOIN User u ON u.id = a.user.id " +
+                        "WHERE u.id = :id " +
+                        "AND (a.isDeleted = true OR a.isDeletedByModerator = true) " +
+                        "GROUP BY a.id, u.id, u.imageLink, u.nickname",
+                        AnswerDto.class)
+                .setParameter("id", userId)
+                .getResultList();
     }
 }

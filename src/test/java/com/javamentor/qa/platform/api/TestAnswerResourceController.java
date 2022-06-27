@@ -84,6 +84,45 @@ class TestAnswerResourceController extends AbstractApiTest {
 
     @Test
     @DataSet(value = {
+            "datasets/AnswerResourceController/getAnswerForLastWeek/answer.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/question.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/questionHasTag.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/tag.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/reputation.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/role.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/user.yml",
+            "datasets/AnswerResourceController/getAnswerForLastWeek/voteAnswer.yml"
+    })
+    public void getAnswerForLastWeek() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/question/100/answer/lastWeek")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].answerId", is(103)))
+                .andExpect(jsonPath("$[0].questionId", is(114)))
+                .andExpect(jsonPath("$[0].countAnswerVote", is(1)))
+                .andExpect(jsonPath("$[0].persistDate", is("2022-05-29T15:59:08")))
+                .andExpect(jsonPath("$[0].htmlBody", is("test103")))
+                .andExpect(jsonPath("$[1].answerId", is(102)))
+                .andExpect(jsonPath("$[1].questionId", is(114)))
+                .andExpect(jsonPath("$[1].countAnswerVote", is(-1)))
+                .andExpect(jsonPath("$[1].persistDate", is("2022-05-29T15:59:08")))
+                .andExpect(jsonPath("$[1].htmlBody", is("test102")))
+                .andExpect(jsonPath("$[2].answerId", is(100)))
+                .andExpect(jsonPath("$[2].questionId", is(114)))
+                .andExpect(jsonPath("$[2].countAnswerVote", is(0)))
+                .andExpect(jsonPath("$[2].persistDate", is("2022-05-29T15:59:08")))
+                .andExpect(jsonPath("$[2].htmlBody", is("test100")))
+        ;
+
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/comment.yml",
+            "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/commentAnswer.yml",
             "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/answer.yml",
             "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/question.yml",
             "datasets/AnswerResourceController/getEmptyListAnswerByQuestionId/questionHasTag.yml",
@@ -127,6 +166,7 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .toString()
                 .contentEquals("UP_VOTE"));
 
+
         //Проверяем, что в БД изменилась репутация пользователя с id 101 (автор) по ответу с id 100. В датасетах изначальная репутация была 106
         Assertions.assertTrue(em.createQuery("SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = :author")
                 .setParameter("author", 101L)
@@ -134,31 +174,41 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .toString()
                 .contentEquals("116"));
 
-        //Проверяем, что невозможно проголосовать за свой ответ. Ответ с id 100 принадлежит пользователю с id 101("test2@test.ru","123")
-        Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
-                        .header("Authorization", getJwtToken("test2@test.ru", "123")))
+        //Проверяем, что невозможно проголосовать за свой ответ. Ответ с id 103 принадлежит пользователю с id 100("3user@mail.ru", "3111")
+        Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/103/answer/103/upVote")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse()
                 .getContentAsString()
-                .contains("Voting for your answer with id " + 100 + " not allowed"));
+                .contains("Voting for your answer with id " + 103 + " not allowed"));
 
-        //проверяем невозможность проголосовать дважды за один ответ, как за, так и против
+        //Проверяем невозможность проголосовать дважды за один ответ, как за, так и против
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse()
                 .getContentAsString()
-                .contains("ConstraintViolationException"));
+                .contains("You allready voted for the answer with id " + 100));
 
-        Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
+        Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse()
                 .getContentAsString()
-                .contains("ConstraintViolationException"));
+                .contains("You allready voted for the answer with id " + 100));
+
+        //Проверяем, что невозможно проголосовать за ответ, которого нет
+        Assertions.assertTrue((this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/104/upVote")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("Answer with id " + 104 + " not found")));
+
     }
 
     @Test
@@ -172,6 +222,7 @@ class TestAnswerResourceController extends AbstractApiTest {
             "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/user.yml",
             "datasets/AnswerResourceController/setDownVoteAnswerByAnswerId/voteAnswer.yml"
     })
+
     public void setDownVoteAnswerByAnswerId() throws Exception {
         //Проверяем возвращаемое значение. В датасетах в базе данных уже было 2 голоса ЗА ответ с id 100
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
@@ -187,6 +238,7 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .toString()
                 .contentEquals("DOWN_VOTE"));
 
+
         //Проверяем, что в БД изменилась репутация пользователя с id 101 (автор) по ответу с id 100. В датасетах изначальная репутация была 106
         Assertions.assertTrue(em.createQuery("SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = :author")
                 .setParameter("author", 101L)
@@ -194,23 +246,23 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .toString()
                 .contentEquals("101"));
 
-        //Проверяем, что невозможно проголосовать за свой ответ. Ответ с id 100 принадлежит пользователю с id 101("test2@test.ru","123")
-        Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
-                        .header("Authorization", getJwtToken("test2@test.ru", "123")))
+        //Проверяем, что невозможно проголосовать за свой ответ. Ответ с id 103 принадлежит пользователю с id 101("3user@mail.ru", "3111")
+        Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/103/answer/103/downVote")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse()
                 .getContentAsString()
-                .contains("Voting for your answer with id " + 100 + " not allowed"));
+                .contains("Voting for your answer with id " + 103 + " not allowed"));
 
-        //проверяем невозможность проголосовать дважды за один ответ, как за, так и против
+//        проверяем невозможность проголосовать дважды за один ответ, как за, так и против
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/upVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse()
                 .getContentAsString()
-                .contains("ConstraintViolationException"));
+                .contains("You allready voted for the answer with id " + 100));
 
         Assertions.assertTrue(this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/100/downVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
@@ -218,7 +270,17 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString()
-                .contains("ConstraintViolationException"));
+                .contains("You allready voted for the answer with id " + 100));
+
+        //Проверяем, что невозможно проголосовать за ответ, которого нет
+        Assertions.assertTrue((this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/104/upVote")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("Answer with id " + 104 + " not found")));
+
     }
 
     @Test
@@ -251,6 +313,8 @@ class TestAnswerResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.isHelpful").value(false))
                 .andExpect(jsonPath("$.countValuable").value(0))
                 .andExpect(jsonPath("$.body").value("test"));
+
+
 
         //Проверяем, что в БД появилась запись о новом ответе с id 1
         Assertions.assertTrue(em.createQuery("SELECT a FROM Answer a WHERE a.user.id = :user AND a.id = :answer")

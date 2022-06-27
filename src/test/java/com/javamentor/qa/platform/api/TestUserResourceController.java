@@ -4,6 +4,9 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -439,4 +442,79 @@ public class TestUserResourceController extends AbstractApiTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/answer.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/question.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/questionHasTag.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/reputation.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/role.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/tag.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/user.yml",
+            "datasets/UserResourceController/getCountOfAnswersByUserToWeek/voteAnswer.yml",
+    })
+    void getCountOfAnswersByUserToWeek() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/profile/question/week")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(3));
+
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/profile/question/week")
+                        .header("Authorization", getJwtToken("test2@test.ru", "123")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(0));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/answers.yml",
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/questions.yml",
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/role.yml",
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/usersTest1.yml",
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/voteAnswer.yml",
+    }, cleanBefore = true, cleanAfter = true)
+    void getTop10ByAnswerPerWeekTest1() throws Exception{
+        email = "3user@mail.com";
+        password = "3111";
+
+        mvc.perform(get("/api/user/top/answer/week")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(4))
+                .andExpect(jsonPath("$[0].id").value(100))
+                .andExpect(jsonPath("$[0].totalAnswers").value(2))
+                .andExpect(jsonPath("$[0].totalVotesOnAnswers").value(2))
+                .andExpect(jsonPath("$[1].id").value(101))
+                .andExpect(jsonPath("$[1].totalAnswers").value(2))
+                .andExpect(jsonPath("$[1].totalVotesOnAnswers").value(1))
+                .andExpect(jsonPath("$[2].id").value(104))
+                .andExpect(jsonPath("$[2].totalAnswers").value(1))
+                .andExpect(jsonPath("$[2].totalVotesOnAnswers").value(2))
+                .andExpect(jsonPath("$[3].id").value(105))
+                .andExpect(jsonPath("$[3].totalAnswers").value(1))
+                .andExpect(jsonPath("$[3].totalVotesOnAnswers").value(1));
+    }
+
+    @Test
+    @DataSet(value = {
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/usersTest2.yml",
+            "datasets/UserResourceController/getTop10ByAnswerPerWeek/role.yml",
+    }, cleanBefore = true, cleanAfter = true)
+    void getTop10ByAnswerPerWeekTest2() throws Exception{
+        email = "3user@mail.com";
+        password = "3111";
+
+        mvc.perform(get("/api/user/top/answer/week")
+                        .header("Authorization", getJwtToken(email, password)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
 }

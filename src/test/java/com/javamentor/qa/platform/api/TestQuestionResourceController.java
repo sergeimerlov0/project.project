@@ -2,12 +2,12 @@ package com.javamentor.qa.platform.api;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractApiTest;
+import com.javamentor.qa.platform.models.dto.AnswerBodyDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
-import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.jayway.jsonpath.JsonPath;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +53,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/postQuestionView/user.yml",
             "datasets/QuestionResourceController/postQuestionView/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
-    void postQuestionView () throws Exception {
+    void postQuestionView() throws Exception {
         //проверка на несуществующий вопрос
         this.mvc.perform(post("/api/user/question/1/view")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
@@ -66,9 +65,9 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(status().isOk());
 
         QuestionViewed questionViewed = em.createQuery(
-                "FROM QuestionViewed a " +
-                        "WHERE a.question.id = :questionId " +
-                        "AND a.user.email = :useremail",
+                        "SELECT a FROM QuestionViewed a " +
+                                "WHERE a.question.id = :questionId " +
+                                "AND a.user.email = :useremail",
                         QuestionViewed.class)
                 .setParameter("questionId", 100L)
                 .setParameter("useremail", "3user@mail.ru")
@@ -80,9 +79,9 @@ class TestQuestionResourceController extends AbstractApiTest {
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk());
         List<QuestionViewed> questionViewed2 = em.createQuery(
-                "FROM QuestionViewed a " +
-                        "WHERE a.question.id = :questionId " +
-                        "AND a.user.email = :useremail",
+                        "SELECT a FROM QuestionViewed a " +
+                                "WHERE a.question.id = :questionId " +
+                                "AND a.user.email = :useremail",
                         QuestionViewed.class)
                 .setParameter("questionId", 100L)
                 .setParameter("useremail", "3user@mail.ru")
@@ -101,6 +100,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionViewDtoById/role.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoById/tag.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoById/user.yml",
+            "datasets/QuestionResourceController/getQuestionViewDtoById/voteAnswer.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoById/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
     void getQuestionViewDtoById() throws Exception {
@@ -112,11 +112,22 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.countAnswer").value(3L))
                 .andExpect(jsonPath("$.authorReputation").value(6L))
                 .andExpect(jsonPath("$.countValuable").value(2L))
+                .andDo(print())
+
+                .andExpect(jsonPath("$.isUserAnswerVote").value(true))
 
                 //Проверяем, что к вопросу с id=100 подгрузились комментарии (2 шт.)
                 .andExpect(jsonPath("$.comments.length()").value(2L))
                 .andExpect(jsonPath("$.comments.[0].id").value(100L))
                 .andExpect(jsonPath("$.comments.[1].id").value(101L));
+
+        this.mvc.perform(get("/api/user/question/103")
+                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(103L))
+                .andExpect(jsonPath("$.isUserAnswerVote").value(false))
+                .andDo(print());
+
     }
 
     @Test
@@ -151,23 +162,59 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/postUpVoteQuestion/user.yml",
             "datasets/QuestionResourceController/postUpVoteQuestion/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
+        //Проверяем, что голосование за вопрос возвращает количество голосов. Должен быть 1 голос.
     void postUpVoteQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/103/upVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
 
+
+        //Проверяем, что в таблице VoteQuestions появился голос
         VoteQuestion vq = em.createQuery(
-                "FROM VoteQuestion a " +
-                        "WHERE a.question.id = :questionId " +
-                        "AND a.user.id = :userId",
+                        "SELECT a FROM VoteQuestion a " +
+                                "WHERE a.question.id = :questionId " +
+                                "AND a.user.id = :userId",
                         VoteQuestion.class)
                 .setParameter("questionId", 103L)
                 .setParameter("userId", 100L)
                 .getSingleResult();
         Assertions.assertNotNull(vq);
         Assertions.assertEquals(VoteType.UP_VOTE, vq.getVote());
+
+
+        //Проверяем, что невозможно проголосовать за свой вопрос
+        Assertions.assertTrue(this.mvc.perform(post("/api/user/question/103/upVote")
+                        .header("Authorization", getJwtToken("test3@test.ru", "123")))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("Voting for your question with id " + 103 + " not allowed"));
+
+        //Проверяем, что невозможно проголосовать за вопрос дважды
+        Assertions.assertTrue(this.mvc.perform(post("/api/user/question/103/upVote")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("You allready voted for the question with id " + 103));
+
+
+        //Проверяем, что невозможно проголосовать за вопрос, которого нет.
+        Assertions.assertTrue(this.mvc.perform(post("/api/user/question/104/upVote")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("Question with id " + 104 + " not found"));
+
     }
+
+
+
 
     @Test
     @DataSet(value = {
@@ -182,22 +229,56 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/postDownVoteQuestion/user.yml",
             "datasets/QuestionResourceController/postDownVoteQuestion/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
+
+        //Проверяем, что голосование за вопрос возвращает количество голосов. Должно быть -1
     void postDownVoteQuestion() throws Exception {
         this.mvc.perform(post("/api/user/question/102/downVote")
                         .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
                 .andExpect(status().isOk())
-                .andExpect(content().string("1"));
+                .andExpect(content().string("-1"));
 
+
+        //Проверяем, что в БД появился голос
         VoteQuestion vq = em.createQuery(
-                "FROM VoteQuestion a " +
-                        "WHERE a.question.id = :questionId " +
-                        "AND a.user.id = :userId",
+                        "SELECT a FROM VoteQuestion a " +
+                                "WHERE a.question.id = :questionId " +
+                                "AND a.user.id = :userId",
                         VoteQuestion.class)
                 .setParameter("questionId", 102L)
                 .setParameter("userId", 100L)
                 .getSingleResult();
         Assertions.assertNotNull(vq);
         Assertions.assertEquals(VoteType.DOWN_VOTE, vq.getVote());
+
+
+        //Проверяем, что невозможно проголосовать за свой вопрос
+        Assertions.assertTrue(this.mvc.perform(post("/api/user/question/103/downVote")
+                        .header("Authorization", getJwtToken("test3@test.ru", "123")))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("Voting for your question with id " + 103 + " not allowed"));
+
+        //Проверяем, что невозможно проголосовать за вопрос дважды
+        Assertions.assertTrue(this.mvc.perform(post("/api/user/question/102/downVote")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("You allready voted for the question with id " + 102));
+
+        //Проверяем, что невозможно проголосовать за вопрос, которого нет.
+        Assertions.assertTrue(this.mvc.perform(post("/api/user/question/104/downVote")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .contains("Question with id " + 104 + " not found"));
+
+
     }
 
     @Test
@@ -697,6 +778,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].countValuable").value(1))
                 .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
 
+
                 //Проверяем, что нужное QuestionDto также выгрузила список всех tags, связанных с ним
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
                 .andExpect(jsonPath("$.items.[0].listTagDto.[1].id").value(101));
@@ -1073,10 +1155,10 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andReturn();
 
         //Проверяем закладку из БД
-        BookMarks bookMarks = em.createQuery("FROM BookMarks a " +
-                                                     "WHERE a.question.id = :questionId " +
-                                                     "AND a.user.id = :userId", BookMarks.class)
-                .setParameter("questionId" , 100L)
+        BookMarks bookMarks = em.createQuery("SELECT a FROM BookMarks a " +
+                        "WHERE a.question.id = :questionId " +
+                        "AND a.user.id = :userId", BookMarks.class)
+                .setParameter("questionId", 100L)
                 .setParameter("userId", 100L)
                 .getSingleResult();
         Assertions.assertNotNull(bookMarks);
@@ -1144,5 +1226,56 @@ class TestQuestionResourceController extends AbstractApiTest {
                 //Проверяем, что в pageDto подтянулись нужные QuestionViewDto
                 .andExpect(jsonPath("$.items.[0].id").value(101))
                 .andExpect(jsonPath("$.items.[1].id").value(100));
+    }
+
+
+    @Test
+    @DataSet(value = {
+            "datasets/QuestionResourceController/testAddCommentToQuestion/role.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/answer.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/reputation.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/user.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/question.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/questionHasTag.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/tag.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/comment.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/commentQuestion.yml",
+            "datasets/QuestionResourceController/testAddCommentToQuestion/voteQuestion.yml",
+
+    }, cleanBefore = true, cleanAfter = true)
+    void addCommentToQuestion() throws Exception {
+
+        //проверка статуса
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/100/comment")
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk());
+
+        //комментария не существует
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/555/comment")
+                        .content(objectMapper.writeValueAsString("CommentTest"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+
+        //новый комментарий к вопросу с id = 100
+        Assertions.assertTrue(em.createQuery("SELECT a FROM CommentQuestion a WHERE a.comment.id = :comment_id")
+                .setParameter("comment_id", 100L)
+                .getResultList().size() > 0);
+
+        //комментарий - пустая строка
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/555/comment")
+                        .content(objectMapper.writeValueAsString(""))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
+
+
+        //null
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/comment")
+                        .content(objectMapper.writeValueAsString(null))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isBadRequest());
     }
 }

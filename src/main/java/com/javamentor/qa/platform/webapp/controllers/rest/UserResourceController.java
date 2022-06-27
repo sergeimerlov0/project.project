@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.BookmarksDto;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.BookmarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
@@ -32,13 +33,16 @@ public class UserResourceController {
     private final UserDtoService userDtoService;
     private UserService userService;
     private final BookmarksDtoService bookmarksDtoService;
+    private final AnswerDtoService answerDtoService;
 
     @Autowired
     public UserResourceController(UserDtoService userDtoService, UserService userservice,
-                                  BookmarksDtoService bookmarksDtoService) {
+                                  BookmarksDtoService bookmarksDtoService
+                                    , AnswerDtoService answerDtoService) {
         this.userDtoService = userDtoService;
         this.userService = userservice;
         this.bookmarksDtoService = bookmarksDtoService;
+        this.answerDtoService = answerDtoService;
     }
 
 
@@ -177,4 +181,26 @@ public class UserResourceController {
     public ResponseEntity<List<BookmarksDto>> getBookmarksDtoByUserId(@PathVariable("userId") long userId) {
         return ResponseEntity.ok(bookmarksDtoService.getBookmarksDtoByUserId(userId));
     }
+
+    @GetMapping("/profile/question/week")
+    @ApiOperation(value = "Получение количества ответов от пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Получено количество ответов"),
+            @ApiResponse(code = 400, message = "Ответы не найдены"),
+            @ApiResponse(code = 404, message = "Неверный ID пользователя")
+    })
+    public ResponseEntity<?> getCountOfAnswersByUserToWeek() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        return ResponseEntity.ok(answerDtoService.getCountOfAnswersByUserToWeek(user.getId()));
+    }
+
+    @GetMapping(value = "/top/answer/week")
+    @ApiOperation(value = "Получение топ 10 пользователей по ответам за неделю", tags = {"Получение пользователей"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное получение пользователей"),
+            @ApiResponse(code = 400, message = "Ошибка получения пользователей")})
+    public ResponseEntity<?> getTop10ByAnswerPerWeek(){
+        return ResponseEntity.ok(userDtoService.getTop10ByAnswerPerWeek());
+    }
+
 }
