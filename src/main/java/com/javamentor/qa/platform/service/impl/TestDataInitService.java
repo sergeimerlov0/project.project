@@ -51,7 +51,6 @@ public class TestDataInitService {
                                TagService tagService, TrackedTagService trackedTagService,
                                IgnoredTagService ignoredTagService, BookmarkService bookmarkService,
                                RelatedTagService relatedTagService,
-                               IgnoredTagService ignoredTagService, BookmarkService bookmarkService,
                                VoteAnswerService voteAnswerService, GroupChatService groupChatService,
                                SingleChatService singleChatService, ChatService chatService,
                                MessageService messageService) {
@@ -83,10 +82,10 @@ public class TestDataInitService {
         addTrackedAndIgnoredTag();
         addBookmark();
         addReputation();
-        addGroupChat(50);
-        addSingleChat(50);
-        addChat();
-        addMessage(50);
+//        addGroupChat(50);
+//        addSingleChat(50);
+//        addChat();
+//        addMessage(50);
         addRelatedTag();
     }
 
@@ -333,24 +332,24 @@ public class TestDataInitService {
         }
     }
 
-    public void addGroupChat(long count) {
-        for (long i = 1; i <= count; i++) {
-            GroupChat groupChat = new GroupChat();
-            Chat chat = new Chat(ChatType.GROUP);
-            chat.setTitle("Some group chat " + i);
-            Set<User> groupChatUsers = new HashSet<>();
-            List<Message> messages = new ArrayList<>();
-            for (long k = 1; k < 5; k++) {
-                User user = userService.getById(k + i).get();
-                groupChatUsers.add(user);
-                messages.add(new Message("Some message in group chat " + k, user, chat));
-            }
-            groupChat.setChat(chat);
-            groupChat.setUsers(groupChatUsers);
-            groupChatService.persist(groupChat);
-            messageService.persistAll(messages);
-        }
-    }
+//    public void addGroupChat(long count) {
+//        for (long i = 1; i <= count; i++) {
+//            GroupChat groupChat = new GroupChat();
+//            Chat chat = new Chat(ChatType.GROUP);
+//            chat.setTitle("Some group chat " + i);
+//            Set<User> groupChatUsers = new HashSet<>();
+//            List<Message> messages = new ArrayList<>();
+//            for (long k = 1; k < 5; k++) {
+//                User user = userService.getById(k + i).get();
+//                groupChatUsers.add(user);
+//                messages.add(new Message("Some message in group chat " + k, user, chat));
+//            }
+//            groupChat.setChat(chat);
+//            groupChat.setUsers(groupChatUsers);
+//            groupChatService.persist(groupChat);
+//            messageService.persistAll(messages);
+//        }
+//    }
 
     public void addSingleChat(long count) {
         for (long i = 1; i <= count; i++) {
