@@ -1,0 +1,9 @@
+chat:
+  - id: 100
+    chat_type: 2
+    persist_date: "2022-06-15 10:10:10.123456"
+    title: "white"
+  - id: 101
+    chat_type: 2
+    persist_date: "2022-06-15 10:10:10.123456"
+    title: "blue"

@@ -1,5 +1,7 @@
 package com.javamentor.qa.platform.models.dto;
 
+import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,16 +9,14 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDto {
+@Getter
+@Setter
+public class SingleChatDto {
     private Long id;
-    private String message;
-    private String nickName;
-    private Long userId;
-    private Long chatId;
+    private String name;
     private String image;
-    private LocalDateTime persistDateTime;
+    private String lastMessage;
+    private LocalDateTime persistDateTimeLastMessage;
 }

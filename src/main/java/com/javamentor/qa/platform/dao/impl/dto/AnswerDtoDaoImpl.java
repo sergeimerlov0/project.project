@@ -98,9 +98,9 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 .setParameter("id", answerId)
                 .getResultStream()
                 .findAny();
+        
     }
-
-    @Override
+ @Override
     public Integer getCountOfAnswersByUserToWeek(long userId) {
         return ((Long) entityManager.createQuery(
                         "SELECT COUNT (*) FROM Answer a " +
@@ -108,7 +108,6 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 .setParameter("userId", userId)
                 .getSingleResult()).intValue();
     }
-
     @Override
     public List<AnswerUserDto> getAnswerForLastWeek() {
         List<Tuple> ansLastWeek = entityManager.createQuery(

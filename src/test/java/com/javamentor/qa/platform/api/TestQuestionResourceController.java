@@ -100,6 +100,7 @@ class TestQuestionResourceController extends AbstractApiTest {
             "datasets/QuestionResourceController/getQuestionViewDtoById/role.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoById/tag.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoById/user.yml",
+            "datasets/QuestionResourceController/getQuestionViewDtoById/voteAnswer.yml",
             "datasets/QuestionResourceController/getQuestionViewDtoById/voteQuestion.yml"
     }, cleanBefore = true, cleanAfter = true)
     void getQuestionViewDtoById() throws Exception {
@@ -111,11 +112,22 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.countAnswer").value(3L))
                 .andExpect(jsonPath("$.authorReputation").value(6L))
                 .andExpect(jsonPath("$.countValuable").value(2L))
+                .andDo(print())
+
+                .andExpect(jsonPath("$.isUserAnswerVote").value(true))
 
                 //Проверяем, что к вопросу с id=100 подгрузились комментарии (2 шт.)
                 .andExpect(jsonPath("$.comments.length()").value(2L))
                 .andExpect(jsonPath("$.comments.[0].id").value(100L))
                 .andExpect(jsonPath("$.comments.[1].id").value(101L));
+
+        this.mvc.perform(get("/api/user/question/103")
+                .header("Authorization", getJwtToken("3user@mail.ru", "3111")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(103L))
+                .andExpect(jsonPath("$.isUserAnswerVote").value(false))
+                .andDo(print());
+
     }
 
     @Test
@@ -765,6 +777,7 @@ class TestQuestionResourceController extends AbstractApiTest {
                 .andExpect(jsonPath("$.items.[0].countAnswer").value(0))
                 .andExpect(jsonPath("$.items.[0].countValuable").value(1))
                 .andExpect(jsonPath("$.items.[0].isUserBookmark").value(true))
+
 
                 //Проверяем, что нужное QuestionDto также выгрузила список всех tags, связанных с ним
                 .andExpect(jsonPath("$.items.[0].listTagDto.[0].id").value(100))
