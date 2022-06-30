@@ -409,5 +409,6 @@ public class TestDataInitService {
         relatedTagService.persist(relatedTagOne);
         relatedTagService.persist(relatedTagTwo);
         relatedTagService.persist(relatedTagThree);
+
         }
 }
