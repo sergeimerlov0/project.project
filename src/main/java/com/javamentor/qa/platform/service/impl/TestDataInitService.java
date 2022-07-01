@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.service.impl;
 
 import com.javamentor.qa.platform.models.entity.BookMarks;
+import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -11,6 +12,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.*;
@@ -33,6 +35,7 @@ public class TestDataInitService {
     private final TagService tagService;
     private final TrackedTagService trackedTagService;
     private final IgnoredTagService ignoredTagService;
+    private final RelatedTagService relatedTagService;
     private final VoteAnswerService voteAnswerService;
     private final GroupChatService groupChatService;
     private final SingleChatService singleChatService;
@@ -47,6 +50,7 @@ public class TestDataInitService {
                                AnswerService answerService, QuestionService questionService,
                                TagService tagService, TrackedTagService trackedTagService,
                                IgnoredTagService ignoredTagService, BookmarkService bookmarkService,
+                               RelatedTagService relatedTagService,
                                VoteAnswerService voteAnswerService, GroupChatService groupChatService,
                                SingleChatService singleChatService, ChatService chatService,
                                MessageService messageService) {
@@ -65,6 +69,7 @@ public class TestDataInitService {
         this.singleChatService = singleChatService;
         this.chatService = chatService;
         this.messageService = messageService;
+        this.relatedTagService = relatedTagService;
     }
 
     public void init() {
@@ -77,10 +82,11 @@ public class TestDataInitService {
         addTrackedAndIgnoredTag();
         addBookmark();
         addReputation();
-        addGroupChat(50);
-        addSingleChat(50);
-        addChat();
-        addMessage(50);
+//        addGroupChat(50);
+//        addSingleChat(50);
+//        addChat();
+//        addMessage(50);
+        addRelatedTag();
     }
 
     private void addRole() {
@@ -326,24 +332,24 @@ public class TestDataInitService {
         }
     }
 
-    public void addGroupChat(long count) {
-        for (long i = 1; i <= count; i++) {
-            GroupChat groupChat = new GroupChat();
-            Chat chat = new Chat(ChatType.GROUP);
-            chat.setTitle("Some group chat " + i);
-            Set<User> groupChatUsers = new HashSet<>();
-            List<Message> messages = new ArrayList<>();
-            for (long k = 1; k < 5; k++) {
-                User user = userService.getById(k + i).get();
-                groupChatUsers.add(user);
-                messages.add(new Message("Some message in group chat " + k, user, chat));
-            }
-            groupChat.setChat(chat);
-            groupChat.setUsers(groupChatUsers);
-            groupChatService.persist(groupChat);
-            messageService.persistAll(messages);
-        }
-    }
+//    public void addGroupChat(long count) {
+//        for (long i = 1; i <= count; i++) {
+//            GroupChat groupChat = new GroupChat();
+//            Chat chat = new Chat(ChatType.GROUP);
+//            chat.setTitle("Some group chat " + i);
+//            Set<User> groupChatUsers = new HashSet<>();
+//            List<Message> messages = new ArrayList<>();
+//            for (long k = 1; k < 5; k++) {
+//                User user = userService.getById(k + i).get();
+//                groupChatUsers.add(user);
+//                messages.add(new Message("Some message in group chat " + k, user, chat));
+//            }
+//            groupChat.setChat(chat);
+//            groupChat.setUsers(groupChatUsers);
+//            groupChatService.persist(groupChat);
+//            messageService.persistAll(messages);
+//        }
+//    }
 
     public void addSingleChat(long count) {
         for (long i = 1; i <= count; i++) {
@@ -387,4 +393,22 @@ public class TestDataInitService {
 
         chatService.persist(chat);
     }
+
+    private void addRelatedTag() {
+        RelatedTag relatedTagOne = new RelatedTag();
+        RelatedTag relatedTagTwo = new RelatedTag();
+        RelatedTag relatedTagThree = new RelatedTag();
+        relatedTagOne.setMainTag(tagService.getById(1L).get());
+        relatedTagTwo.setMainTag(tagService.getById(1L).get());
+        relatedTagThree.setMainTag(tagService.getById(2L).get());
+
+        relatedTagOne.setChildTag(tagService.getById(3L).get());
+        relatedTagTwo.setChildTag(tagService.getById(4L).get());
+        relatedTagThree.setChildTag(tagService.getById(5L).get());
+
+        relatedTagService.persist(relatedTagOne);
+        relatedTagService.persist(relatedTagTwo);
+        relatedTagService.persist(relatedTagThree);
+
+        }
 }
